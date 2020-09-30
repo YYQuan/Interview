@@ -2012,7 +2012,7 @@ SourceGenerator 中的FetcherReadyCallback  传的是DecodeJob对象
 
 RequestBuilder 构建ViewTarget   然后 构建Request
 接着通过RequestManager来执行request
-然后就开始异步执行加载任务， 真正执行加载任务是通过EngineJob来执行的
+然后就开始异步执行加载任务， 真正执行加载任务是通过EngineJob来执行的，EngineJob就是一个异步线程启动器
 engineJob 是启动DecodeJob这个runnable来启动任务的。
 DecodeJob 这个任务有分三个部分 
 
@@ -2027,6 +2027,24 @@ DecodeJob 这个任务有分三个部分
 转换完之后 再通过 一层一层的回调 最终回调到ViewTarget的ready回调用，viewTarget内部维护了用户传入的view,由其完成贴图操作
 转换完成 - > DecodeJob.callback --> EngineJob.callback --> 
 Request.callback --> viewTarget.callback
+
+
+
+
+
+现在接着把 非主线 但是也是很重要的逻辑（主要就是缓存逻辑）也理一下。
+
+
+
+DataFetcherGenerator  是怎么获取 LoadData的?
+
+
+
+![image-20200930180403641](https://i.loli.net/2020/09/30/mWFG4AxkIjEzl3U.png)
+
+![image-20200930181632623](https://i.loli.net/2020/09/30/92Sg45XTHFrtPam.png)
+
+
 
 
 
