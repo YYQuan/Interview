@@ -92,4 +92,4 @@ public static void main(String argv[]){
 
 ```
 
-![image-20201009183924746](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20201009183924746.png)
+![image-20201009183924746](https://i.loli.net/2020/10/10/JEnbABkdPX4Ye6h.png)0
