@@ -371,6 +371,30 @@ zygote中通过socket把接收到的参数作为类型来找类对象， 由于A
 
 
 
+先来简析下ActivityThread的类的主要结构
+
+##### ActivityThread 结构图
+
+![image-20201012095552522](https://i.loli.net/2020/10/12/2ofZUAV1Wnm7xwM.png)
+
+
+
+可以看出  ActivityThread里面 有 
+**activity**的map、  **provider**的map、**service**的map 、和一个**BroadCastRecevier** 
+
+也就是维护了 本进程中的四大组件，
+比较特殊的是 广播broadCastRecevier   四大组件内 只有 broadCastRecevier 没有map ，那是因为 ActivityThread 只负责BroadCastRecevier 的转发 ，实际的处理和维护还是在AMS 当中的
+
+
+
+**looper** :  启动消息循环 ，使能消息分发
+**mH** :  一个主线程的handler
+**mApplicationcation**:  进程的applicaiton对象  ，（也是由ActivityThread  创建和维护的）
+
+**Instrumentation**: 一个辅助ActivityThread的来完成activity调度的工具类，比如完成activity对象的创建呀 ，执行oncreate函数等等。
+
+ApplicationThread : 一个IBinder的接口，AMS 之所以能够调用四大组件的方法， 就是通过这个ApplicationThread
+
 下一步就是执行到ActivityThread.main()
 
 ##### ActivityThread.main()
@@ -461,11 +485,21 @@ mAtmInternal.attachApplication(...);
 
 ```
 
+通过ActivityThread 传入的 ApplicationThread的iBinder对象 ，就能调用到 applicationThread .bindApplication()
+
 接着分别来看 thread.bindApplication  和  mATMS的attachApplication
+
 
 ###### thread.bindApplication
 
+
+
+
 ![image-20201010160840664](https://i.loli.net/2020/10/10/XWE6aH57SMNGxZJ.png)
+
+***Q:为啥要发消息呢？直接调用AcivityThread当中的目标函数不行么？***
+
+***A:是因为ams 中 通过IBinder对象调用的方法 是在子线程当中， 需要通过mH来切换到主线程当中去执行逻辑***
 
 
 
@@ -474,6 +508,8 @@ mAtmInternal.attachApplication(...);
 发送了个消息
 
 ![image-20201010161032901](https://i.loli.net/2020/10/10/C4V8lcsfRnavKqx.png)
+
+
 
 创建application
 
@@ -513,26 +549,26 @@ clientLifecycleManager.scheduleTransaction(clientTransaction);
 
 ```
 
+
+
+对于launch 的事务，
+activityStackSupervisor 会执行到LauncherActivityItem 的execute函数
+
+如果是pause事务 那就会执行PauseActivityItem 的execute(),这个是状态机的设计模式。
+
+
+
+
+
+![image-20201012105554798](https://i.loli.net/2020/10/12/nCylQxqcDXhrj7z.png)
+
 sdk层源码看不出来，但是实际上 
-**clientLifecycleManager.scheduleTransaction(clientTransaction)**就是给ActivityThread的mH   handler 发送了个EXECUTE_TRANSACTION 消息
+**clientLifecycleManager.scheduleTransaction(clientTransaction)**调用了LaunchActivityItem.execute()
+就是调用了ActivityThread的handleLauncherAcitivity()
 
-![image-20201010165047067](https://i.loli.net/2020/10/10/fvDqNEbBUnkMAPc.png)
+![image-20201012105320332](https://i.loli.net/2020/10/12/nkJluzCWadMEigA.png)
 
-
-
-
-
-![image-20201010165411821](https://i.loli.net/2020/10/10/ALYHhUsrd7gGe5a.png)
-
-把事务提交到线程池当中，
-
-
-
-![image-20201010165724429](https://i.loli.net/2020/10/10/O3JFTf69BKZVbGL.png)
-
-
-
-然后 底层调调调 就会调用到 ActivityThread.performLaunchActivity
+ActivityThread.performLaunchActivity
 
 ```java
 ClientTransactionHandler.handleLaunchActivity
@@ -653,7 +689,7 @@ ams 对application的注册分两个部分： application 和activity
 ATMS.attachApplication 需要说明一下。
 ATMS.attachAppliction实际上调用到的是activityStackSupervisor的相关方法。 毕竟得告诉activityStackSupervisor    执行的结果到底怎么样嘛。
 
-然后呢 就ActivityThread 去发起 一个事务， 实际上就是给ActivityThread 里维护的一个handler发送消息。
+然后呢 就ActivityThread 去发起 一个事务， 实际上就是调用ActivityThread的父类ClientTransactionHandler的方法（ClientTransactionHandler也是android 10 google重构 时新增的内容， 就是专门来用关系activity的）
 
 最终会调用到 ActivityThread 里的performLauncher 方法
 
@@ -688,3 +724,270 @@ A1_2:  不行 ，因为 linux fork 进程不允许多线程的。
 
 
 
+## Activity核心
+
+
+这部分内容主要包含如下部分：
+
+1. View树的绘制
+2. Ui刷新的机制
+3. 手势分发的源头
+4. Activity的任务栈
+
+要解决的问题的总纲如下：
+
+![image-20201012111430118](https://i.loli.net/2020/10/12/sFDM47uWJSwRhyb.png)
+
+### Activity View树的测绘流程
+
+
+
+从一个面试题入手：
+
+**Q:如何在Activity的onCreate和onResume中获取一个view的height/width?**
+
+**A:  直接拿是不行的， 因为 view的测绘流程还没有开始， 一般是通过view.post来获取，也可以通过给view添加上globallayoutListener的监听来获取**
+
+
+
+那Activity的测绘流程是从哪里开始的呢？
+
+下面开始分析 activity的测绘流程。
+
+从分析启动流程的过程当中已经知道了，activity第一个被调用的方法是  attach函数 ，然后才是 onCreate()
+
+先看下attach 函数
+
+
+
+#### Activity.attach
+
+![image-20201012113139447](https://i.loli.net/2020/10/12/WvufKNZd6POcMsA.png)
+
+
+
+发现attach方法中 初始化了  成员变量 window
+
+然后并没有发现其他和view的测绘相关的代码，
+onCreate也是是。
+
+所以回到 activity ，看setContentView(int id)
+
+
+
+#### Activity.setContentView()
+
+
+
+![image-20201012113850673](https://i.loli.net/2020/10/12/7KD5owS6Fkbmn1Z.png)
+
+
+
+观察一下，
+
+
+
+
+![image-20201012115734317](https://i.loli.net/2020/10/12/oHeVfrmbIljwTg4.png)
+
+![image-20201012115844719](https://i.loli.net/2020/10/12/gTRlrvSAsmdXq28.png)
+
+在activity的setContentView(view)中， 创建了一个viewGroup 并且 赋给了 window .
+
+接着看看window.setContentView里面做了啥。
+
+PhoneWindow是android中window的唯一实现类。
+
+
+
+![image-20201012120421370](https://i.loli.net/2020/10/12/A9Jl8v3QSdIe5nW.png)
+
+从上图可知，phoneWindow.setContentView
+中创建了一个decorView ，并且和该window进程了绑定，
+
+然后初始化了 mContentParent ，并且把activity传过来的view， 添加到 mContentParent当中。
+
+
+
+ok， 现在就是已经把 用户指定的 view添加到了 
+activity的window(由attach 方法创建)   然后再有setContentView触发，  new 一个decorView 和window相互绑定，   用户指定的 view 在添加到decorView的当中去。
+
+但是这个过程并没有 涉及到绘制的流程。
+
+
+
+所以得回到 activity的生命周期中。
+
+onStart / onResume  中 都没有线索。
+而且刚才提的问题中 也说到了 在activity的onResume方法中就获取不到view的 height和width的。 所以view的测绘肯定是在onResume方法之后。
+
+ok ，那得啦。activity的显示的生命周期已经走完了，都没有触发测绘， 那测绘是在哪进行的啊。
+
+那只能先去ActivityThread里面去找一下了。
+
+
+
+#### ActivityThread.handlerResumeActivity
+
+![image-20201012140525473](https://i.loli.net/2020/10/12/PqMNjsd32iWBzlH.png)
+
+在ActivityThread 内 ，发现在handleResumeActivity中 ，在performResumeActivity之后， 还把 和window绑定了的 并且是包含了用户布局view的 decorView 添加到到了windowManager 当中。
+
+这里会遇到一个问题 ，发现windowManger 是一个抽象方法， 并且找不到其实现类。
+
+但是看 window的windowManage的赋值里有线索。
+
+![image-20201012144328175](https://i.loli.net/2020/10/12/CD89txfl6T7bugs.png)
+
+
+
+发现其实现类就是WindowManagerImpl
+
+PS : android studio 中找不到实现类的时候一般可以看看 *Imple，比如WindowManager ,Context 
+
+
+
+#### WindowManagerImpl
+
+接下来查看 WindowManagerImlp ，
+
+![image-20201012144810147](https://i.loli.net/2020/10/12/uePdx9sbnAOXTGr.png)
+
+发现只是做了下转发。
+
+转发给了WindowManagerGlobal
+WindowManagerGlobal 其实就是应用的统一windwomanager入口。 
+一个页面就有一个windowManager ,每一个windowManager都由WindowManagerGlobal来维护。
+
+所以对于应用外部来说， 应用内的所有的增删改查 都是WindowManagerGlobal来完成的。
+
+![image-20201012145627956](https://i.loli.net/2020/10/12/BtLkWm13VygZKoU.png)
+
+
+
+#### ViewRootImpl
+
+上面已经知道了viewRootImpl 是触发测绘的关键了。
+先来对ViewRootImpl的做个整体的认识。
+
+![image-20201012150058223](https://i.loli.net/2020/10/12/sAueMY96hg257Cb.png)
+
+
+
+ViewRootImpl  
+
+
+
+其中很重要的一个作用就是 监听 系统 
+ vsync （垂直同步）信号 ，然后触发view的measure ,layout, draw这三大流程
+
+
+
+ViewRootImpl 不仅仅是 view绘制的发起点， 还是手势事件接收的入口。
+
+##### 注册手势监听
+
+下面就是向windowManagerService 注册window的代码， 注册时还传入了 手势监听的回调。
+
+![image-20201012170532408](https://i.loli.net/2020/10/12/iKa5fe3GxZ6oMXm.png)
+
+
+
+##### 设置ViewParent
+
+要注意ViewRootImpl 本身不是view ，只是实现了ViewParent的接口
+把view和viewRootImpl关联起来，viewRootImpl 就是传入的decorView的ViewParent
+
+![image-20201012171004960](https://i.loli.net/2020/10/12/JL2PvpaOQdytUuq.png)
+
+![image-20201012171257636](https://i.loli.net/2020/10/12/9Anf3lp5kKGTNUq.png)
+
+
+
+##### 注册屏幕点击实现的响应
+
+![image-20201012172337038](https://i.loli.net/2020/10/12/I3LOlvYKmGpMqHD.png)
+
+##### 测绘
+
+requestLayout
+
+![image-20201012162426645](https://i.loli.net/2020/10/12/5IJCbpdBDWGnS7g.png)
+
+上图就是 著名的  只能在主线程更新的异常。
+
+这个异常就是在ViewRootImpl 中被抛出的。
+
+所以说  view 在更新数据的时候 ，如果没有执行到viewRootImpl的requestLayout()方法的话， 那么就算在子线程中，也是可以进行ui更新的。因为没有线程检查。
+
+
+
+在子线程当中去更新UI 也是由应用的，比如 如果想要页面一展示出来就能立刻的把相关内容都显示出来，就可以采用在子线程当中更新的策略
+
+比如 手机淘宝的首页， 基本loading界面一结束 内容都出来的。 为啥呢？
+就是其实在 引导页的时候 子线程就已经在加载页面了。
+
+
+
+
+
+线程检查完之后就进行事务处理
+
+![image-20201012163523277](https://i.loli.net/2020/10/12/cEbUHedmKB1NsnA.png)
+
+![image-20201012163633289](https://i.loli.net/2020/10/12/7phxiw6HAGC5kKP.png)
+
+
+
+设置好垂直同步信号的监听之后，再收到垂直同步信号之后 就会调用mTravesalRunnable
+
+![image-20201012163838951](https://i.loli.net/2020/10/12/vDZEjmNqsCaPAHp.png)
+
+
+
+![image-20201012164122540](https://i.loli.net/2020/10/12/3jxnhgMVJfpbarG.png)
+
+![image-20201012164306328](https://i.loli.net/2020/10/12/OZu5cqDCo8Mfkd9.png)
+
+performTraversals 就是触发绘制的地方.
+performTraversals 会根据 当前的view树是否发生变化 ，包括大小、 属性；来判断是否需要重新测绘，重新布局，重新绘制
+
+
+
+performTraversals 中就会调用 performMeasure、 performLayout、 以及performDraw
+
+他们内部就会分别调用 decorView的 measure 、layout、 和draw
+
+
+这里提一下 handler的屏障消息
+
+##### Hnadler之屏障消息
+
+![image-20201012163142822](https://i.loli.net/2020/10/12/GKErabTiFO1c85l.png)
+
+handler的同步消息和异步消息，在平常是没有区别的。但是再handler接收到 屏障消息之后就不一样了。 接收到屏障消息之后的handler就会优先处理 异步消息，而view的测绘任务就是一个异步消息。
+
+
+
+
+
+### 总结
+
+![image-20201012164839207](https://i.loli.net/2020/10/12/PtI5fiDGJmnC8MO.png)
+
+1. 在ATMS 调用了activity.attach   创建window
+
+2. 在setContentView 中创建 decorView 和用户指定的view ，并且把用户指定的view添加到decorView中 ，然后把window和decorView关联起来；
+
+3. 在ActivityThread 的handerResumeActiivty中，performResumeActivity之后  会把window添加到windowmanagerService当中
+   
+
+4. WindowManagerService中会创建 ViewRootImpl
+   并且把ViewRootImlp 指定为 decorView的ViewParent(顶层节点);
+   ViewRootImpl中会对view的测绘，以及向WindowManagerService 注册手势监听，以及点击事件监听。
+   View的测试是通过在ViewRootImpl中添加系统垂直同步信号的监听来完成的。
+   当接收到系统的垂直同步信号 后就会调用
+   performTarversator()
+   perfromTarversator中就会对 viewParent进行判断，看时候需要重新刷新；需要的话就会执行view的绘制的三大流程： measure ,layout,draw
+
+   
