@@ -971,17 +971,14 @@ handler的同步消息和异步消息，在平常是没有区别的。但是再h
 
 
 
-### 总结
+#### 总结
 
 ![image-20201012164839207](https://i.loli.net/2020/10/12/PtI5fiDGJmnC8MO.png)
 
 1. 在ATMS 调用了activity.attach   创建window
-
 2. 在setContentView 中创建 decorView 和用户指定的view ，并且把用户指定的view添加到decorView中 ，然后把window和decorView关联起来；
-
 3. 在ActivityThread 的handerResumeActiivty中，performResumeActivity之后  会把window添加到windowmanagerService当中
    
-
 4. WindowManagerService中会创建 ViewRootImpl
    并且把ViewRootImlp 指定为 decorView的ViewParent(顶层节点);
    ViewRootImpl中会对view的测绘，以及向WindowManagerService 注册手势监听，以及点击事件监听。
@@ -990,4 +987,113 @@ handler的同步消息和异步消息，在平常是没有区别的。但是再h
    performTarversator()
    perfromTarversator中就会对 viewParent进行判断，看时候需要重新刷新；需要的话就会执行view的绘制的三大流程： measure ,layout,draw
 
-   
+
+
+### Activity页面刷新机制概述
+
+前面讲到了在ViewRootImpl中  向Choreographer 注册了 垂直信号的 接收来刷新界面的。
+
+来看看choreoGrapher
+
+#### Choreographer 
+
+ChoreoGrapher 有两个作用：
+
+1. 根据系统的信号来刷新界面
+2. 过滤掉同时有多个ViewRootImpl的requestLayout()请求，避免一帧的时间段内 多次刷新。
+
+
+
+ChoreoGrapher 中维护了两个重要的成员变量：
+
+1. displayEventReceiver :  接口native层的VSync的信号
+2. CallbackQueues
+
+CallbackQueues里面就对应着几种 Callback 类型
+对应着几种事件类型的callback , 比如 屏幕输入，动画，requestLayout触发的测绘事件，以及Vsync的确认事件。
+
+
+
+这个是CallbackQueue的数据模型。
+
+![image-20201013155341175](https://i.loli.net/2020/10/13/2pLsaSVfWUcnJAy.png)
+
+
+
+choreoGrapher 是如何达到 ，一帧内 的requestLayout请求只执行一次的呢？
+
+其实很简单， 就是在接受到请求的时候，不是立即去执行的，而是先存其起来，然后在接收到vSync信号之后， 再去执行。
+
+先整体的浏览一下ChoreoGrapher的整体结构
+
+![image-20201013164115386](https://i.loli.net/2020/10/13/wJs1n7YIj69PGR5.png)
+
+这几个 方法最终都是调用
+ChoreoGrapher.postCallbackDelayedInternal（）
+
+![image-20201013164216052](https://i.loli.net/2020/10/13/wdjP7Xb6caQtOYm.png)
+
+可以把postCallbackDealyedInternal理解为刷新界面的唯一入口
+
+
+
+![image-20201013164736582](https://i.loli.net/2020/10/13/FLpHGXfzeRhIjKY.png)
+
+![image-20201013164751008](https://i.loli.net/2020/10/13/NkmZ5BaFuYOsnRr.png)
+
+
+
+上面可以看出来，ChoreoGrapher实际上就是向DisplayEventReceiver 进行了调度。
+
+等到显示服务发送了Vsync信号之后， DisplayEventReceiver就能够接收到了。
+
+然后DisplayEventReceiver的实现类FrameDisplayEventRecevice的onVsync函数就会被调用
+
+
+![image-20201013165643122](https://i.loli.net/2020/10/13/MkaBYiLVQFEvArp.png)
+
+ok 现在就接收到了vsync消息了。
+接着往下看， FrameDisplayEventRecevice的run里做了啥呢？
+
+![image-20201013170254693](https://i.loli.net/2020/10/13/WFvLM4EbZ9U1aXH.png)
+
+这个是 frameWork对掉帧的判断
+ok 接着往下看逻辑的处理
+
+![image-20201013171121284](https://i.loli.net/2020/10/13/sGBCnLoZv95jz6t.png)
+
+上面这段 对动画 ，输入，测绘的逻辑 就是ChoreoGrapher协调 显示的逻辑
+
+
+
+接下来 看CallbackRecord的run函数做了什么。
+
+![image-20201013171208102](https://i.loli.net/2020/10/13/hlQsmWTuzFZXdOG.png)
+
+
+
+那action.run()里面一般是做啥呢？
+
+以ViewRootImpl中的测绘工作来看，
+![image-20201013172405498](https://i.loli.net/2020/10/13/hIoF1kwlyvGxjMH.png)
+
+
+
+这样第一帧的刷新就完成了。
+
+view的所有刷新都会触发到ViewRootImpl的performTraversal()。 从而完成对 vsync的callback的添加， 以此完成刷新。
+
+### 手势分发
+
+
+
+前面说到 WindowInputEventReceiver
+是接收手势的原点。
+
+主流程
+
+![image-20201013183209513](https://i.loli.net/2020/10/13/kBwJr5dn6H3fzTS.png)
+
+为啥 流程中 要 decorView 分发给activity  ,然后再由activity分发会给decorView ，再传给ViewGroup呢?
+
+是为了给activity 拦截事件的能力
