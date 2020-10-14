@@ -1097,3 +1097,364 @@ view的所有刷新都会触发到ViewRootImpl的performTraversal()。 从而完
 为啥 流程中 要 decorView 分发给activity  ,然后再由activity分发会给decorView ，再传给ViewGroup呢?
 
 是为了给activity 拦截事件的能力
+
+
+
+### Activity任务管理
+
+要想在程序的任意位置都获取到 当前activity任务栈顶部activity , android 中并没有直接的api， 但是可以通过application类下的ActivityLifecycleCallback 接口来获取。
+
+#### ActivityLifecycleCallback
+
+ActivityLifecycleCallback中包含了全部的activity的生命周期的回调。
+![image-20201014095647393](https://i.loli.net/2020/10/14/Kch6oZqtbnluIT4.png)
+
+
+
+通过这个ActivityLifecycleCallback ,从而就能构建
+
+
+
+## Fragmetn核心
+
+![image-20201014105106063](https://i.loli.net/2020/10/14/9PRVS1qohJjkyme.png)
+
+
+
+常规用法
+![image-20201014114554004](https://i.loli.net/2020/10/14/9u7Yaq2VKAts1kB.png)
+
+#### Fragment的使用原理
+
+![image-20201014111611463](https://i.loli.net/2020/10/14/Hyp1Kg2LiP5ZcmO.png)
+
+
+
+为啥呢，FragmentActivity 不直接用activity来调用FragmentManager ，而是通过FrgmentController来处理呢？
+
+![image-20201014112042278](https://i.loli.net/2020/10/14/AwqOTUPSRJcgbE1.png)
+
+
+
+
+
+![image-20201014112410508](https://i.loli.net/2020/10/14/6hp1NivBxwg4rLA.png)
+
+fragmentController是在activity的实例被创建的时候就被创建出来了的
+
+
+
+这里就能看出来 Activity 管理Fragment的方式是
+
+
+通过Activity 创建了一个FragmentControl ,并且把一个FragmentHostCallback接口的实现传给FragmentControl，
+
+真正持有着FragmentManager的是 Activity new出来传给FragmentController的FragmentHostCallback接口的实现。
+
+ok， 那搞的这么绕干嘛呀。
+主要是为了屏蔽宿主对FragmentHostCallback的直接引用， 因为Fragment并不是只提供给activity使用的，可以拓展应用场景。
+
+以后做设计也可以这样来考虑。
+但是我是没看出来由啥好处
+
+
+
+接着往下看。
+
+![image-20201014114539253](https://i.loli.net/2020/10/14/6IBmkqvz7eRj9gx.png)
+
+这个beginTransaction 是fragment操作的起点。
+
+后面的一些列的操作  （到commit为止）构成了一个事务，  事务的一个特性就是 全部的操作 ，要么都成功，要么都失败。不会有一部分成功的情况。
+
+
+
+接下来看BackStackRecord
+
+##### BackStackRecord
+
+![image-20201014114959699](https://i.loli.net/2020/10/14/K8ygCqeZTBMNxHA.png)
+
+BackStackRecord继承至FragmentTransaction,
+因此可以把backStackRecord 理解为 fragment的事务，
+由google的命名的尿性 record的这个一般就是 一组概念里面的最小单位， 比如 对于activity任务栈来说 最小的单位就是 ActivityRecord；
+
+
+
+为啥给FragmetnTransaction加多层包装呢？
+是为了给FragmentManager逆向操作事务，完成出栈操作。逆向操作的能力是由backStackRecord还实现了BackStackEntry接口
+
+ok 接着往下看
+
+##### add
+
+![image-20201014120234725](https://i.loli.net/2020/10/14/LsycuNFStkK27eU.png)
+
+创建了一个事务，并且添加到一个列表当中
+
+
+
+replace 和add类似
+![image-20201014120405709](https://i.loli.net/2020/10/14/2hk1VWAuXBsKop4.png)
+
+
+
+
+
+##### commit
+
+commit是FragmentTransaction的abstract方法
+真正的实现实在BackStackRecord当中
+
+![image-20201014120706294](https://i.loli.net/2020/10/14/pgEk2sHoldShQVI.png)
+
+![image-20201014121006358](https://i.loli.net/2020/10/14/hun4ICJAYUGSoPQ.png)
+
+
+FragmentManager在执行事务之前会做状态检查。
+
+![image-20201014121755603](https://i.loli.net/2020/10/14/68OCErLIuV2SlGR.png)
+
+
+
+那怎么能避免状态检查呢？
+
+##### FragmentManager的事务提交方式
+
+![image-20201014121913404](https://i.loli.net/2020/10/14/JrpCwKiZ1SFUQqx.png)
+
+说明：
+同步 异步 都是在主线程执行的，只是异步是通过发送消息到消息队列当中， 在消息被轮询到的时候，才开始处理。
+
+正常来说 用同步操作会更加安全一些， 不过只要不检查状态，那么就不会抛出异常了。
+
+
+
+继续回到commit
+
+
+
+![image-20201014122513648](https://i.loli.net/2020/10/14/ID9ztYed6bTcZCv.png)
+
+
+![image-20201014142640213](https://i.loli.net/2020/10/14/a3OoRK5Sy2Vrbmn.png)
+
+
+
+![image-20201014142653386](https://i.loli.net/2020/10/14/UF38jsvGAeCSEn6.png)
+
+然后会调到FragmentTransition.startTransitions
+
+![image-20201014143729764](https://i.loli.net/2020/10/14/nq6WA1mMtV352pK.png)
+
+![image-20201014143833412](https://i.loli.net/2020/10/14/8P7lOgMZIX16HLh.png)
+
+
+
+
+
+![image-20201014144456853](https://i.loli.net/2020/10/14/LJTN4Xlhqs6uyKP.png)
+
+![image-20201014144723816](https://i.loli.net/2020/10/14/tevRxDZcJBKfbOz.png)
+
+FragmentManager的moveToState就是处理 fragment生命周期回调的地方
+
+无论是由于事务的执行 还是activity触发的fragment的生命周期的回调都是通过FragmentManager成moveToState来调用fragment的生命周期相关函数
+
+
+
+#####  fragment的生命周期的回调
+
+activity是通过在生命周期函数中调用FragmentController相关函数来控制fragment来声明周期的。
+比如oncreate()
+
+![image-20201014150444485](https://i.loli.net/2020/10/14/2S1ECmAB7hftrNl.png)
+
+
+
+**PS： android studio中可能同时包含着几个版本的sdk，看源码的时候主要要对应sdk版本 ，否则可能会找不到相关函数**
+
+
+
+### Fragment的数据是怎么存储起来的？
+
+
+
+我们知道activity的数据存储是在 onSaveInstanceState当中， 试着跟一下。
+
+![image-20201014151414330](https://i.loli.net/2020/10/14/hcEbeiCxj4uBmMl.png)
+
+这就是fragment 的存储
+这里也侧面说明了fragment相关信息的存储，也是在activity的onSaveInstanceState当中来执行的。
+
+但要注意 fragment的restore 并不是发生在activity.onRestoreInstanceState当中的。
+（可能是由于onSaveInstanceState和onRestoreInstanceState并不是成对出现而导致的）
+fragment的恢复是在oncreate当中的
+
+![image-20201014153228551](https://i.loli.net/2020/10/14/vN7FDiBwAHR6Xxu.png)
+
+上面这个是数据恢复，生命周期的恢复也是在onCreate方法当中来完成的
+![image-20201014153332971](https://i.loli.net/2020/10/14/jfiyIkELxecPdaR.png)
+
+
+
+
+
+也正是由于activity在恢复的时候会尝试恢复fragment，但是并没有保存fragment中的view的状态，因此会调用fragment.onCreateView 
+,所以会导致会出现fragment页面重叠的问题
+比如：按下Home键后再回到前台
+
+### Fragment的页面重叠
+
+
+
+解决方法： 在添加fragment之前先判断一下该fragment是否已经存在了。
+
+![image-20201014154416520](https://i.loli.net/2020/10/14/Ua69yfoNFcAQIMn.png)
+
+
+
+
+
+PS： 给fragment添加tag的时候 最好不要用类相关的名称， 因为混淆后的名称是一样的
+
+
+
+### Fragment新版懒加载
+
+懒加载：Fragment的ui对用户可见时才加载数据。
+
+
+
+![image-20201014154736373](https://i.loli.net/2020/10/14/hpVsakFveAbSgfn.png)
+
+
+
+### 单Activity模式的探讨
+
+![image-20201014164606412](https://i.loli.net/2020/10/14/pJU1zGQASbHxLKM.png)
+
+**灵活**：单activity的话  就不需要管啥mainfest的注册什么的了，代码甚至都可以从服务器下发。
+**响应速度**：fragment只是一个view ,而activity还需要走ams  进行ipc通讯，fragment的响应速度肯定是比activity快的
+
+灵活和响应速度是单activity的优势，
+但是对于fragment的支持 ，比如 多屏设下下， dialog和fragment的交互  这些都还有很多坑。
+**稳定性和扩展性** 单Activity是比较差的
+
+
+
+
+
+## RecyclerView核心知识点
+
+
+
+![img](https://img.mukewang.com/wiki/5f2990d109207c2026041420.jpg)
+
+
+
+RecyclerView的插拔式设计还是很牛逼的。
+
+
+
+### RecycleView的基本用法
+
+![image-20201014170611779](https://i.loli.net/2020/10/14/MpD3EbV6wWXArIu.png)
+
+
+
+RecyclerView 的源码分析可以从setLayoutManager中开始
+
+### RecyclerView.setLayoutManager
+
+![image-20201014171230386](https://i.loli.net/2020/10/14/qX3oE7IOTHfpMDZ.png)
+
+
+
+请求了刷新之后，来看下RecyclerView的测绘的三大流程
+
+![image-20201014171402821](https://i.loli.net/2020/10/14/j8YFywOemzUQTKq.png)
+
+![image-20201014172106683](https://i.loli.net/2020/10/14/ocjvPBhUJsA2aZ8.png)
+
+
+
+这里我们得出结论  recyclerView的 测绘流程，基本都是交给了LayoutManager 来处理。
+细节太多 也记不住。先不管了。
+
+接着看RecyclerView的复用
+
+### RecyclerView的复用
+
+![img](https://img.mukewang.com/wiki/5f2990dd0940c7f113660534.jpg)
+
+
+
+
+
+前面分析到了 RecyclerView的测绘都是交给了layoutManager.
+
+
+
+因此RecyclerView的item的复用 都是交给了LayoutManager.
+
+RecyclerView的复用是从
+**LayoutManager.getViewForPosition()**开始
+
+
+
+layoutManager每次在添加一个item的时候， 都会想Recycler 索取一个viewHolder
+
+Recycler中就会按照优先级去拿。
+
+
+
+### Recycler
+
+```java
+//Recycler 
+
+public final class Recycler {
+ //#1 不需要重新bindViewHolder
+ ArrayList<ViewHolder> mAttachedScrap;
+ ArrayList<ViewHolder> mChangedScrap;
+  
+ //#2 可通过setItemCacheSize调整，默认大小为2,
+ ArrayList<ViewHolder> mCachedViews;
+  
+ //#3 自定义拓展View缓存
+ ViewCacheExtension mViewCacheExtension;
+  
+ //#4 根据viewType存取ViewHolder，
+ //   可通过setRecycledViewPool调整,每个类型容量默认为5
+ RecycledViewPool mRecyclerPool;
+
+}
+```
+
+![image-20201014184033108](https://i.loli.net/2020/10/14/SCyi8lQMTp7xUF6.png)
+
+其中mAttachedScrp 、mCacheViews 是不需要重新onBind的
+
+注意 recyclerPool的缓存   一般是一个 type 有5个缓存。
+
+有些人说   缓存不止四级 ，他们是 一个 缓存list就当做一级。
+
+但是分级应该是按照上图来分的。
+所以 attachedScrap 和changeScrap 是同一级的。
+
+
+
+
+
+但是mChacheViews中的缓存需要校验下位置，
+
+从holderView的获取方式来看，就是从各级的缓存中拿，如果拿不到就调用createView
+
+![image-20201014182633655](https://i.loli.net/2020/10/14/4dfxbBe1qFhk6KV.png)
+
+
+
+
+
+![image-20201014183928238](https://i.loli.net/2020/10/14/q1TYBkafmF3irMC.png)
