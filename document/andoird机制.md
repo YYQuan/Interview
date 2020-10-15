@@ -371,6 +371,30 @@ zygote中通过socket把接收到的参数作为类型来找类对象， 由于A
 
 
 
+先来简析下ActivityThread的类的主要结构
+
+##### ActivityThread 结构图
+
+![image-20201012095552522](https://i.loli.net/2020/10/12/2ofZUAV1Wnm7xwM.png)
+
+
+
+可以看出  ActivityThread里面 有 
+**activity**的map、  **provider**的map、**service**的map 、和一个**BroadCastRecevier** 
+
+也就是维护了 本进程中的四大组件，
+比较特殊的是 广播broadCastRecevier   四大组件内 只有 broadCastRecevier 没有map ，那是因为 ActivityThread 只负责BroadCastRecevier 的转发 ，实际的处理和维护还是在AMS 当中的
+
+
+
+**looper** :  启动消息循环 ，使能消息分发
+**mH** :  一个主线程的handler
+**mApplicationcation**:  进程的applicaiton对象  ，（也是由ActivityThread  创建和维护的）
+
+**Instrumentation**: 一个辅助ActivityThread的来完成activity调度的工具类，比如完成activity对象的创建呀 ，执行oncreate函数等等。
+
+ApplicationThread : 一个IBinder的接口，AMS 之所以能够调用四大组件的方法， 就是通过这个ApplicationThread
+
 下一步就是执行到ActivityThread.main()
 
 ##### ActivityThread.main()
@@ -461,11 +485,21 @@ mAtmInternal.attachApplication(...);
 
 ```
 
+通过ActivityThread 传入的 ApplicationThread的iBinder对象 ，就能调用到 applicationThread .bindApplication()
+
 接着分别来看 thread.bindApplication  和  mATMS的attachApplication
+
 
 ###### thread.bindApplication
 
+
+
+
 ![image-20201010160840664](https://i.loli.net/2020/10/10/XWE6aH57SMNGxZJ.png)
+
+***Q:为啥要发消息呢？直接调用AcivityThread当中的目标函数不行么？***
+
+***A:是因为ams 中 通过IBinder对象调用的方法 是在子线程当中， 需要通过mH来切换到主线程当中去执行逻辑***
 
 
 
@@ -474,6 +508,8 @@ mAtmInternal.attachApplication(...);
 发送了个消息
 
 ![image-20201010161032901](https://i.loli.net/2020/10/10/C4V8lcsfRnavKqx.png)
+
+
 
 创建application
 
@@ -513,26 +549,26 @@ clientLifecycleManager.scheduleTransaction(clientTransaction);
 
 ```
 
+
+
+对于launch 的事务，
+activityStackSupervisor 会执行到LauncherActivityItem 的execute函数
+
+如果是pause事务 那就会执行PauseActivityItem 的execute(),这个是状态机的设计模式。
+
+
+
+
+
+![image-20201012105554798](https://i.loli.net/2020/10/12/nCylQxqcDXhrj7z.png)
+
 sdk层源码看不出来，但是实际上 
-**clientLifecycleManager.scheduleTransaction(clientTransaction)**就是给ActivityThread的mH   handler 发送了个EXECUTE_TRANSACTION 消息
+**clientLifecycleManager.scheduleTransaction(clientTransaction)**调用了LaunchActivityItem.execute()
+就是调用了ActivityThread的handleLauncherAcitivity()
 
-![image-20201010165047067](https://i.loli.net/2020/10/10/fvDqNEbBUnkMAPc.png)
+![image-20201012105320332](https://i.loli.net/2020/10/12/nkJluzCWadMEigA.png)
 
-
-
-
-
-![image-20201010165411821](https://i.loli.net/2020/10/10/ALYHhUsrd7gGe5a.png)
-
-把事务提交到线程池当中，
-
-
-
-![image-20201010165724429](https://i.loli.net/2020/10/10/O3JFTf69BKZVbGL.png)
-
-
-
-然后 底层调调调 就会调用到 ActivityThread.performLaunchActivity
+ActivityThread.performLaunchActivity
 
 ```java
 ClientTransactionHandler.handleLaunchActivity
@@ -663,7 +699,7 @@ ams 对application的注册分两个部分： application 和activity
 ATMS.attachApplication 需要说明一下。
 ATMS.attachAppliction实际上调用到的是activityStackSupervisor的相关方法。 毕竟得告诉activityStackSupervisor    执行的结果到底怎么样嘛。
 
-然后呢 就ActivityThread 去发起 一个事务， 实际上就是给ActivityThread 里维护的一个handler发送消息。
+然后呢 就ActivityThread 去发起 一个事务， 实际上就是调用ActivityThread的父类ClientTransactionHandler的方法（ClientTransactionHandler也是android 10 google重构 时新增的内容， 就是专门来用关系activity的）
 
 最终会调用到 ActivityThread 里的performLauncher 方法
 
@@ -698,3 +734,737 @@ A1_2:  不行 ，因为 linux fork 进程不允许多线程的。
 
 
 
+## Activity核心
+
+
+这部分内容主要包含如下部分：
+
+1. View树的绘制
+2. Ui刷新的机制
+3. 手势分发的源头
+4. Activity的任务栈
+
+要解决的问题的总纲如下：
+
+![image-20201012111430118](https://i.loli.net/2020/10/12/sFDM47uWJSwRhyb.png)
+
+### Activity View树的测绘流程
+
+
+
+从一个面试题入手：
+
+**Q:如何在Activity的onCreate和onResume中获取一个view的height/width?**
+
+**A:  直接拿是不行的， 因为 view的测绘流程还没有开始， 一般是通过view.post来获取，也可以通过给view添加上globallayoutListener的监听来获取**
+
+
+
+那Activity的测绘流程是从哪里开始的呢？
+
+下面开始分析 activity的测绘流程。
+
+从分析启动流程的过程当中已经知道了，activity第一个被调用的方法是  attach函数 ，然后才是 onCreate()
+
+先看下attach 函数
+
+
+
+#### Activity.attach
+
+![image-20201012113139447](https://i.loli.net/2020/10/12/WvufKNZd6POcMsA.png)
+
+
+
+发现attach方法中 初始化了  成员变量 window
+
+然后并没有发现其他和view的测绘相关的代码，
+onCreate也是是。
+
+所以回到 activity ，看setContentView(int id)
+
+
+
+#### Activity.setContentView()
+
+
+
+![image-20201012113850673](https://i.loli.net/2020/10/12/7KD5owS6Fkbmn1Z.png)
+
+
+
+观察一下，
+
+
+
+
+![image-20201012115734317](https://i.loli.net/2020/10/12/oHeVfrmbIljwTg4.png)
+
+![image-20201012115844719](https://i.loli.net/2020/10/12/gTRlrvSAsmdXq28.png)
+
+在activity的setContentView(view)中， 创建了一个viewGroup 并且 赋给了 window .
+
+接着看看window.setContentView里面做了啥。
+
+PhoneWindow是android中window的唯一实现类。
+
+
+
+![image-20201012120421370](https://i.loli.net/2020/10/12/A9Jl8v3QSdIe5nW.png)
+
+从上图可知，phoneWindow.setContentView
+中创建了一个decorView ，并且和该window进程了绑定，
+
+然后初始化了 mContentParent ，并且把activity传过来的view， 添加到 mContentParent当中。
+
+
+
+ok， 现在就是已经把 用户指定的 view添加到了 
+activity的window(由attach 方法创建)   然后再有setContentView触发，  new 一个decorView 和window相互绑定，   用户指定的 view 在添加到decorView的当中去。
+
+但是这个过程并没有 涉及到绘制的流程。
+
+
+
+所以得回到 activity的生命周期中。
+
+onStart / onResume  中 都没有线索。
+而且刚才提的问题中 也说到了 在activity的onResume方法中就获取不到view的 height和width的。 所以view的测绘肯定是在onResume方法之后。
+
+ok ，那得啦。activity的显示的生命周期已经走完了，都没有触发测绘， 那测绘是在哪进行的啊。
+
+那只能先去ActivityThread里面去找一下了。
+
+
+
+#### ActivityThread.handlerResumeActivity
+
+![image-20201012140525473](https://i.loli.net/2020/10/12/PqMNjsd32iWBzlH.png)
+
+在ActivityThread 内 ，发现在handleResumeActivity中 ，在performResumeActivity之后， 还把 和window绑定了的 并且是包含了用户布局view的 decorView 添加到到了windowManager 当中。
+
+这里会遇到一个问题 ，发现windowManger 是一个抽象方法， 并且找不到其实现类。
+
+但是看 window的windowManage的赋值里有线索。
+
+![image-20201012144328175](https://i.loli.net/2020/10/12/CD89txfl6T7bugs.png)
+
+
+
+发现其实现类就是WindowManagerImpl
+
+PS : android studio 中找不到实现类的时候一般可以看看 *Imple，比如WindowManager ,Context 
+
+
+
+#### WindowManagerImpl
+
+接下来查看 WindowManagerImlp ，
+
+![image-20201012144810147](https://i.loli.net/2020/10/12/uePdx9sbnAOXTGr.png)
+
+发现只是做了下转发。
+
+转发给了WindowManagerGlobal
+WindowManagerGlobal 其实就是应用的统一windwomanager入口。 
+一个页面就有一个windowManager ,每一个windowManager都由WindowManagerGlobal来维护。
+
+所以对于应用外部来说， 应用内的所有的增删改查 都是WindowManagerGlobal来完成的。
+
+![image-20201012145627956](https://i.loli.net/2020/10/12/BtLkWm13VygZKoU.png)
+
+
+
+#### ViewRootImpl
+
+上面已经知道了viewRootImpl 是触发测绘的关键了。
+先来对ViewRootImpl的做个整体的认识。
+
+![image-20201012150058223](https://i.loli.net/2020/10/12/sAueMY96hg257Cb.png)
+
+
+
+ViewRootImpl  
+
+
+
+其中很重要的一个作用就是 监听 系统 
+ vsync （垂直同步）信号 ，然后触发view的measure ,layout, draw这三大流程
+
+
+
+ViewRootImpl 不仅仅是 view绘制的发起点， 还是手势事件接收的入口。
+
+##### 注册手势监听
+
+下面就是向windowManagerService 注册window的代码， 注册时还传入了 手势监听的回调。
+
+![image-20201012170532408](https://i.loli.net/2020/10/12/iKa5fe3GxZ6oMXm.png)
+
+
+
+##### 设置ViewParent
+
+要注意ViewRootImpl 本身不是view ，只是实现了ViewParent的接口
+把view和viewRootImpl关联起来，viewRootImpl 就是传入的decorView的ViewParent
+
+![image-20201012171004960](https://i.loli.net/2020/10/12/JL2PvpaOQdytUuq.png)
+
+![image-20201012171257636](https://i.loli.net/2020/10/12/9Anf3lp5kKGTNUq.png)
+
+
+
+##### 注册屏幕点击实现的响应
+
+![image-20201012172337038](https://i.loli.net/2020/10/12/I3LOlvYKmGpMqHD.png)
+
+##### 测绘
+
+requestLayout
+
+![image-20201012162426645](https://i.loli.net/2020/10/12/5IJCbpdBDWGnS7g.png)
+
+上图就是 著名的  只能在主线程更新的异常。
+
+这个异常就是在ViewRootImpl 中被抛出的。
+
+所以说  view 在更新数据的时候 ，如果没有执行到viewRootImpl的requestLayout()方法的话， 那么就算在子线程中，也是可以进行ui更新的。因为没有线程检查。
+
+
+
+在子线程当中去更新UI 也是由应用的，比如 如果想要页面一展示出来就能立刻的把相关内容都显示出来，就可以采用在子线程当中更新的策略
+
+比如 手机淘宝的首页， 基本loading界面一结束 内容都出来的。 为啥呢？
+就是其实在 引导页的时候 子线程就已经在加载页面了。
+
+
+
+
+
+线程检查完之后就进行事务处理
+
+![image-20201012163523277](https://i.loli.net/2020/10/12/cEbUHedmKB1NsnA.png)
+
+![image-20201012163633289](https://i.loli.net/2020/10/12/7phxiw6HAGC5kKP.png)
+
+
+
+设置好垂直同步信号的监听之后，再收到垂直同步信号之后 就会调用mTravesalRunnable
+
+![image-20201012163838951](https://i.loli.net/2020/10/12/vDZEjmNqsCaPAHp.png)
+
+
+
+![image-20201012164122540](https://i.loli.net/2020/10/12/3jxnhgMVJfpbarG.png)
+
+![image-20201012164306328](https://i.loli.net/2020/10/12/OZu5cqDCo8Mfkd9.png)
+
+performTraversals 就是触发绘制的地方.
+performTraversals 会根据 当前的view树是否发生变化 ，包括大小、 属性；来判断是否需要重新测绘，重新布局，重新绘制
+
+
+
+performTraversals 中就会调用 performMeasure、 performLayout、 以及performDraw
+
+他们内部就会分别调用 decorView的 measure 、layout、 和draw
+
+
+这里提一下 handler的屏障消息
+
+##### Hnadler之屏障消息
+
+![image-20201012163142822](https://i.loli.net/2020/10/12/GKErabTiFO1c85l.png)
+
+handler的同步消息和异步消息，在平常是没有区别的。但是再handler接收到 屏障消息之后就不一样了。 接收到屏障消息之后的handler就会优先处理 异步消息，而view的测绘任务就是一个异步消息。
+
+
+
+
+
+#### 总结
+
+![image-20201012164839207](https://i.loli.net/2020/10/12/PtI5fiDGJmnC8MO.png)
+
+1. 在ATMS 调用了activity.attach   创建window
+2. 在setContentView 中创建 decorView 和用户指定的view ，并且把用户指定的view添加到decorView中 ，然后把window和decorView关联起来；
+3. 在ActivityThread 的handerResumeActiivty中，performResumeActivity之后  会把window添加到windowmanagerService当中
+   
+4. WindowManagerService中会创建 ViewRootImpl
+   并且把ViewRootImlp 指定为 decorView的ViewParent(顶层节点);
+   ViewRootImpl中会对view的测绘，以及向WindowManagerService 注册手势监听，以及点击事件监听。
+   View的测试是通过在ViewRootImpl中添加系统垂直同步信号的监听来完成的。
+   当接收到系统的垂直同步信号 后就会调用
+   performTarversator()
+   perfromTarversator中就会对 viewParent进行判断，看时候需要重新刷新；需要的话就会执行view的绘制的三大流程： measure ,layout,draw
+
+
+
+### Activity页面刷新机制概述
+
+前面讲到了在ViewRootImpl中  向Choreographer 注册了 垂直信号的 接收来刷新界面的。
+
+来看看choreoGrapher
+
+#### Choreographer 
+
+ChoreoGrapher 有两个作用：
+
+1. 根据系统的信号来刷新界面
+2. 过滤掉同时有多个ViewRootImpl的requestLayout()请求，避免一帧的时间段内 多次刷新。
+
+
+
+ChoreoGrapher 中维护了两个重要的成员变量：
+
+1. displayEventReceiver :  接口native层的VSync的信号
+2. CallbackQueues
+
+CallbackQueues里面就对应着几种 Callback 类型
+对应着几种事件类型的callback , 比如 屏幕输入，动画，requestLayout触发的测绘事件，以及Vsync的确认事件。
+
+
+
+这个是CallbackQueue的数据模型。
+
+![image-20201013155341175](https://i.loli.net/2020/10/13/2pLsaSVfWUcnJAy.png)
+
+
+
+choreoGrapher 是如何达到 ，一帧内 的requestLayout请求只执行一次的呢？
+
+其实很简单， 就是在接受到请求的时候，不是立即去执行的，而是先存其起来，然后在接收到vSync信号之后， 再去执行。
+
+先整体的浏览一下ChoreoGrapher的整体结构
+
+![image-20201013164115386](https://i.loli.net/2020/10/13/wJs1n7YIj69PGR5.png)
+
+这几个 方法最终都是调用
+ChoreoGrapher.postCallbackDelayedInternal（）
+
+![image-20201013164216052](https://i.loli.net/2020/10/13/wdjP7Xb6caQtOYm.png)
+
+可以把postCallbackDealyedInternal理解为刷新界面的唯一入口
+
+
+
+![image-20201013164736582](https://i.loli.net/2020/10/13/FLpHGXfzeRhIjKY.png)
+
+![image-20201013164751008](https://i.loli.net/2020/10/13/NkmZ5BaFuYOsnRr.png)
+
+
+
+上面可以看出来，ChoreoGrapher实际上就是向DisplayEventReceiver 进行了调度。
+
+等到显示服务发送了Vsync信号之后， DisplayEventReceiver就能够接收到了。
+
+然后DisplayEventReceiver的实现类FrameDisplayEventRecevice的onVsync函数就会被调用
+
+
+![image-20201013165643122](https://i.loli.net/2020/10/13/MkaBYiLVQFEvArp.png)
+
+ok 现在就接收到了vsync消息了。
+接着往下看， FrameDisplayEventRecevice的run里做了啥呢？
+
+![image-20201013170254693](https://i.loli.net/2020/10/13/WFvLM4EbZ9U1aXH.png)
+
+这个是 frameWork对掉帧的判断
+ok 接着往下看逻辑的处理
+
+![image-20201013171121284](https://i.loli.net/2020/10/13/sGBCnLoZv95jz6t.png)
+
+上面这段 对动画 ，输入，测绘的逻辑 就是ChoreoGrapher协调 显示的逻辑
+
+
+
+接下来 看CallbackRecord的run函数做了什么。
+
+![image-20201013171208102](https://i.loli.net/2020/10/13/hlQsmWTuzFZXdOG.png)
+
+
+
+那action.run()里面一般是做啥呢？
+
+以ViewRootImpl中的测绘工作来看，
+![image-20201013172405498](https://i.loli.net/2020/10/13/hIoF1kwlyvGxjMH.png)
+
+
+
+这样第一帧的刷新就完成了。
+
+view的所有刷新都会触发到ViewRootImpl的performTraversal()。 从而完成对 vsync的callback的添加， 以此完成刷新。
+
+### 手势分发
+
+
+
+前面说到 WindowInputEventReceiver
+是接收手势的原点。
+
+主流程
+
+![image-20201013183209513](https://i.loli.net/2020/10/13/kBwJr5dn6H3fzTS.png)
+
+为啥 流程中 要 decorView 分发给activity  ,然后再由activity分发会给decorView ，再传给ViewGroup呢?
+
+是为了给activity 拦截事件的能力
+
+
+
+### Activity任务管理
+
+要想在程序的任意位置都获取到 当前activity任务栈顶部activity , android 中并没有直接的api， 但是可以通过application类下的ActivityLifecycleCallback 接口来获取。
+
+#### ActivityLifecycleCallback
+
+ActivityLifecycleCallback中包含了全部的activity的生命周期的回调。
+![image-20201014095647393](https://i.loli.net/2020/10/14/Kch6oZqtbnluIT4.png)
+
+
+
+通过这个ActivityLifecycleCallback ,从而就能构建
+
+
+
+## Fragmetn核心
+
+![image-20201014105106063](https://i.loli.net/2020/10/14/9PRVS1qohJjkyme.png)
+
+
+
+常规用法
+![image-20201014114554004](https://i.loli.net/2020/10/14/9u7Yaq2VKAts1kB.png)
+
+#### Fragment的使用原理
+
+![image-20201014111611463](https://i.loli.net/2020/10/14/Hyp1Kg2LiP5ZcmO.png)
+
+
+
+为啥呢，FragmentActivity 不直接用activity来调用FragmentManager ，而是通过FrgmentController来处理呢？
+
+![image-20201014112042278](https://i.loli.net/2020/10/14/AwqOTUPSRJcgbE1.png)
+
+
+
+
+
+![image-20201014112410508](https://i.loli.net/2020/10/14/6hp1NivBxwg4rLA.png)
+
+fragmentController是在activity的实例被创建的时候就被创建出来了的
+
+
+
+这里就能看出来 Activity 管理Fragment的方式是
+
+
+通过Activity 创建了一个FragmentControl ,并且把一个FragmentHostCallback接口的实现传给FragmentControl，
+
+真正持有着FragmentManager的是 Activity new出来传给FragmentController的FragmentHostCallback接口的实现。
+
+ok， 那搞的这么绕干嘛呀。
+主要是为了屏蔽宿主对FragmentHostCallback的直接引用， 因为Fragment并不是只提供给activity使用的，可以拓展应用场景。
+
+以后做设计也可以这样来考虑。
+但是我是没看出来由啥好处
+
+
+
+接着往下看。
+
+![image-20201014114539253](https://i.loli.net/2020/10/14/6IBmkqvz7eRj9gx.png)
+
+这个beginTransaction 是fragment操作的起点。
+
+后面的一些列的操作  （到commit为止）构成了一个事务，  事务的一个特性就是 全部的操作 ，要么都成功，要么都失败。不会有一部分成功的情况。
+
+
+
+接下来看BackStackRecord
+
+##### BackStackRecord
+
+![image-20201014114959699](https://i.loli.net/2020/10/14/K8ygCqeZTBMNxHA.png)
+
+BackStackRecord继承至FragmentTransaction,
+因此可以把backStackRecord 理解为 fragment的事务，
+由google的命名的尿性 record的这个一般就是 一组概念里面的最小单位， 比如 对于activity任务栈来说 最小的单位就是 ActivityRecord；
+
+
+
+为啥给FragmetnTransaction加多层包装呢？
+是为了给FragmentManager逆向操作事务，完成出栈操作。逆向操作的能力是由backStackRecord还实现了BackStackEntry接口
+
+ok 接着往下看
+
+##### add
+
+![image-20201014120234725](https://i.loli.net/2020/10/14/LsycuNFStkK27eU.png)
+
+创建了一个事务，并且添加到一个列表当中
+
+
+
+replace 和add类似
+![image-20201014120405709](https://i.loli.net/2020/10/14/2hk1VWAuXBsKop4.png)
+
+
+
+
+
+##### commit
+
+commit是FragmentTransaction的abstract方法
+真正的实现实在BackStackRecord当中
+
+![image-20201014120706294](https://i.loli.net/2020/10/14/pgEk2sHoldShQVI.png)
+
+![image-20201014121006358](https://i.loli.net/2020/10/14/hun4ICJAYUGSoPQ.png)
+
+
+FragmentManager在执行事务之前会做状态检查。
+
+![image-20201014121755603](https://i.loli.net/2020/10/14/68OCErLIuV2SlGR.png)
+
+
+
+那怎么能避免状态检查呢？
+
+##### FragmentManager的事务提交方式
+
+![image-20201014121913404](https://i.loli.net/2020/10/14/JrpCwKiZ1SFUQqx.png)
+
+说明：
+同步 异步 都是在主线程执行的，只是异步是通过发送消息到消息队列当中， 在消息被轮询到的时候，才开始处理。
+
+正常来说 用同步操作会更加安全一些， 不过只要不检查状态，那么就不会抛出异常了。
+
+
+
+继续回到commit
+
+
+
+![image-20201014122513648](https://i.loli.net/2020/10/14/ID9ztYed6bTcZCv.png)
+
+
+![image-20201014142640213](https://i.loli.net/2020/10/14/a3OoRK5Sy2Vrbmn.png)
+
+
+
+![image-20201014142653386](https://i.loli.net/2020/10/14/UF38jsvGAeCSEn6.png)
+
+然后会调到FragmentTransition.startTransitions
+
+![image-20201014143729764](https://i.loli.net/2020/10/14/nq6WA1mMtV352pK.png)
+
+![image-20201014143833412](https://i.loli.net/2020/10/14/8P7lOgMZIX16HLh.png)
+
+
+
+
+
+![image-20201014144456853](https://i.loli.net/2020/10/14/LJTN4Xlhqs6uyKP.png)
+
+![image-20201014144723816](https://i.loli.net/2020/10/14/tevRxDZcJBKfbOz.png)
+
+FragmentManager的moveToState就是处理 fragment生命周期回调的地方
+
+无论是由于事务的执行 还是activity触发的fragment的生命周期的回调都是通过FragmentManager成moveToState来调用fragment的生命周期相关函数
+
+
+
+#####  fragment的生命周期的回调
+
+activity是通过在生命周期函数中调用FragmentController相关函数来控制fragment来声明周期的。
+比如oncreate()
+
+![image-20201014150444485](https://i.loli.net/2020/10/14/2S1ECmAB7hftrNl.png)
+
+
+
+**PS： android studio中可能同时包含着几个版本的sdk，看源码的时候主要要对应sdk版本 ，否则可能会找不到相关函数**
+
+
+
+### Fragment的数据是怎么存储起来的？
+
+
+
+我们知道activity的数据存储是在 onSaveInstanceState当中， 试着跟一下。
+
+![image-20201014151414330](https://i.loli.net/2020/10/14/hcEbeiCxj4uBmMl.png)
+
+这就是fragment 的存储
+这里也侧面说明了fragment相关信息的存储，也是在activity的onSaveInstanceState当中来执行的。
+
+但要注意 fragment的restore 并不是发生在activity.onRestoreInstanceState当中的。
+（可能是由于onSaveInstanceState和onRestoreInstanceState并不是成对出现而导致的）
+fragment的恢复是在oncreate当中的
+
+![image-20201014153228551](https://i.loli.net/2020/10/14/vN7FDiBwAHR6Xxu.png)
+
+上面这个是数据恢复，生命周期的恢复也是在onCreate方法当中来完成的
+![image-20201014153332971](https://i.loli.net/2020/10/14/jfiyIkELxecPdaR.png)
+
+
+
+
+
+也正是由于activity在恢复的时候会尝试恢复fragment，但是并没有保存fragment中的view的状态，因此会调用fragment.onCreateView 
+,所以会导致会出现fragment页面重叠的问题
+比如：按下Home键后再回到前台
+
+### Fragment的页面重叠
+
+
+
+解决方法： 在添加fragment之前先判断一下该fragment是否已经存在了。
+
+![image-20201014154416520](https://i.loli.net/2020/10/14/Ua69yfoNFcAQIMn.png)
+
+
+
+
+
+PS： 给fragment添加tag的时候 最好不要用类相关的名称， 因为混淆后的名称是一样的
+
+
+
+### Fragment新版懒加载
+
+懒加载：Fragment的ui对用户可见时才加载数据。
+
+
+
+![image-20201014154736373](https://i.loli.net/2020/10/14/hpVsakFveAbSgfn.png)
+
+
+
+### 单Activity模式的探讨
+
+![image-20201014164606412](https://i.loli.net/2020/10/14/pJU1zGQASbHxLKM.png)
+
+**灵活**：单activity的话  就不需要管啥mainfest的注册什么的了，代码甚至都可以从服务器下发。
+**响应速度**：fragment只是一个view ,而activity还需要走ams  进行ipc通讯，fragment的响应速度肯定是比activity快的
+
+灵活和响应速度是单activity的优势，
+但是对于fragment的支持 ，比如 多屏设下下， dialog和fragment的交互  这些都还有很多坑。
+**稳定性和扩展性** 单Activity是比较差的
+
+
+
+
+
+## RecyclerView核心知识点
+
+
+
+![img](https://img.mukewang.com/wiki/5f2990d109207c2026041420.jpg)
+
+
+
+RecyclerView的插拔式设计还是很牛逼的。
+
+
+
+### RecycleView的基本用法
+
+![image-20201014170611779](https://i.loli.net/2020/10/14/MpD3EbV6wWXArIu.png)
+
+
+
+RecyclerView 的源码分析可以从setLayoutManager中开始
+
+### RecyclerView.setLayoutManager
+
+![image-20201014171230386](https://i.loli.net/2020/10/14/qX3oE7IOTHfpMDZ.png)
+
+
+
+请求了刷新之后，来看下RecyclerView的测绘的三大流程
+
+![image-20201014171402821](https://i.loli.net/2020/10/14/j8YFywOemzUQTKq.png)
+
+![image-20201014172106683](https://i.loli.net/2020/10/14/ocjvPBhUJsA2aZ8.png)
+
+
+
+这里我们得出结论  recyclerView的 测绘流程，基本都是交给了LayoutManager 来处理。
+细节太多 也记不住。先不管了。
+
+接着看RecyclerView的复用
+
+### RecyclerView的复用
+
+![img](https://img.mukewang.com/wiki/5f2990dd0940c7f113660534.jpg)
+
+
+
+
+
+前面分析到了 RecyclerView的测绘都是交给了layoutManager.
+
+
+
+因此RecyclerView的item的复用 都是交给了LayoutManager.
+
+RecyclerView的复用是从
+**LayoutManager.getViewForPosition()**开始
+
+
+
+layoutManager每次在添加一个item的时候， 都会想Recycler 索取一个viewHolder
+
+Recycler中就会按照优先级去拿。
+
+
+
+### Recycler
+
+```java
+//Recycler 
+
+public final class Recycler {
+ //#1 不需要重新bindViewHolder
+ ArrayList<ViewHolder> mAttachedScrap;
+ ArrayList<ViewHolder> mChangedScrap;
+  
+ //#2 可通过setItemCacheSize调整，默认大小为2,
+ ArrayList<ViewHolder> mCachedViews;
+  
+ //#3 自定义拓展View缓存
+ ViewCacheExtension mViewCacheExtension;
+  
+ //#4 根据viewType存取ViewHolder，
+ //   可通过setRecycledViewPool调整,每个类型容量默认为5
+ RecycledViewPool mRecyclerPool;
+
+}
+```
+
+![image-20201014184033108](https://i.loli.net/2020/10/14/SCyi8lQMTp7xUF6.png)
+
+其中mAttachedScrp 、mCacheViews 是不需要重新onBind的
+
+注意 recyclerPool的缓存   一般是一个 type 有5个缓存。
+
+有些人说   缓存不止四级 ，他们是 一个 缓存list就当做一级。
+
+但是分级应该是按照上图来分的。
+所以 attachedScrap 和changeScrap 是同一级的。
+
+
+
+
+
+但是mChacheViews中的缓存需要校验下位置，
+
+从holderView的获取方式来看，就是从各级的缓存中拿，如果拿不到就调用createView
+
+![image-20201014182633655](https://i.loli.net/2020/10/14/4dfxbBe1qFhk6KV.png)
+
+
+
+
+
+![image-20201014183928238](https://i.loli.net/2020/10/14/q1TYBkafmF3irMC.png)
