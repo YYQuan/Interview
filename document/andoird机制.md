@@ -588,19 +588,29 @@ launcher就被启动起来了
 
 文字描述一下：
 
+上电后 启动 bootloader ，然后启动内核， 内核会启动C++层的frameWork , 然后C++层会启动 java层的入口函数 zygoteInite.java
+
+zygoteInit.java  启动了会加载系统资源 、启动一个socket,并且开启systemService服务
+
+
+systemService 当中就会创建AMS  ，然后启动 其他各种进程
+
 systemService 在启动 otherServices之后  , 
 这时候就需要启动新进程啦，应用进程的入口都是AMS,所以肯定是去调用AMS啦。 实际上就是调用AMS.systemReady ，
 
 ATMS是AMS 用来管理activity相关的，而我们这个时候是需要启动launcher进程，那么自然应该通过ATMS来启动launcher.
 实际上AMS.systemReady中会调用给ATMS.startHomeOnAllDisplay
 
-ATMS.startHomeOnAllDisplays中 就会 去查找符合条件的应用，然后由ActivityStarter来获取到要启动的AcivityRecord，为啥是获取ActivityRecord，因为android中的activity都要通过任务栈来管理，任务栈中的最小单元就是ActivityRecord ，需要先得到ActivityRecord，并且添加到任务栈当中去维护 ，这样任务栈才完整呀。
+ATMS.startHomeOnAllDisplays中 就会 去查找符合条件的应用，然后由ActivityStarter来获取到要以何种方式来启动哪个AcivityRecord，为啥是获取ActivityRecord，因为android中的activity都要通过任务栈来管理，任务栈中的最小单元就是ActivityRecord ，需要先得到ActivityRecord，并且添加到任务栈当中去维护 ，这样任务栈才完整呀。
 
 得到ActivityRecord ，并且拿到ActivityRecord 应该所属的ActivityStack ,这样才知道ActivityRecord 应该要放在哪个ActivityStack当中。
 
 然后再通过ActivityStack获知了ActivityRecord 应该所属的ActivityStackSupervisor , 这样任务栈信息就完整了。
 
-接着在通过ActivityStackSupervisor 来同时AMS  我有新的activity小伙伴要加进来哦。
+
+
+然后新的ActivityRecord就入栈了，ActivityStack 就去发起新的栈顶activityRecord 进来啦， 好更新界面的状态啦。
+ActviityStack 是通过ActivityStackSupervisor 来通知AMS  我有新的activity小伙伴要加进来哦。
 这里有个小疑问，为啥把通知给ams 放在activityStackSupervisor当中，而是不是actvityStack当中？
 不考虑代码 ，只考虑概念也很好理解。
 activityStack 是某个进程下维护的 而ams 是系统层面维护的 不是同一个层面的概念；明显让activityStack持有AMS 是不合理的
