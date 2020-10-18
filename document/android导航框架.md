@@ -43,9 +43,60 @@ navigation  不支持模块间通讯 、不支持拦截器、不支持降级操�
 
 
 
-以Fragment为例
+
 
 NavHostFragment 是全部fragment的宿主。
+所有的跳转都是通过NavHostFragment来处理的。
+
+主要需要分析的流程
+NavHostFragment的解析是在哪里进行的？
+NavHostFragment路由间的跳转是怎么完成的？
 
 
+先来分析 NavHostFragment的解析是哪开始的？
+
+### NavHostFragment的解析
+
+onFlate函数是NavHostFragment的路由xml的入口
+**PS**：对于可以在xml文件中声明的类， 在创建完毕之后 都会回调到其onFlate函数。
+
+![image-20201017045528448](https://i.loli.net/2020/10/17/lOqLBtU4jEucNMH.png)
+
+![image-20201017045559841](https://i.loli.net/2020/10/17/5nHf6Je71iUwZmj.png)
+
+
+
+onflate中拿到了自定义的属性  graphid 以及  defaultNavHost
+
+
+然后 接着看NavHostFragment onCreate
+
+![image-20201019071517126](https://i.loli.net/2020/10/19/vVDmURz4bWThOIS.png)
+
+
+
+在onCreate 中初始化了 mNavController
+
+![image-20201019071855067](https://i.loli.net/2020/10/19/ZxiYUDp8F9tKAzj.png)
+
+
+
+为啥 fragment的navigation没有和activity类型的navigation 放在一起注册呢？
+因为 activity是应用不可或缺的， 而fragment并不是不可或缺的
+
+
+
+**NavDestination** ：xml中的路由节点
+
+### NavHostFragment的路由跳转
+
+
+
+### NavHostFragment的缺点
+
+
+
+1. 全部的路由节点都需要在资源文件当中配置
+2. Fragment的路由跳转是使用replace方法， 会导致生命周期的重新调度
+3. 没有办法对路由跳转进行拦截
 
