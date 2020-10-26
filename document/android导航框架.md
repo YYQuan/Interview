@@ -161,12 +161,44 @@ onflate中拿到了自定义的属性  graphid 以及  defaultNavHost
 - ARouter编译时原理
 - ARouter运行时原理
 
+![img](https://img.mukewang.com/wiki/5f29930209e8f4e815940972.jpg)
 
-基本用法
+
+
+Arouter的功能分为了三个阶段：
+
+1. 开发时   用注解来标识
+2. 编译时 把开发时标志下来的注解给收集起来 并且记录到文件当中
+3. 运行时 Arouter负责界面的跳转
+
+
+
+因此 Arouter最重要的两步就是 
+
+1. 编译时原理：是怎么收集注解信息的  
+2. 运行时原理：是怎么完成界面跳转的
+
+
+
+
+
+### 基本用法
 
 ![image-20201021072946494](https://i.loli.net/2020/10/21/Pz21oSgaQrByskY.png)
 
 
+
+
+
+说明一下  IProvider  
+
+IProvider 可以支持跨模块的服务调用， 这样可以避免无关模块之间的强耦合。
+
+
+
+
+
+### 编译时原理
 
 **三个注解处理器**
 
@@ -174,3 +206,46 @@ onflate中拿到了自定义的属性  graphid 以及  defaultNavHost
 
 
 
+#### BaseProcessor
+
+
+
+这三个注解器都是继承至 BaseProcessor
+
+
+![image-20201027072230865](https://i.loli.net/2020/10/27/MI1jNT5JGipoHkE.png)
+
+
+
+#### RouterProcessor
+
+![image-20201027073150130](https://i.loli.net/2020/10/27/ZAquVzay6Rkxiw7.png)
+
+
+
+然后逐个解析Route注解
+
+![image-20201027073340826](https://i.loli.net/2020/10/27/gGUvN8KwzJft7T1.png)
+
+
+
+这个是啥判断方法呀 。以前没见过
+
+创建.java文件
+
+![image-20201027074213180](https://i.loli.net/2020/10/27/9AFRvrIgGt7EBST.png)
+
+这里简单说明一个javapoet
+javapoet的简单生成java文件的方法
+
+![image-20201027074418211](https://i.loli.net/2020/10/27/f7H8AS1pEis3YCv.png)
+
+
+
+判断当前被route注解的类的类型
+
+![image-20201027075218740](https://i.loli.net/2020/10/27/kWeMUj5S14YAN7r.png)
+
+对比下比较low的方法
+
+![image-20201027075552067](https://i.loli.net/2020/10/27/ZFm2c3hS7faz1tT.png)
