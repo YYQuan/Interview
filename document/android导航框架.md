@@ -84,11 +84,33 @@ onflate中拿到了自定义的属性  graphid 以及  defaultNavHost
 为啥 fragment的navigation没有和activity类型的navigation 放在一起注册呢？
 因为 activity是应用不可或缺的， 而fragment并不是不可或缺的
 
+接着往下看 onCreate
+
+![image-20201019164841705](https://i.loli.net/2020/10/19/vLhSmVUd6eRMKjl.png)
+
+往里 跟一下
+
+![image-20201019165654395](https://i.loli.net/2020/10/19/AmSbK1GeW8k2JZd.png)
 
 
-**NavDestination** ：xml中的路由节点
 
-### NavHostFragment的路由跳转
+接着跟 setGraph
+
+
+
+
+
+
+
+### 
+
+![image-20201019170439642](https://i.loli.net/2020/10/19/yEpjiFmMHgbKSq7.png)
+
+
+
+
+在NavigartorProvider中 根据传入的NavDestination的类型来选择Navigator来完成跳转
+要注意 传给Navigator的Destination 是NavGraph 类型的， 里面还包含着navigationd xml的全部节点
 
 
 
@@ -99,4 +121,18 @@ onflate中拿到了自定义的属性  graphid 以及  defaultNavHost
 1. 全部的路由节点都需要在资源文件当中配置
 2. Fragment的路由跳转是使用replace方法， 会导致生命周期的重新调度
 3. 没有办法对路由跳转进行拦截
+4.  而且路由跳转在 模块化 组件化 中 很多坑
+
+
+
+
+
+### NavHostFragment的优化
+
+优化点
+
+-  摒弃 navigation.xml , 支持开发时注解标记路由节点
+- 自定义Fragment导航器 ，避免 原本导航器中 调用的fragment的replace 
+  导致的重置fragment生命周期
+- 配置化 APP 主页架构， （这样可以支持服务端下发）
 
