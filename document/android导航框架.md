@@ -285,3 +285,217 @@ javapoet的简单生成java文件的方法
 对比下比较low的方法
 
 ![image-20201027075552067](https://i.loli.net/2020/10/27/ZFm2c3hS7faz1tT.png)
+
+
+
+#### AutoWiredProcessor
+
+这一个注解处理器 的功能主要就是创建 对应的 参数注入类
+
+比如对于TradeDetailActivity 
+
+![image-20201027172227614](https://i.loli.net/2020/10/27/8jLG7VhDoNdPOzA.png)
+
+![image-20201027172656903](https://i.loli.net/2020/10/27/21GoKlpHOiTmAJU.png)
+
+
+
+
+
+对于TradeDetailActivity来说 ，AutowiredProcessor这个注解的 作用就生成
+TradeDetailActivity$$Arouter$$Autowired .这个类。
+
+然后在TradeDetailActivity调用ARouter的inject()的时候 会通过反射去调用对应Autowired类的inject函数。 从而完成赋值。
+
+
+
+接下来看看 AutoWiredProcessor 是怎么生成 java类的
+还是通过JavaPoet来完成的
+
+![image-20201027173105543](https://i.loli.net/2020/10/27/krPdV843QjoEeMD.png)
+
+![image-20201027172953296](https://i.loli.net/2020/10/27/zA3FEti6GVdgQkI.png)
+
+
+
+主体就是扫描全部的autowired注解  然后通过javaPoet来生成 java类。
+
+
+#### InterceptorProcessor
+
+和AutoWiredProcessor 类似。
+
+
+
+### 运行时原理
+
+初始化
+
+![img](https://img.mukewang.com/wiki/5f29933b09898b3313521030.jpg)
+
+
+
+
+
+代码分析：
+
+![image-20201027174935985](https://i.loli.net/2020/10/27/oBMAJOSpHr9nDUl.png)
+
+![image-20201027175256594](https://i.loli.net/2020/10/27/c7Zxm5oj3S9YRnU.png)
+
+
+
+先要来读取全部dex文件
+
+这里的读取dex文件路径的方式以后可能用的到
+
+##### TIPs:  读取dex文件路径
+
+```java
+ public static List<String> getSourcePaths(Context context) throws PackageManager.NameNotFoundException, IOException {
+        ApplicationInfo applicationInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(), 0);
+        File sourceApk = new File(applicationInfo.sourceDir);
+
+        List<String> sourcePaths = new ArrayList<>();
+        sourcePaths.add(applicationInfo.sourceDir); //add the default apk path
+
+        //the prefix of extracted file, ie: test.classes
+        String extractedFilePrefix = sourceApk.getName() + EXTRACTED_NAME_EXT;
+
+//        如果VM已经支持了MultiDex，就不要去Secondary Folder加载 Classesx.zip了，那里已经么有了
+//        通过是否存在sp中的multidex.version是不准确的，因为从低版本升级上来的用户，是包含这个sp配置的
+        if (!isVMMultidexCapable()) {
+            //the total dex numbers
+            int totalDexNumber = getMultiDexPreferences(context).getInt(KEY_DEX_NUMBER, 1);
+            File dexDir = new File(applicationInfo.dataDir, SECONDARY_FOLDER_NAME);
+
+            for (int secondaryNumber = 2; secondaryNumber <= totalDexNumber; secondaryNumber++) {
+                //for each dex file, ie: test.classes2.zip, test.classes3.zip...
+                String fileName = extractedFilePrefix + secondaryNumber + EXTRACTED_SUFFIX;
+                File extractedFile = new File(dexDir, fileName);
+                if (extractedFile.isFile()) {
+                    sourcePaths.add(extractedFile.getAbsolutePath());
+                    //we ignore the verify zip part
+                } else {
+                    throw new IOException("Missing extracted secondary dex file '" + extractedFile.getPath() + "'");
+                }
+            }
+        }
+
+        if (ARouter.debuggable()) { // Search instant run support only debuggable
+            sourcePaths.addAll(tryLoadInstantRunDexFile(applicationInfo));
+        }
+        return sourcePaths;
+    }
+
+```
+
+
+
+ARouter里面读取类名是用了多个线程同时执行， 但是加了个同步锁来处理
+以后遇到这种场景可以借鉴这种同步锁的方式。
+
+##### TIPs: 用同步锁来处理 等待多个子任务完成的场景
+
+```java
+        List<String> paths = getSourcePaths(context);
+		//同步锁
+        final CountDownLatch parserCtl = new CountDownLatch(paths.size());
+
+        for (final String path : paths) {
+            DefaultPoolExecutor.getInstance().execute(new Runnable() {
+                @Override
+                public void run() {
+                   		...
+                        parserCtl.countDown();
+                    }
+                }
+            });
+        }
+
+        parserCtl.await();
+
+```
+
+
+
+得到全部ARouter包下的类后  对部分进行处理
+
+
+
+![image-20201027181637406](https://i.loli.net/2020/10/27/VlS3HzRvwbfmIAp.png)
+
+也就是调用了对应的ARouter生成类的 loadInto函数
+
+
+
+![image-20201027182253207](https://i.loli.net/2020/10/27/67LbTSt4ZKdvzCw.png)
+
+
+
+其实Root的loadInto只是把 生成的对应组的 相关的class传了进去。 并没有做处理。
+
+
+
+路由主体流程
+
+![img](https://img.mukewang.com/wiki/5f2993440953378f24881348.jpg)
+
+
+
+
+
+代码流程 就和流程图很贴合。
+
+
+
+主要说明了主要有几点
+
+1. ARouter拦截点 ： 
+   a. 开始时 的路径替换， 
+   b.路由前预加载
+   c.降级处理
+2. 按需 按组加载
+
+怎么完成路由的呢？
+为啥模块间调用能减少耦合呢？ 体现在哪呢？
+还是一样要在manifest里面去注册呀。
+后面再感受一下。
+
+
+
+### 总结
+
+​	ARouter 就分 两个阶段
+
+​	编译时， 
+​	运行时
+
+​	编译时就是收集 各个注解的信息 生成文件， 并且 通过javapoet去生成一些java类。来辅助加载。
+​	
+
+​	运行时的入口是 arouter.init。 这时候就会去加载 一些必要的组件，比如拦截器，service ,内容提供器等。
+​	然后在执行router跳转的时候，在按照组来加载进Router 维护的 资源类当中。在加载的过程当中，ARouter 提供了三次拦截操作， 路径替换，预加载，加载失败的降级处理。
+​    这个就是ARouter的简单流程。
+​	感觉这里面最有价值的就是 javaPoet。  看了这才发现 还可以这样来写java类的。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
