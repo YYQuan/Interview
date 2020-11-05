@@ -3,15 +3,19 @@ package src;
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        Thread t1 = new Thread(new TestSyn());
+        Thread t2 = new Thread(new TestSyn());
+        t1.start();
+        t2.start();
 
-        String  str = "u0_a27    24913 4997  7720   2704  __skb_recv 00000000 S logcat\n" +
-                "u0_a27    30501 4997  4136   1836  __skb_recv 00000000 S logcat";
-        String[] strs = str.split("\\s+");
-        for (String s:strs) {
-            System.out.println(s+"\n");
-
+        try {
+            t1.join();
+            t2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        System.out.println(TestSyn.count);
+
     }
 
     public  static void  test(){
@@ -34,5 +38,32 @@ public class Main {
 //                }
 //            }
 //        }
+    }
+
+    public static  class TestSyn implements Runnable {
+        public static final Object lockHelper = new Object();
+
+        public static long count = 0;
+
+        public synchronized void increase() {
+            for (int i = 0; i < 1000000; i++) {
+                count++;
+            }
+        }
+
+        @Override
+        public void run() {
+            increase();
+        }
+
+        public static void main(String[] args) throws InterruptedException {
+            Thread t1 = new Thread(new TestSyn());
+            Thread t2 = new Thread(new TestSyn());
+            t1.start();
+            t2.start();
+            t1.join();
+            t2.join();
+            System.out.println(count);
+        }
     }
 }
