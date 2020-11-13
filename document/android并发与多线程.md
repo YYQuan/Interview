@@ -224,3 +224,380 @@ AtomicInteger..  原子类
 
 
 
+#### 实现类
+
+##### 原子类：
+
+ 利用 自旋特性来保证线程同步，  适用于与 非高并发的情况
+
+##### Volatile
+
+volatile 只能保证单次的原子性操作 能同步
+
+比如
+
+```java
+volatile int a ;
+a  =1 ;// 原子性操作
+a++; // 非原子性操作， java中 a++ 并不是 一条命令， 而是多条命令
+a = a+1; // 非原子性操作
+
+```
+
+
+
+##### Synchronize
+
+- 方法前加synchronize 锁的是类的对象
+- static 成员 加synchronize锁的是 class对象
+
+
+
+优点：
+	jvm可以主动帮我们释放锁，能避免死锁的情况
+
+缺点：
+
+​	必须要等你获取锁对象的线程执行完毕、出现异常之后，才能释放掉锁。
+不能中途中断；
+​	另外 也不制度奥多个线程竞争锁的时候，是否获取锁成功
+   每个锁只有单一条件， 也不能设定超时时间
+
+
+
+##### ReentrantLock
+
+正是由于synchronize 的缺点，所以引入了ReentrantLock
+ReentrantLock是需要手动来释放锁的
+
+![image-20201109115803374](https://i.loli.net/2020/11/09/oZFNKJL7zgynf4j.png)
+
+利用公平锁特性 是可以达到多个线程交替执行的目的的。 
+多个线程交替执行的话， 用thread.join（）也行。
+
+ReentrantLock的话 是可重入的
+
+```java
+ReentrantLock lock = new ReentrantLock();
+// ReentrantLock的 可重入特性 并不会造成死锁
+public void doWork(){
+  try{
+  
+  lock.lock()
+  doWork();//递归调用,使得统一线程多次获得锁
+}finally{
+  lock.unLock()
+}
+}
+
+```
+
+
+
+
+
+ReentrantLock还 可以以条件来唤醒执行线程
+
+```java
+ReentrantLock lock = new ReentrantLock();
+Condition worker1 = lock.newCondition();
+Condition worker2 = lock.newCondition();
+
+class Worker1{
+  .....
+    worker1.await()//进入阻塞,等待唤醒
+  .....
+}
+
+class Worker2{
+  .....
+    worker2.await()//进入阻塞,等待唤醒
+  .....
+}
+
+class Boss{
+  
+  if(...){
+    worker1.signal()//指定唤醒线程1
+  }else{
+    worker2.signal()//指定唤醒线程2
+  }
+}
+
+```
+
+
+
+![image-20201110153358019](https://i.loli.net/2020/11/10/LSc9vW1zqPxRrpt.png)
+
+
+
+```java
+ReentrantReadWriteLock reentrantReadWriteLock;
+ReentrantReadWriteLock.ReadLock readLock; // 读锁  共享
+ReentrantReadWriteLock.WriteLock writeLock;// 写锁 排他
+
+```
+
+
+
+这里有点不明白 共享锁的意义， 直接不加锁不就得了。
+
+这点可以通过这个表格来说明。
+
+读锁去访问读锁是可以的， 但是一旦 资源被读锁持有着了的话， 那么写锁就拿不到资源了。 所以 读到的数据一定是正确的， 不会有边读边写的情况。
+这个就是共享锁的意义。
+
+|      | 读锁     | 写锁     |
+| ---- | -------- | -------- |
+| 读锁 | 可以访问 | 不可访问 |
+| 写锁 | 不可访问 | 不可访问 |
+
+
+
+## 锁的优化
+
+1.  减少持有锁的时间
+2. 把锁给分离 
+   比如共享锁 和排他锁
+   因为大多数都是读操作， 读操作是不没有线程安全问题的
+3. 把锁粗化
+   也就是说 连续多次加锁的时候，如果中间的操作的复杂度很轻的话，那么可以考虑多次加锁的操作合并成一个， 减少加锁 /释放锁的次数， 从而 提高效率。
+4. 在基本都是读场景下， 用原子类来代替锁
+   原子类的自旋特性，在客户端这种低并发的场景下，性能源高于加锁。
+
+
+
+## 线程池
+
+核心问题 
+
+#### 实现原理
+
+​	就是对Runnable进行一系列的封装。
+   本质上还是 Thread和runnable
+
+#### 线程池怎么复用的？
+
+其实就是Thread启动后 run方法里有一个while循环 ，不直接结束，
+任务直线完后就会阻塞住， 等待队列中的任务或者新任务
+
+ 对于非核心线程就挂起 等待保活市场， 如果这段时间内没有任务的话就销毁
+如果是核心线程的话，那么就一直保活
+
+
+
+## 自定义线程操作框架
+
+为啥不用原来提供的呢
+因为
+不支持任务优先级、
+不支持线程池暂停、恢复、关闭
+不支持异步任务结果回调
+
+
+自定义的框架应该要支持以上三个功能。
+
+
+
+1. 任务优先级
+   利用  优先队列来做等待队列 来解决
+   ***但是要注意 这个只是优先级的处理，并不是按顺序来处理***
+   而且当等待队列满了之后， 新来的任务都不会进到队列当中去的。
+
+   
+
+2. 线程的的暂停和恢复
+
+
+   利用ReentrantLock 的条件锁来 处理
+   也就是通过复写ThreadExecute的beforeExecute来实现的。
+   暂停时就锁，阻塞住 然后等待恢复
+
+   ![image-20201113151830660](https://i.loli.net/2020/11/13/DQHpnByWCLK7Gik.png)
+
+   ![image-20201113151717594](https://i.loli.net/2020/11/13/4WT9ueRO5UHfrdI.png)
+   ![](https://i.loli.net/2020/11/13/KYyDe6c4MSbECIG.png)
+
+3. 异步回调
+   用Callable来代替Runnable就能实现异步回调 逻辑很简单。
+
+   ![image-20201113152842192](https://i.loli.net/2020/11/13/BZgWmpoUV3JPY6F.png)
+
+   ![image-20201113152835186](https://i.loli.net/2020/11/13/iBaM28lNOotYwun.png)
+
+
+
+
+
+## Kotlin协程机制
+
+### 初衷
+
+场景对比：
+
+场景一：
+
+![img](https://img.mukewang.com/wiki/5ee6ef5309bd2dc612220266.jpg)
+
+描述： Request1 结束后 ，再执行Reqeust2 ...Request3结束后 再更新UI
+
+用常规的回调的方式来处理
+Tvlauncher中有很多这样的代码
+一层嵌套一层
+
+---对调地狱
+
+```java
+//客户端顺序进行三次网络异步请求，并用最终结果更新UI
+request1(parameter) { value1 ->
+	request2(value1) { value2 ->
+		request3(value2) { value3 ->
+			updateUI(value3)            
+		} 
+	}              
+}
+
+```
+
+
+
+
+
+协程的写法
+
+```kotlin
+// 启动一个协程
+GlobalScope.launch(Dispatchers.Main){
+
+  //用同步的方式来 执行任务，并且拿到返回值  
+  val value1 = request1()
+  val value2 = request2(value1)
+  val value3 = request2(value2）
+  updateUI(value3)
+}
+
+//suspend  协程任务                        
+suspend request1( )
+suspend request2(..)
+suspend request3(..)
+
+```
+
+
+
+场景2
+
+
+
+![img](https://img.mukewang.com/wiki/5ee6ef5e091a09ab09960428.jpg)
+
+描述： Request1 完成后， 并发请求2,3  2,3都完成之后 再去更新ui
+
+常规代码
+
+要加上 request3 、request2是否完成这种状态标志
+
+```java
+//客户端顺序并发三次网络异步请求，并用最终结果更新UI
+fun request1(parameter) { value1 ->
+	request2(value1) { value2 ->
+      this.value2=value2   
+	    if(request3){
+         updateUI()       
+      }
+	} 
+  request3(value2) { value3 ->
+      this.value3=value3                
+	    if(request2) {
+        updateUI()
+      }     
+	}                                  
+}
+
+fun updateUI() 
+
+```
+
+协程写法
+
+```kotlin
+//发起一个协程任务
+GlobalScope.launch(Dispatchers.Main/*指定代码块在主线程执行*/){
+   val value1 =    request1()
+   //request2 和request3 并发执行 
+   // 用GlobalScope.async来包裹 request2 ,request3  
+   val deferred2 = GlobalScope.async{request2(value1)}
+   val deferred3 = GlobalScope.async{request3(value2)}
+   // deferred2.await() 、 deferred3.await()  request2/request3都执行完了之后 调用updateUI
+   updateUI(deferred2.await(),deferred3.await())
+}
+
+suspend request1( )
+suspend request2(..)
+suspend request3(..)
+
+```
+
+
+
+从两个场景可以看出来，协程可以避免异步任务之间的嵌套，和多任务之间依赖而需要多增代码的情况。
+最重要就是增加了可读性， 把异步代码用同步的方式来写了。
+
+
+
+
+
+### 依赖
+
+```java
+//在kotlin项目中配合jetpack架构引入协程
+api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+api 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0'
+api 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
+  
+//在kotlin项目但非jetpack 架构项目中引入协程
+api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1"
+api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1'
+
+```
+
+
+
+### 创建协程
+
+```kotlin
+//创建协程时,可以通过Dispatchers.IO,MAIN,Unconfined指定协程运行的线程
+val job:Job =GlobalScope.launch(Dispatchers.Main/IO...)
+val deffered:Deffered=GlobalScope.async（Dispatchers.IO）
+
+```
+
+![image-20201113164627863](https://i.loli.net/2020/11/13/LhdDnJ7uPYFxiMq.png)
+
+
+协程的启动就是启动了一个协程调度器
+
+调度器会根据传入的DIspatchers来处理任务。
+
+![img](https://img.mukewang.com/wiki/5ee6ef6d09ee1faa19621001.jpg)
+
+![image-20201113170912483](https://i.loli.net/2020/11/13/GNob5ClaYBQuTEF.png)
+
+
+用Main模式 ， 实际上就是 mainHandler.post  也是异步的
+用unconfined模式， 实际上就是同步
+
+
+
+协程调度器除了Dispatcher模式之外，还有一个重要属性，就是启动模式
+
+![image-20201113171125922](https://i.loli.net/2020/11/13/fPev5imS3pdYwaz.png)
+
+### suspend的作用
+
+挂起函数 
+![image-20201113165247987](https://i.loli.net/2020/11/13/t9G2as8TZlY4XAJ.png)
+
+并不是suspend修饰  就一定有挂起效果
+而是suspend修饰的函数  编译器会 自动转换成 return&callback的回调。
