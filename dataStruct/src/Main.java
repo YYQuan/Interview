@@ -57,13 +57,19 @@ public class Main {
         }
 
         public static void main(String[] args) throws InterruptedException {
-            Thread t1 = new Thread(new TestSyn());
-            Thread t2 = new Thread(new TestSyn());
-            t1.start();
-            t2.start();
-            t1.join();
-            t2.join();
-            System.out.println(count);
+
+            int  val = 1 ;
+            val |=Integer.MIN_VALUE;
+            if(val == -1 ){
+                System.out.println("equal  -1 ");
+            }
+            if(val == -2147483647 ){
+                System.out.println("equal  -1 ");
+            }
+
+            System.out.println(Integer.toBinaryString(val));
+
+            System.out.println("%b"+val);
         }
     }
 }

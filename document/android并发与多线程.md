@@ -8,7 +8,7 @@
 
 ![img](https://img.mukewang.com/wiki/5ee6e28709ec3ec019402170.jpg)
 
-
+​                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
 
 
 
@@ -601,3 +601,400 @@ val deffered:Deffered=GlobalScope.async（Dispatchers.IO）
 
 并不是suspend修饰  就一定有挂起效果
 而是suspend修饰的函数  编译器会 自动转换成 return&callback的回调。
+
+先说一下效果：
+
+![image-20201116103050907](https://i.loli.net/2020/11/16/RbzYGwlaL5xXeCD.png)
+
+这个reqeust2函数里 的写法是一个同步的写法，正常来说 应该执行完
+delay（）之后 ， 就阻塞住，然后再打印
+但是由于加了suspend 关键字，所以说实际上是会执行完delay之后 就立刻返回，并不会阻塞住线程。 然后2S后 再打印 request 2 ... 这个打印。
+
+怎么回有这样的效果呢？
+就是由于编译器在编译时 检测到了suspend关键字 ，然后给这段代码添加上了其他代码。
+
+
+
+接下来看下例子
+
+kotlin 代码  ： 没有 suspend
+
+![image-20201116094527048](https://i.loli.net/2020/11/16/nO9XRSU7uAWPYMh.png)
+
+反编译出的java  ：没有suspend
+
+![image-20201116094544854](https://i.loli.net/2020/11/16/YDBZ9ybgS2E583V.png)
+
+加上suspend 关键字之后 编译器生成的代码发生了变化
+
+![image-20201116102657790](https://i.loli.net/2020/11/16/qKdAIN6LjrVyD53.png)
+
+多了一个入参
+
+
+
+如果给request2（）加上delay 函数（）生成的代码就会大变样， 
+
+![image-20201116103050907](https://i.loli.net/2020/11/16/RbzYGwlaL5xXeCD.png)
+
+
+
+
+
+
+![image-20201116100128226](https://i.loli.net/2020/11/16/hUDCp8oFjTNb7yP.png)
+
+
+
+也就是说 request2()加上delay函数之后， 才会使得 同步代码的写法有了异步的形式。
+
+分析一下  加上delay之后
+
+
+
+变化点 ：
+1.增加了一个 Continuation的入参，先对入参进行包装
+2.continuation 参数加入了 递归回到， 同步状态来分布执行
+从而实现了 同步的写法， 有异步的调用
+
+3
+
+
+
+![image-20201116104642144](https://i.loli.net/2020/11/16/XF8WbfwhgPCiAxy.png)
+
+![image-20201116104933842](https://i.loli.net/2020/11/16/gemic3yHokBbYzq.png)
+
+
+
+
+
+delay函数 源码：
+
+kotlin上看 delay函数是 没有回调参数 也没有返回值的， 需要 反编译成java来看。
+以后遇到这种情况的话 也可以反编译一下。
+
+![image-20201116123019434](https://i.loli.net/2020/11/16/iwXETD8bszlJMHg.png)
+
+![image-20201116122941059](https://i.loli.net/2020/11/16/1UFPiSMLHGRJZ98.png)
+
+
+
+delay 中传入的回调里面维护这一个状态机，用来标志delay任务的状态，然后根据状态来触发回调。
+![image-20201116141853096](https://i.loli.net/2020/11/16/De5gycSLKAH8mnG.png)
+
+
+
+所以 delayt只所以能挂起， 实际上是DelayKt.delay 决定的。
+
+
+
+小结一下 suspend  关键字 是有可能把一个方法分成几部分去执行的。
+是否分要取决于内部有没有类似delay这种方法，返回了SUSPENDED 这种状态。
+
+
+
+加入有多个delay（或者类似delay这种返回了SUSPENDED 状态的行数）是怎么处理的
+
+kotlin
+
+![image-20201116150052112](https://i.loli.net/2020/11/16/he7AJngEcWL4y21.png)
+
+java:
+
+```java
+   @Nullable
+   public final Object request2(@NotNull Continuation $completion) {
+      Object $continuation;
+      label37: {
+         if ($completion instanceof <undefinedtype>) {
+            $continuation = (<undefinedtype>)$completion;
+            if ((((<undefinedtype>)$continuation).label & Integer.MIN_VALUE) != 0) {
+               ((<undefinedtype>)$continuation).label -= Integer.MIN_VALUE;
+               break label37;
+            }
+         }
+
+         $continuation = new ContinuationImpl($completion) {
+            // $FF: synthetic field
+            Object result;
+            int label;
+            Object L$0;
+
+            @Nullable
+            public final Object invokeSuspend(@NotNull Object $result) {
+               this.result = $result;
+               this.label |= Integer.MIN_VALUE;
+               return CoroutineScene2.this.request2(this);
+            }
+         };
+      }
+
+      label31: {
+         Object var4;
+         label30: {
+            Object $result = ((<undefinedtype>)$continuation).result;
+            var4 = IntrinsicsKt.getCOROUTINE_SUSPENDED();
+            switch(((<undefinedtype>)$continuation).label) {
+            case 0:
+               ResultKt.throwOnFailure($result);
+               ((<undefinedtype>)$continuation).L$0 = this;
+               ((<undefinedtype>)$continuation).label = 1;
+               if (DelayKt.delay(2000L, (Continuation)$continuation) == var4) {
+                  return var4;
+               }
+               break;
+            case 1:
+               this = (CoroutineScene2)((<undefinedtype>)$continuation).L$0;
+               ResultKt.throwOnFailure($result);
+               break;
+            case 2:
+               this = (CoroutineScene2)((<undefinedtype>)$continuation).L$0;
+               ResultKt.throwOnFailure($result);
+               break label30;
+            case 3:
+               CoroutineScene2 var5 = (CoroutineScene2)((<undefinedtype>)$continuation).L$0;
+               ResultKt.throwOnFailure($result);
+               break label31;
+            default:
+               throw new IllegalStateException("call to 'resume' before 'invoke' with coroutine");
+            }
+
+            Log.e(TAG, "request2 completed11111111111");
+            ((<undefinedtype>)$continuation).L$0 = this;
+            ((<undefinedtype>)$continuation).label = 2;
+            if (DelayKt.delay(2000L, (Continuation)$continuation) == var4) {
+               return var4;
+            }
+         }
+
+         Log.e(TAG, "request2 completed11111111111");
+         ((<undefinedtype>)$continuation).L$0 = this;
+         ((<undefinedtype>)$continuation).label = 3;
+         if (DelayKt.delay(2000L, (Continuation)$continuation) == var4) {
+            return var4;
+         }
+      }
+
+      Log.e(TAG, "request2 completed222222222222");
+      return "result from request2";
+   }
+```
+
+![image-20201116150237824](https://i.loli.net/2020/11/16/YbX1cDTZ7HMJosq.png)
+
+![image-20201116150405020](https://i.loli.net/2020/11/16/heDiNcyM1QGpdbE.png)
+
+![image-20201116150543683](https://i.loli.net/2020/11/16/oJneQPVwbsDmWNx.png)
+
+
+
+也就是 一样会分成不同不块去执行。
+有x个delay   ，函数就会分成x+1个部分去执行。
+
+
+
+另外 编译是怎么判断出需要不需要增加 状态机 那部分的代码的呢？
+实际上是根据 内部调用的函数里有没有suspend 函数来判定的。
+
+eg.
+
+kotlin
+
+![image-20201116151449462](https://i.loli.net/2020/11/16/eKrg9IoMzcNmHVs.png)
+
+```java
+  @Nullable
+   public final Object request1(@NotNull Continuation $completion) {
+      Object $continuation;
+      label20: {
+         if ($completion instanceof <undefinedtype>) {
+            $continuation = (<undefinedtype>)$completion;
+            if ((((<undefinedtype>)$continuation).label & Integer.MIN_VALUE) != 0) {
+               ((<undefinedtype>)$continuation).label -= Integer.MIN_VALUE;
+               break label20;
+            }
+         }
+
+         $continuation = new ContinuationImpl($completion) {
+            // $FF: synthetic field
+            Object result;
+            int label;
+            Object L$0;
+
+            @Nullable
+            public final Object invokeSuspend(@NotNull Object $result) {
+               this.result = $result;
+               this.label |= Integer.MIN_VALUE;
+               return CoroutineScene2.this.request1(this);
+            }
+         };
+      }
+
+      Object $result = ((<undefinedtype>)$continuation).result;
+      Object var5 = IntrinsicsKt.getCOROUTINE_SUSPENDED();
+      Object var10000;
+      switch(((<undefinedtype>)$continuation).label) {
+      case 0:
+         ResultKt.throwOnFailure($result);
+         ((<undefinedtype>)$continuation).L$0 = this;
+         ((<undefinedtype>)$continuation).label = 1;
+         var10000 = this.request2((Continuation)$continuation);
+         if (var10000 == var5) {
+            return var5;
+         }
+         break;
+      case 1:
+         CoroutineScene2 var6 = (CoroutineScene2)((<undefinedtype>)$continuation).L$0;
+         ResultKt.throwOnFailure($result);
+         var10000 = $result;
+         break;
+      default:
+         throw new IllegalStateException("call to 'resume' before 'invoke' with coroutine");
+      }
+
+      String request2 = (String)var10000;
+      return "result from request1 " + request2;
+   }
+
+   @Nullable
+   public final Object request2(@NotNull Continuation $completion) {
+      Log.e(TAG, "request2 completed222222222222");
+      return "result from request2";
+   }
+
+```
+
+
+
+内部没有调用suspend修饰的request2  只加了个入参，没有状态机判断
+
+![image-20201116151623181](https://i.loli.net/2020/11/16/YaKiF1R2LPe4tuE.png)
+
+request1 中 有状态机代码
+![image-20201116152009570](https://i.loli.net/2020/11/16/NODqyt45zKrICgx.png)
+
+
+
+ps: delay这些是怎么触发回调的
+是手动的调用 resumeWith(suspend)来完成回调的。
+
+小结：
+
+
+协程的挂起 本质:方法的挂起， 方法被分成的多个部分来分开执行。
+也就是return  +callback
+
+协程是线程框架吗？
+ 严格来说不是， 他只是提供了能在io线程运行的调度器，并不涉及线程的唤醒与阻塞。里面都是通过callback和return来完成异步任务的。
+
+什么时候协程？
+多任务并发的时候使用协程性能比java好， 因为并不涉及到线程的唤醒和阻塞。
+
+
+
+
+
+## Kotlin协程应用
+
+如何让普通函数适配协程， 成为 真正的挂起函数。即让调用方以同步的方式拿到异步任务的返回结果。
+
+前面说了 并不是加上suspend关键字就能达到异步的目的的。
+需要其返回了SUSPENDED这种状态才行。
+
+
+
+![image-20201116162303448](https://i.loli.net/2020/11/16/UxTw7ySteIfkjCP.png)
+
+应用：
+![image-20201116163109802](https://i.loli.net/2020/11/16/WBcFvG5ITYoxSJ1.png)
+
+lifeccleScope只能在activity/fragment当中使用
+
+别的地方就只能用和application绑定的 GlobalScope了
+
+![image-20201116164122952](https://i.loli.net/2020/11/16/knNA2bwsHtCWfc5.png)
+
+
+
+
+
+## 多线程优化
+
+### 线程池
+
+#### 通过等待队列来控制 -线程池的吞吐量 & 设置优先级
+
+对线程设置优先级并不能保证 优先， 但是等待队列里设置优先级 ，在队列中时，是能保证优先被取出来执行的。
+
+![image-20201116164632685](https://i.loli.net/2020/11/16/O8xSlpeAdNZvRXb.png)
+
+#### 线程池性能监控
+
+可以动态的调整 非核心线程的等待时间， 避免线程过多的销毁 /等待
+
+
+
+### 并发安全
+
+#### synchronized 
+
+​	synchronized 在 jdk1.6进行了重构，  性能已经得到了很大的提升。
+   并不和以前学的时候说的那样说 很重量。
+  google 官方也是推荐使用synchronized的
+
+  但是synchronized的确拿不到锁的细节， 要感知锁的细节的话 ，还是得用ReentrantLock.
+
+
+
+#### 减少持锁时间
+
+
+
+把耗时的 不需要同步的部分 抽离出来
+
+
+
+#### 锁分离
+
+读锁 和写锁分离，   业务中 基本都是读操作， 单独的读操作其实不需要锁住
+
+
+
+#### 锁的粗化
+
+假如两块同步操作， 这两个同步操作中间有一些耗时很短的操作，这样可以把这些耗时短的操作一并加上锁， 合成一个请求锁的操作。这样来避免多次请求锁，释放锁。
+这个和减少锁持有的时间并不冲突
+
+
+
+#### 原子类
+
+在客户端读多写少的场景下  用原子类的性能会高一些
+
+
+
+### 线程协作
+
+![image-20201116170322985](https://i.loli.net/2020/11/16/ug9Xi4KLnrNzIV7.png)
+
+
+
+CountDownLatchDemo:
+
+![image-20201116170838309](https://i.loli.net/2020/11/16/QjUxeD9ZafER6nN.png)
+
+
+
+#### Semephore :  限制最大访问数量
+
+感觉客户端很少用到
+用例demo
+
+![image-20201116173454952](https://i.loli.net/2020/11/16/fb9mcJLMIEneYRv.png)
+
+#### 协程
+
+协程最重要的作用就是 可以把异步代码写成同步的形式。提高可读性
+
+细节参考前面
