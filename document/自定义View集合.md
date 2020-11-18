@@ -110,39 +110,9 @@ HTTP2.0 借鉴了很多google的SPDY 协议的优点 比如 多路复用，  压
 
 
 
-主体的话 自己看源码吧。
 
 
 
-tip: 怎么 判断传入的参数是不是基本数据类型的方法？
-
-```java
-  // 利用反射来 判断是否是 基本数据类型， 基本数据类型是都有TYPE字段的
-    // class 里面的isPrimitive 函数就是用于判断是否是 原始数据类型。
-    private fun isPrimitive(value: Any): Boolean {
-       
-        try {
-            //int byte short long boolean char double float
-            val field = value.javaClass.getField("TYPE")
-				
-            val clazz = field[null] as Class<*>
-            if (clazz.isPrimitive) {
-                return true
-            }
-        } catch (e: IllegalAccessException) {
-            e.printStackTrace()
-        } catch (e: NoSuchFieldException) {
-            e.printStackTrace()
-        }
-        return false
-    }
-```
-
-
-
-## 适配Retrofit
-
-看源码去。
 
 
 

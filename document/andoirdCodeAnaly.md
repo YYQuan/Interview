@@ -370,6 +370,26 @@ OkHttp当中默认的队列是同步队列
 
 # Retrofit
 
+## 纲领
+
+***核心***： 用动态代理和注解来处理网络请求
+***代理模式***：里面用很了很多代理对象， 是为了能够对各个流程进行监控
+比如说 异步任务的回调要切回到主线程来执行， OKHTTP本身是不支持的。
+所以需要一个代理对象来包装一层，在收到回复的时候切换到主线程去。
+又比如说 拦截器， 如果没有代理类进行包装的话， execute 命令出去就直接发送了 
+网络请求了。 没法实现拦截，因此 才出现的代理类。
+***模板模式***：
+retrofit 需要处理很多中字段，  retrofit为了避免出现很多了 解析字段，也就用了专门的类去
+完成解析，这样主干代码能更加清爽
+
+比如ParameterHandler 就用了这种设计模式
+
+![image-20201118164836490](https://i.loli.net/2020/11/18/bV5xsfOa8gzP9Jr.png)
+
+
+
+## 依赖
+
 ```java
 implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 implementation 'com.squareup.retrofit2:converter-gson:2.0.2'
@@ -388,7 +408,7 @@ implementation 'com.squareup.retrofit2:converter-gson:2.0.2'
 
 
 可以看出来 只要吧retrofit的实例创建出来。
-然后用retrofix.create.create(x.class),就能直接通过接口来得到
+然后用retrofix.create(x.class),就能直接通过接口来得到
 OkHttp的Call,得到call之后就能执行网络请求了
 
 ## 完整流程
@@ -669,6 +689,13 @@ PS：这里的Call和OKHttp里的是不一样的。
 CallAdapater中 无论是返回 call ,还是   executorCallbackCall 主流程都是类似的，先接着看主流程。
 以返回call 来继续。
 
+
+
+***也就是Retrofit会得到一个内部包含这OKHTTP.call的ExecutorCallBackbackCall对象。
+这个ExecutorCallBackCall的最重要能力就是把异步回到切回到主线程执行***。
+
+
+
 回到主流程
 
 retrofit.create返回的是一个动态代理。netApi.serviceApi执行后，返回的其实是HttpServiceMethod.parseAnnotations().invoke()的返回 OkHttpCall<T>了
@@ -829,21 +856,38 @@ GsonConverterFactory 是比较常用的 ConvertFactory。
 
 异步和同步的返回值的泛型转换是一样的。不需要单独分析。
 
+***重点 返回之后 会根据返回值的类型 去选择转换器
+比如 如果是Observable的话就会选Rxjava 
+如果是Response的话，就用默认的
+如果是协程的话， 就是根据请求的最后一个参数是不是 Continuetion
+反正就是做转换***。
+
 ## 总结
 
-​	retrofit 先通过构造者模式 创建出retrofit对象。并且设置好配置，比如CallFactoty, ConVertFactory 等参数。
-CallFactory 可以控制 怎么执行OkHttpCall
-ConvertFactory可以控制返回的值
+***retrofit就是用动态代理的方式去运行时解析 接口的注解，从而发起网络请求。
+重要的两步就是 calladapter 和 convert
+calladadapter只可以控制网络的发起 和 回调的线程的切换
+convert可以对返回值进行转换
+多个calladater和convert时 retrofit都是通过类型判断来选择需要用哪个adatper
+只要有一个符合就可以了。
+只有协程的适配有有些差异， 是利用suspend的特性的判断的。
+suspend修饰的函数的最后一个参数一定是continuation***。
+
+
+
+retrofit 先通过构造者模式 创建出retrofit对象。并且设置好配置，比如CallFactoty, ConvertFactory 等参数。
+CallFactory  选择怎么new出call对象 ， 默认是OkHttpCall   // 还有一个重要功能就是 切换回调的线程
+ConvertFactory可以转换返回的值
 CallFactory 和ConvertFactory 传入多个的时候，只有一个会生效，优先级是先加入的优先。
 
-然后通过retrofig对象的craete函数来创建出接口动态代理。
+然后通过retrofig对象的create函数来创建出接口动态代理。
 等调用动态代理的函数时，实际上返回的是retrofit的invokeHandle的invoke函数。
 一般默认情况下返回的就是OkHttpCall<T>。
 这样就得到接口的实例了。
 当接口的execute / enqueue 被执行的时候，实际上是被转化成为了OKhttp3.call去执行了。
 然后把从OKHttp3中得到的Response 通过ConverFactory的conver函数来解析。解析出来的就是最终retrofit返回来的数据.
 
-![image-20200817181634119](../../AppData/Roaming/Typora/typora-user-images/image-20200817181634119.png)
+
 
 
 
@@ -863,6 +907,13 @@ PS：对于 CallAdapter的 适配。其实最重要的就是适配把回调函�
 这部分就是 把持有主线程handle的Executor来实现主线程的切换。
 
 
+
+***Retrofit的 协程的适配***
+
+Retrofit的 协程的适配    要适配协程那么 该函数一定是被suspend关键字修饰的
+所以经过编译处理之后 ，最后一个参数一定是Continuation 类型的，Retrofit 就是用过这个来判断的。
+然后Retrofit对协程支持的转换过程的闭包代码块中就是直接包含了execute函数
+所以协程启动 网络请求就发起了。不需要显式的执行execute。
 
 # RxJava
 

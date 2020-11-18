@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e84021db-92be-427c-a582-b34f1cd46f79" name="Default" comment="update">
-      <change beforePath="$PROJECT_DIR$/dataStruct/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/dataStruct/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android并发与多线程.md" beforeDir="false" afterPath="$PROJECT_DIR$/document/android并发与多线程.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/document/andoirdCodeAnaly.md" beforeDir="false" afterPath="$PROJECT_DIR$/document/andoirdCodeAnaly.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/document/网络框架.md" beforeDir="false" afterPath="$PROJECT_DIR$/document/网络框架.md" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -209,7 +209,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1605598083827" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1605607309249" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="gradle.experimental" />
@@ -306,7 +306,7 @@
       <workItem from="1604403460480" duration="3000" />
       <workItem from="1604444928837" duration="916000" />
       <workItem from="1604884727699" duration="600000" />
-      <workItem from="1605248090759" duration="2702000" />
+      <workItem from="1605248090759" duration="4039000" />
     </task>
     <task id="LOCAL-00001" summary="update">
       <created>1603065137201</created>
@@ -343,11 +343,18 @@
       <option name="project" value="LOCAL" />
       <updated>1605263204664</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="update">
+      <created>1605606591988</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1605606591988</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="14793000" />
+    <option name="totallyTimeSpent" value="16130000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="0" width="1934" height="1047" extended-state="0" />
