@@ -264,6 +264,36 @@ charles 还可以改接口返回的数据， 这样可以不改代码的情况�
 
 
 
+## 断网情况下 避免首页白屏
+
+
+
+打包的时候内置上 跟包数据 （首次安装时才加载）。
+然后请求到接口之后， 则缓存到本地。 接口优先拿缓存。
+
+
+
+## ViewPager相同数据 不应该触发detach
+
+处理ViewPager  两次fragment 的内容是否相同 ，如果相同则不应该触发detach   重跑生命周期，；应该只有不相同的时候再detach。
+
+主要是通过 Adapter 的这两个函数来处理。
+
+```kotlin
+// 这里判断 需不需要刷新
+        override fun getItemPosition(`object`: Any): Int {
+			// 对于PageViewAdapter来说 这个object就是fragment对象实例。
+		   // 这里拿到的fragment实例 实际上是通过 下面的  getItemId 作为标识 获取的fragment
+        }
+
+// 这里是获取目标 fragment 实例 的唯一标识， 默认是以position作为标识的
+// 所以在同一个页面 由于数据变动的情况下 position改变了，导致的fragment生命周期的重走，就可以通过这个GetItemId来处理 但是具体用什么来做fragment的标识要根据具体的业务来灵活处理。
+        override fun getItemId(position: Int): Long {
+        }
+```
+
+
+
 ## Jetpack
 
 jetpack就是一个组件集合， 是google主推的开发规范
@@ -528,27 +558,57 @@ activity中的ViewModelStore是从NonConfigurationInstances 中拿的。
 只需要知道  NonConfigutationInstances 是在ActivityThread。preformDestory 中调用了
 activity的retainNonConfigurationInsatances 中保存下NonConfigutationInstances的 
 
+##### ViewModel进阶用法-savedState
+
+- SavedStateHandle的数据恢复与存储，即使ViewModel对象不是同一个也能够恢复，
+  所以在低电量和低内存的情况也能够完成数据的恢复。
+
+
+
+###### 整体结构
+
+
+
+![img](https://img.mukewang.com/wiki/5ee8307409cd9c2118971359.jpg)
 
 
 
 
 
+###### SavedStateRegistry的数据模型
+
+- 一个activity只有一个SavedSateRegistry
+- 一个SavedStateHandler对应一个ViewModel
+- SavedStateRegistry不只有一个ViewModel
+
+![img](https://img.mukewang.com/wiki/5ee8308409439aee15640642.jpg)
+
+
+
+###### 存储的流程
+
+![img](https://img.mukewang.com/wiki/5ee8309309666f0c22190609.jpg)
+
+tips:
+存储数据的时候是要把该activity对应的SavedStateRegister中的所有SavedStateHandle都添加上保存的数据
+
+###### 恢复流程
+
+![img](https://img.mukewang.com/wiki/5ee8309f0928b00417550489.jpg)
+
+
+
+前面有说 viewModel的key是以Class来作为标识的 所以 能拿到保存的bundle中对应的数据
+
+
+
+![img](https://img.mukewang.com/wiki/5ee830a709cb63df18150517.jpg)
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+###### ViewModel和onSaveInstanceState的区别
 
 ### Room 
 
@@ -587,6 +647,42 @@ Room的ADUC
 
 
 
+
+Room 可以和LiveData  绑定使用， 从而可以直接实现对数据库中的数据进行监听。
+![image-20201202145920386](https://i.loli.net/2020/12/02/q2mpQxTlFA5zNCv.png)
+
+用法很简单 ，就在@Dao注解下的接口处，实现table_cache即可。
+
+
+
+Room支持内存数据库  （在进程被杀死之后  数据丢失）
+
+```java
+Room.inMemoryDatabaseBuilder()
+                 Room.databaseBuilder(context, CacheDatabase::class.java, "howow_cache").build()
+
+```
+
+
+
+疑问：
+Q1: 这个注解是怎么创建出SQLite表的？
+通过注解在编译时， 构建出了对应的java类。
+
+Q2: 这个LiveData  是怎么实现监听的？
+当第一个LiveData的观察者被注册进来的时候，才触发查询数据库 发送数据更新。
+那是怎么实现对数据库进行监听的呢？
+实际上就是Room的内部 专门维护一个保存哪些表被更新了的表， 其他表的增删改操作会触发更新表的对应的tabID字段置为1
+
+![image-20201202161101795](https://i.loli.net/2020/12/02/kxgnEUTXzHlL174.png)
+
+总流程
+
+1.LiveData的首个观察者进来的时候触发  查询数据库 更新LiveData
+首次向LiveData注册Observer是利用LiveData的onActive回调来做的。
+感觉这个omActive可以处理很多懒加载的场景。
+
+2.当表被更新之后，会多加一个任务，就是遍历Room内部维护的更新表，然后找出被更新了的表单， 分发消息，接着接收到消息的观察者就去查询最新记录，然后通过LiveData发送数据出去。
 
 ### DataBinding 
 
