@@ -273,6 +273,12 @@ charles 还可以改接口返回的数据， 这样可以不改代码的情况�
 
 
 
+## 用弱引用来处理LiveData全局监听的自动解绑
+
+![image-20201203102206890](https://i.loli.net/2020/12/03/JPwH1jeYpoWBs6x.png)
+
+![image-20201203102231612](https://i.loli.net/2020/12/03/UEG6LPaDjQrIBAm.png)
+
 ## ViewPager相同数据 不应该触发detach
 
 处理ViewPager  两次fragment 的内容是否相同 ，如果相同则不应该触发detach   重跑生命周期，；应该只有不相同的时候再detach。
@@ -610,6 +616,14 @@ tips:
 
 ###### ViewModel和onSaveInstanceState的区别
 
+存储类时机不一样， 存储的位置不一样。
+ViewModelStore 在页面重建的时候  是存储在ActivityThread的ViewModelStore里面的。
+是在页面配置变更的情况下触发的 本质上还是在同一个进程当中。
+
+而SavedState  是存储在了ActivityRecord当中， 是可以支持跨进程的。
+
+同一个进程下的效率会比跨进程 效率高一些，所以ViewModelStore和SavedState都是有意义的。
+
 ### Room 
 
 轻量级orm数据库，本质上是一个SQLite的抽象层
@@ -709,3 +723,51 @@ workManager是可以支持 链式 调度的。
 可以指定执行的顺序。
 
 ![image-20201128165423938](https://i.loli.net/2020/11/28/BXLwpSsndyjr2C5.png)
+
+
+
+
+
+## 详情页
+
+可能遇到的问题
+
+![image-20201203111026362](https://i.loli.net/2020/12/03/Nj53lZr1iGvbw89.png)
+
+
+
+
+
+
+
+
+
+### 流式布局 
+
+常规流式布局 是用FlowLayout来处理的。
+
+
+但是对于轻量一点的view来说 可以通过chip组件来实现
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
