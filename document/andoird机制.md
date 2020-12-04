@@ -1468,3 +1468,361 @@ public final class Recycler {
 
 
 ![image-20201014183928238](https://i.loli.net/2020/10/14/q1TYBkafmF3irMC.png)
+
+
+
+
+
+## Android 消息机制
+
+### 整体结构
+
+android的消息是由
+
+- Handler
+- Looper
+- MessageQueue
+- Message
+
+这四个类支撑起来的。
+
+
+
+
+
+### Looper
+
+取出MessageQueue 出队， 分发msg
+
+就是一个驱动器的作用
+决定了消息处理在哪个线程当中。
+
+### Message
+
+
+
+数据结构
+
+```JAVA
+long  when  // 预期执行的时间戳  
+Handler target // 给哪个handler处理
+Runnable  callback //  该消息的处理回调
+Object  obj		
+Bundle  data
+Message  next  // 下一个消息
+```
+
+
+
+
+
+Message消息类型
+
+- 同步消息
+- 异步消息
+- 屏障消息 
+
+这里可能会有误解， 这里的同步/异步消息 处理时并没有不同，都是异步处理的。Handler的消息处理都是异步处理的。
+只和MessageQueue的出队顺序相关。
+
+
+
+
+
+Message中有一个时间戳字段，MessageQueue就根据这个时间戳来决定出队顺序。
+
+Handler的延时也是通过改这个时间戳来实现的 。
+入队还是立刻入队的。
+
+一般情况下MessageQueue的消息出队顺序是只和时间顺序有关。但是在队头是屏障消息的时候，就会跳过同步消息，去把第一个异步消息出队。
+
+Tip：屏障消息 和异步消息 用户是不能触发的。都是系统触发的 。 系统应用场景有  对于刷新ui的垂直刷新信号就是异步消息，系统就是用屏障消息来触发垂直刷新信号消息来刷新UI的。 
+
+
+
+Tip: Handler里有 根据消息立即唤醒对应线程的机制，这个立即唤醒是为了让异步消息更快的得到执行。
+比如 messageQueue中下一条消息就是屏障消息，或这插入的消息是第一条异步消息，那么handler都会主动的唤醒其对应的线程。
+
+
+
+### MessageQueue
+
+其中MessageQueue是用来存储Message
+是一个单向链表队列
+
+出队的顺序是
+
+- 如果队头是屏障消息，那么就跳过同步消息，取出第一个异步消息
+- 如果队头不是屏障消息，那么就按照时间顺序来出队
+
+
+
+### Handler
+
+发送的方式
+
+1. sendMessage(message)
+2. post(runnable)
+3. sendMessageAtTime
+
+
+
+消息分发的优先级：
+
+1. Message的回调方法： message.callback 
+   也就是传入的runnable
+2. Handle的回调方法：
+   Handler.mCallback.handleMessage
+3. Handler的默认方法：
+   Handler.handleMessage
+
+对应的对调
+
+```kotlin
+        //1. 直接在Runnable中处理任务
+        handler.post (runnable= Runnable{
+          
+        })
+
+        //2.使用Handler.Callback 来接收处理消息
+        val handler =object :Handler(Callback {
+            return@Callback true
+          
+           }
+        )
+          
+        //3. 使用handlerMessage接收处理消息
+        val handler =object :Handler(){
+            override fun handleMessage(msg: Message) {
+                super.handleMessage(msg)
+            }
+        }
+        val message = Message.obtain()
+        handler.sendMessage(message)
+
+```
+
+
+
+
+
+创建Handler的时候并不需要传入Looper对象
+
+那么Looper对象是哪来的呢？
+
+
+![image-20201204105123320](https://i.loli.net/2020/12/04/xkea1ZdvGVzhorC.png)
+
+
+
+需要在当前线程中调用Looper.prepare，才能拿到改线程的Looper 对象。
+
+ 在主线程内 ，之所以不需要调用Looper.prepare就能直接创建Handler，  是因为在ActivityThread里面就已经执行了Looper.prepare了。
+
+
+
+线程的looper是通过threadLocal来存储的。
+
+用ThreadLocal可以在线程的任意位置拿到线程的私有对象，不需要传来传去的。
+
+
+
+
+
+
+
+Q1:
+
+#### 如何让子线程拥有消息分发的能力？
+
+在子线程当中 执行 Looper.prepare 以及Looper.loop（）即可。
+
+```java
+class HandlerThread extends Thread{
+  private  Handler handler
+   @overried
+   public void run(){
+       Looper.prepare()
+       //面试题：如何在子线程中弹出toast  Toast.show() 
+       //Toast.show() 
+          
+       createHandler()
+   
+       Looper.loop()
+   }
+  
+   private void createHandler(){
+     handler  = new Handler(){
+        @overried
+        public void handleMessage(Message msg){
+            //处理主线程发送过来的消息
+        }
+     }
+   }
+}
+
+```
+
+
+
+Q2：
+
+#### 如何在子线程中弹出Toast
+
+```java
+在子线程当中 执行Looper.prepare 以及Looper.loop
+后即可 弹出Toast了。
+    
+也许会有个疑问， 这不是违反了 要在主线程更新UI的基本法则么？
+    
+实际上，view 并不是只能在主线程更新。
+view的线程检查是在ViewRootImpl里面的checkThread来进行的。
+源码看下图。
+ViewRootImpl的线程检查并没有要求一定要在主线程当中。
+
+而是要求checkThread和 创建ViewRootImpl必须要同一个线程当中。
+
+所以 弹出toast并没有报错误。
+
+
+
+
+```
+
+![image-20201204145749534](https://i.loli.net/2020/12/04/75gCAZoXVRrKSTp.png)
+
+Q3
+
+发送了handler消息之后 ， 让手机立即进入休眠状态。在休眠中，这条handler消息会被执行吗？
+
+答案是不会。休眠时期cpu是不处理handler消息的。
+
+但是如果有这种场景，
+post了一个msg ，延时 1小时， 然后让手机休眠两个小时后，之前post的这个msg会被触发吗？
+
+理论上应该是会的。
+应为handler用的时间戳是 SystemClock.uptimeMillis()
+而不是SystemClock.currentTimeMillis()
+
+1. SystemClock.uptimeMillis : 启动后运行 的事件， 不包含深度休眠的时间
+2. SystemClock.currentTimeMillis:
+   日期时间， 是可以被修改的。
+
+由于时间戳是用uptimeMillis打上的。 比较的时候 用的也是uptimeMillis  所以休眠之后 消息由于未到指定的uptimeMillis 所以 不会被取出。 等待接触休眠之后 消息才有可能会被取出。
+
+
+
+### looper 的无限循环 不耗费资源的 关键 - Linux 的epoll机制
+
+
+loop .next（） 函数中 如果没有msg，那么就会调用linux的epoll命令，让该线程进入休眠状态，直到超时，或者有新msg进入时才唤醒。
+
+整是由于epoll把线程给休眠了， 所以才能使得loop中的无限循环 不会占用太多的系统资源。
+
+
+
+android 线程的消息来源除了app之外 还有软键盘 、屏幕啊等等。
+epoll 后， 系统会把这些消息写入一个文件当中。
+epoll的机制就是会监听这些文件。
+系统把消息写入文件后就会唤醒java线程，java线程就会被唤醒了。
+
+### IdleHander
+
+IdleHandler  监听 当前线程的Looper进入了空闲状态。
+用于处理不重要的任务， 避免抢占系统资源
+
+在MessageQueue 中，如果有空闲的话，就处理idleHandler
+
+是否空闲的判断
+![image-20201204163223949](https://i.loli.net/2020/12/04/HbWFI9fYvxLZEpd.png)
+
+![image-20201204162412663](https://i.loli.net/2020/12/04/hTOoQ26Bxim1G3n.png)
+
+
+
+
+
+### ThreadLocal
+
+[参考文章](https://www.cnblogs.com/aobing/p/13382184.html)
+
+
+
+threadLocal 提供了线程独有的局部变量存储能力。
+可以在整个线程存活的过程中随时取用。
+
+![img](https://img.mukewang.com/wiki/5f1f89eb09548b3f10110496.jpg)
+
+
+
+![image-20201204165859587](https://i.loli.net/2020/12/04/Qky5VoCY6bIFxKi.png)
+
+![image-20201204170040825](https://i.loli.net/2020/12/04/7PvwpJrhxzT25FD.png)
+
+这源码看起来  一个ThreadLocal的实例 只能存一个内容呀。
+
+Looper里有一个ThreadLocal 实例
+
+一个Thread里有一个ThreadLocalMap
+
+一个ThreadLocal 可以在一个ThreadLocapMap里面存一个对象
+
+所以实际上就是Looper用自己维护threadLocal对象，
+在各个Thread中的ThreadLocalMap中都保存了一份
+以threadLocal作为key的数据
+
+![image-20201204170633584](https://i.loli.net/2020/12/04/yGVqNHzxrkIb3un.png)
+
+![image-20201204170430567](https://i.loli.net/2020/12/04/M7cmQhu3V1iFP54.png)
+
+另外ThreadLocal是有可能内存泄露的。
+
+存再ThreadLocalMap当中真正的数据对象是Entry
+而且实际上并不是用map来存的 ，而是用Entry数组
+
+而是通过threadLocal的哈希值  来算出改ThreadLocal在该ThreadLocalMap中对应的序号来处理的
+
+那hash冲突了怎么办？
+除了用hash序号之外，还会对key进行比对，如果不对则去看下一个元素。
+所以说这个序号只是一个最早可能早的位置，并不是绝对准确的。
+
+![image-20201204174311149](https://i.loli.net/2020/12/04/jZlJthsBMVqiNUu.png)
+
+Entry 是同时持有着一个弱引用和一个强引用。
+虽然Entry是集成只弱引用。
+但是弱引用需要在释放了 其持有的强引用之后 才能被Gc清除掉。
+
+ps: 所以说弱引用也不一定一来GC就释放的。如果没有弱应用内部没有强引用的话，那么就是gc扫描到了就会回收的
+
+所以如果一个thread的threadLocalMap中存储了值，
+那么这个threadLocal就不能被回收，
+这时候需要手动的把 threadLocal的强引用给手动置空才能使得ThreadLocal被回收。
+
+```
+泄露场景：
+
+就比如线程池里面的线程，线程都是复用的，那么之前的线程实例处理完之后，出于复用的目的线程依然存活，所以，ThreadLocal设定的value值被持有，导致内存泄露。
+
+但是实际上 ThreadLocal关心的任务已经被执行完了。
+但是由于Thread的复用 导致 ThreadLocalMap里面的数据 还被持有着 导致不能被GC。
+```
+
+
+
+![image-20201204172455230](https://i.loli.net/2020/12/04/8Rrs9lKv4tVz25E.png)
+
+解决办法 
+
+源码中 在ThreadLocalMap的set函数中有把key为空的entry给释放的操作，但是并不能百分百保证。
+ 执行ThreaLocal.remove 就能保证value的释放了。
+
+
+
+另外 从网上的说法来推断
+当GC 检测到是， Entry的key 是会被回收的。
+但是value 没有被回收，导致的Entry没有被回收。
+所以
+
+![image-20201204181942534](https://i.loli.net/2020/12/04/mC8Y7BwXo2K1Zdk.png)
+
+![image-20201204182230534](https://i.loli.net/2020/12/04/MEHu6w9fDSVyzjl.png)
