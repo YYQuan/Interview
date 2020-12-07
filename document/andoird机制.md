@@ -1712,7 +1712,7 @@ post了一个msg ，延时 1小时， 然后让手机休眠两个小时后，之
 
 
 
-### looper 的无限循环 不耗费资源的 关键 - Linux 的epoll机制
+#### looper 的无限循环 不耗费资源的 关键 - Linux 的epoll机制
 
 
 loop .next（） 函数中 如果没有msg，那么就会调用linux的epoll命令，让该线程进入休眠状态，直到超时，或者有新msg进入时才唤醒。
@@ -1826,3 +1826,367 @@ ps: 所以说弱引用也不一定一来GC就释放的。如果没有弱应用�
 ![image-20201204181942534](https://i.loli.net/2020/12/04/mC8Y7BwXo2K1Zdk.png)
 
 ![image-20201204182230534](https://i.loli.net/2020/12/04/MEHu6w9fDSVyzjl.png)
+
+
+
+
+
+### Handler常见面试题
+
+
+
+- 为什么主线程不会因为Looper.loop里的死循环卡死？
+  ![image-20201204183105931](https://i.loli.net/2020/12/04/b4ZGmA197syNng2.png)
+- post和sendMessage 两类发送消息的方法有什么区别？
+  ![image-20201204183133355](https://i.loli.net/2020/12/04/fJXtGIw6paxEmFY.png)
+- 为什么要通过Message.obtain()方法获取Message对象？
+  ![image-20201204183200969](https://i.loli.net/2020/12/04/z6KelyJt2f47RIF.png)
+- Handler实现发送延迟消息的原理是什么？
+  ![image-20201204183328714](https://i.loli.net/2020/12/04/DZ4BGkTWYjAzhq6.png)
+- 同步屏障消息的作用？
+  ![image-20201204183359036](https://i.loli.net/2020/12/04/WNrR23bh6fcjwP1.png)
+- IdleHandler的作用？
+  ![image-20201204183416570](https://i.loli.net/2020/12/04/Dnlgq28mhzPF6GT.png)
+- 为什么非静态类的Handler导致内存泄露？怎么解决？
+
+![image-20201204183451232](https://i.loli.net/2020/12/04/IQsbOSqhW2gw975.png)
+
+- 如何让在子线程中弹出toast
+
+![image-20201204183529942](https://i.loli.net/2020/12/04/KIiLRtScpha678k.png)
+
+```java
+在子线程当中 执行Looper.prepare 以及Looper.loop
+后即可 弹出Toast了。
+    
+也许会有个疑问， 这不是违反了 要在主线程更新UI的基本法则么？
+    
+实际上，view 并不是只能在主线程更新。
+view的线程检查是在ViewRootImpl里面的checkThread来进行的。
+源码看下图。
+ViewRootImpl的线程检查并没有要求一定要在主线程当中。
+
+而是要求checkThread和 创建ViewRootImpl必须要同一个线程当中。
+
+所以 弹出toast并没有报错误。
+
+```
+
+
+
+
+
+## Android类加载机制
+
+
+
+
+
+
+
+
+
+
+
+#### 双亲委派
+
+##### 什么是双亲委派
+
+![image-20201207101425223](https://i.loli.net/2020/12/07/ysprbSBX6UtYVoG.png)
+
+
+
+![img](https://img.mukewang.com/wiki/5f1f8a6309f6733603840620.jpg)
+
+##### 双亲委派的作用
+
+![image-20201207101558504](https://i.loli.net/2020/12/07/4Pi3dIkoc2b6fQy.png)
+
+#### Dex文件的加载
+
+##### android中主要的类加载器
+
+- PathClassLoader
+- DexClassLoader
+- BaseDexClassLoader 
+
+
+
+其实PathClassLoader和DexClassLoader都没有做啥实现， 主要的就是把BaseDexClass的构造参数暴露出来。
+，但其实也没用这些参数。这么做的目的估计是为了向前兼容。
+所以实际上都是BaseDexClassLoader在处理。
+
+PathClassLoader 
+
+![image-20201207102312917](https://i.loli.net/2020/12/07/rDxSigmce5TuO6p.png)
+
+
+
+![image-20201207102352054](https://i.loli.net/2020/12/07/DARTVvX8k1ewjtf.png)
+
+这几个参数的意义
+1.dexPath   :要加载的dex文件的路径
+2.optimizedDirectory :加载出来的dex文件的 缓存  存放在路径
+3.librarySearchPath要加载的c++链接库的路径
+
+
+
+一个dex文件 ，会被加载成DexFile对象。
+（optimizedDirectory 在8.0之后都是null了）
+
+```java
+class DexPathList{
+  public DexPathList(ClassLoader definingContext, String dexPath,String librarySearchPath, File optimizedDirectory, boolean isTrusted) {
+     //dexPath="/data/data/**/classes.dex:/data/data/**/class1.dex/data/data/**/class2.dex"
+      //根据传递的dexpath加载出所有dex文件路径
+      this.dexElements = makeDexElements(splitDexPath(dexPath), optimizedDirectory, suppressedExceptions, definingContext, isTrusted);
+      //加载APP的动态库
+      this.nativeLibraryDirectories = splitPaths(librarySearchPath, false); 
+      //加载系统的动态库
+      this.systemNativeLibraryDirectories =splitPaths(System.getProperty("java.library.path"), true);
+      ......
+  }
+    
+    private static Element[] makeDexElements(List<File> files,  optimizedDirectory, List<IOException> suppressedExceptions, ClassLoader loader, boolean isTrusted) {
+      Element[] elements = new Element[files.size()];
+      int elementsPos = 0;
+      for (File file : files) {
+          if (file.isDirectory()) { 
+              elements[elementsPos++] = new Element(file);
+          } else if (file.isFile()) {
+              String name = file.getName();
+              DexFile dex = null;
+              //如果文件路径以.dex结尾，则直接加载文件内容
+              if (name.endsWith(DEX_SUFFIX)) {
+                  try {
+                      dex = loadDexFile(file, optimizedDirectory, loader, elements);//  加载dex文件到内存当中
+                      if (dex != null) {
+                          elements[elementsPos++] = new Element(dex, null);//用一个数组来维护dexFile对象
+                      }
+                  } catch (IOException suppressed) {
+                      System.logE("Unable to load dex file: " + file, suppressed);
+                      suppressedExceptions.add(suppressed);
+                 }
+              } else {
+                  try {
+                     //如果是jar,zip等文件类型，则需要先
+                      dex = loadDexFile(file, optimizedDirectory, loader, elements);//  加载dex文件到内存当中
+                  } catch (IOException suppressed) {
+                      suppressedExceptions.add(suppressed);
+                  }
+
+                   if (dex == null) {
+                      elements[elementsPos++] = new Element(file);
+                  } else {
+                      elements[elementsPos++] = new Element(dex, file);//用一个数组来维护dexFile对象
+                  }
+              }
+              if (dex != null && isTrusted) {
+                dex.setTrusted();
+              }
+          } else {
+              System.logW("ClassLoader referenced unknown path: " + file);
+          }
+      }
+      if (elementsPos != elements.length) {
+          elements = Arrays.copyOf(elements, elementsPos);
+      }
+      return elements;
+    }
+    //从这里可以看出 optimizedDirectory 不同,  DexFile对象构造方式不同，我们继续看看 optimizedDirectory 在 DexFile 中的作用：
+    private static DexFile loadDexFile(File file, File optimizedDirectory)
+        throws IOException {
+    if (optimizedDirectory == null) {
+        return new DexFile(file);
+    } else {
+        String optimizedPath = optimizedPathFor(file, optimizedDirectory);
+        return DexFile.loadDex(file.getPath(), optimizedPath, 0);
+      }
+   }  
+}
+
+```
+
+
+
+![image-20201207105859737](https://i.loli.net/2020/12/07/1ZULAiDfdGYjuEO.png)
+
+
+
+上面已经知道 DexPathList用来一个数据来维护 所以dexFiel对象。
+
+然后加载的时候 就按顺序的去遍历 该数组，看 要加载的类在哪个DexFile对象下。
+找到第一个包含该对象的Dex文件即可。
+这里面包含两个点：
+
+- 如果有很多个dex文件，那么如果要加载的类对应的DexFile越靠后，那么加载的速度就越慢，因此为了提高某些重要类的加载速度，可以指定要最前面的dex文件。
+- 对于一个类，只加载最早找到的那个dex文件的对应实现（  热修复的基础方案。在原先的DexPathList的数组前前插入一个Dex，这样就可以屏蔽掉原先的类的实现了。）
+
+但是注意DexPathList的作用只是加载了dexFile，还不是class加载。
+
+
+
+#### Class文件的加载
+
+
+
+类的加载指的是将类的class文件中的二进制数据读入内存当中，将其放在运行时的数据区的方法区内，然后再堆区创建一个java.lang.Class对象。用来封装类再方法去内的数据结构，并且提供了访问方法区内的数据结构的方法。
+
+重点就两个：
+
+- 把class的数据加载到方法区中
+- class对象放入堆中， class和方法区中的数据关联起来
+
+类的加载是 在用到的时候在会去dexPathList去遍历DexFile的。
+
+
+
+##### 类加载的步骤
+
+![img](https://img.mukewang.com/wiki/5f1f8aa6092a3eaf53241882.jpg)
+
+![image-20201207114520368](https://i.loli.net/2020/12/07/TpwUgdr7Vcmz8no.png)
+
+![image-20201207114533094](https://i.loli.net/2020/12/07/tylSid8Kabx7r3M.png)
+
+
+
+
+
+![image-20201207114541851](https://i.loli.net/2020/12/07/hT57ZLAPb1sRgGt.png)
+
+![image-20201207114558727](https://i.loli.net/2020/12/07/1cMGWdQjF4ZBJLe.png)
+
+```java
+class MainActivity{
+   //在准备阶段他得值为默认值0，初始化阶段才会被赋值为3.
+   
+   //因为把value赋值为3的putlic static语句在编译后的指令是在类构造器<clinit>（）方法之中被调用的，所以把value赋值为3的动作将在初始化阶段才会执行。
+   static int value = 3；//0x0001
+   
+   int value2=3;//随着对象实例化的时候，才会被赋值
+  
+  static void test(){
+      value2 = 100;//静态方法为什么不能访问非静态变量？
+  }
+}
+
+```
+
+上面demo对应的class字节码
+
+![image-20201207115615383](https://i.loli.net/2020/12/07/fo9s58bS4d6yKOz.png)
+
+
+
+
+
+**为啥不能静态方法里面调用实例变量？**
+因为静态方法，和静态变量是在类加载的时候就和class对象一样放在了方法区。是全局唯一的。
+而实例变量是创建实例的时候才创建出来放在堆中的。
+
+如果在静态方法里调用非静态的变量的话，就存在该变量没有被初始化，没有被赋值的情况 。
+而且静态方法是可以被类直接调用的**，用类来调用的话，**
+**就根本不知道该去调用哪一个实例的实例对象。**
+
+
+
+
+
+类的初始化 
+类的初始化 并不是必须的。
+和类的加载并没有绑定在一起。
+比如Class.forName 通过ClassLoader.loadClass是执行类的加载，然后会额外执行类的初始化。
+ClassLoader.loadClass本身并不会执行类的初始化操作。
+
+
+
+这个类的初始化 的点 可以和单例引起的初始化顺序异常的问题可以结合起来。
+
+![image-20201207144142587](https://i.loli.net/2020/12/07/jATKUJtEasX6Fnv.png)
+
+为什么饿汉式会有实例变量比静态变量先初始化的情况呢?
+原因是 声明静态的INSTANCE的时候 在类的初始化的时候就进行了。
+这个静态的INSTANCE 执行了构造函数，那么在构造函数中被赋值的成员变量就会被赋值。然后再继续往下执行其他的静态变量的赋值，静态代码块的执行。
+
+而静态内部类的方式的单例，其SingletonInstance是在调用到SingletonInstance.INSTANCE 才开始加载SIngletonInstance类对象。此时其外部类的类的初始化已经进行完了（也就是静态变量，静态代码块已经处理了）。所以可以保证静态成员的赋值能在构造函数之前。
+
+
+
+##### Class.forName & ClassLoader.loadClass 的不同
+
+![image-20201207143148408](https://i.loli.net/2020/12/07/MhIRA2zEiYoNw3H.png)
+
+
+
+
+
+## Android的热修复
+
+
+
+主流方案：
+
+![image-20201207151127298](https://i.loli.net/2020/12/07/6zeQg2qhcCyrTSA.png)
+
+
+
+
+
+AndroidStudio的INSTANCE Run的实现原理是 类加载方案。
+
+
+
+从底层替换的方案 andFix已经废弃，Sophix 收费。而且也比较复杂。
+
+这里主要研究类加载方案的代表Tinker.
+
+### 动态加载dex方案
+
+![img](https://img.mukewang.com/wiki/5f1f8c3d095e254584503246.jpg)
+
+学习类加载的时候就已经知道了 ClassLoader中的DexPathList中维护了一个dexFile的数组。 动态修复dex的方案的原理就是把要替换的dexFile插入到DexPathList的数组的头部。让修复好的class代替要修复的class.
+
+
+
+- 找到ClassLoader.DexPathList 
+- 执行DexPathList.makeDexElements方法生成包含dex的数组
+- 向dexPathList合并新加载进来的dex数组
+
+
+
+### Tinker工作原理简述
+
+
+
+- 使用bsdiff对新旧apk做差分异，得到差量化产物patch.apk。
+  bsdiff是基于二进制的差异比较得到的包，体积会很小。
+
+- 把新得到的差异包和目标版本进行全量合并，得到新的apk文件
+  class文件 、so文件 -》  tinker-NClass.apk
+  res文件  -》 resource.apk
+
+  为啥class和res要分成两个包呢？
+  是因为 class和res 类和资源的热修复方式不一样。
+
+- 类更新 apk 进行dex插队来修复
+  资源更新 用反射去替换AssetManager来完成修复
+
+
+
+这里要强调， 下发的只是差分包，全量合并是在本地执行的。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
