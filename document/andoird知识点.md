@@ -2180,6 +2180,347 @@ AndroidStudio的INSTANCE Run的实现原理是 类加载方案。
 
 
 
+# 设计模式 
+
+
+
+
+
+
+
+## 单例
+
+主要讲讲DCL的实现
+
+### DCL
+
+java
+
+```java
+public Demo {
+    //使用volatile 关键字 使其能立即同步数据到主存当中， 否则可能会出现 子线程已经创建了对象。但是由于没同步到驻村当中，下一个持有锁的线程，没检测到该对象已经被创建了。
+	private volatile Demo INSTANCE  = NULL;
+    
+    public Demo getInstance(){
+        if(INSTANCE == NULL){
+            synchronized(Demo.class){
+                
+                if(INSTANCE ==NULL){
+                    INSTANCE = new Demo();
+                }
+            }
+        }
+    }
+    
+    private Demo(){
+        
+    }
+
+
+
+}
+```
+
+
+
+
+
+```kotlin
+//无参数
+class Singleton3Kotlin private constructor(){
+    companion object{
+        val INSTANCE: Singleton3Kotlin by lazy(mode == LazyThreadSagetyMode.SYNCHRONIZED){
+        Singleton3Kotlin()
+    }
+}
+实际上这个lazy的内部实现就是 DCL
+
+```
+
+lazy 实现
+![image-20201208173020701](https://i.loli.net/2020/12/08/e4NVnGkJbW2BpEf.png)
+
+![image-20201208174236880](https://i.loli.net/2020/12/08/qhAlNK7Rx4ibvIZ.png)
+
+
+
+
+
+## 装饰者模式
+
+
+用买咖啡 挺好说明的。
+coffe有普通咖啡  、 摩卡 、卡布奇诺...
+
+而且coffe还可以加料。
+
+如果每一种料都用子类来复写的话，那么子类就非常非常多了。
+这时候就可以考虑装饰者模式了。
+
+
+
+kotlin的装饰者模式实现 比java的代码量可以少非常多。
+
+```kotlin
+
+class Coffe{
+    fun price():BigDecimal{
+        // 基础coffe
+        return BigDecimal.valueOf(1)
+    }
+
+    // 描述是哪中coffe
+    fun  description():String{
+        return "基础"
+    }
+
+    companion object{
+
+        @JvmStatic
+        fun main(args: Array<String>) {
+
+            var description = Coffe().run {
+                var desc = mocaDesc(description())
+                cabuqinoDesc(desc)
+            }
+            println(description)
+
+            var price = Coffe().let {
+                var price = it.mocaPrice(it.price())
+                it.cabuqinoPrice(price)
+            }
+            println(price)
+
+
+
+            var description1 = Coffe().run {
+                mocaDesc(description())
+            }
+            println(description1)
+
+            var price1 = Coffe().let {
+                it.mocaPrice(it.price())
+            }
+            println(price1)
+        }
+
+    }
+}
+
+
+//加 moca
+fun Coffe.mocaDesc(desc:String ) :String{
+    return desc +"add moca coffe"
+}
+fun Coffe.mocaPrice(price:BigDecimal) :BigDecimal{
+    return price.add(BigDecimal.valueOf(2))
+}
+
+//加 cabuqino
+fun Coffe.cabuqinoPrice(price:BigDecimal) :BigDecimal{
+    return price.add(BigDecimal.valueOf(2.5))
+}
+fun Coffe.cabuqinoDesc(desc:String) :String{
+    return desc +" add  cabuqino "
+}
+```
+
+打印 
+![image-20201209105409040](https://i.loli.net/2020/12/09/laXt7RVx6crYIwM.png)
+
+ 可以看出来 ，通过闭包和扩展函数，kotlin可以不用像java一样声明一堆的实际装饰者类
+
+java中要用接口继承 和传入被包装者来实现约束，而kotlin中直接用扩展函数就能够实现约束了。
+
+
+
+## 建造者模式
+
+java用建造者模式的最重要点就是为了只暴露想让用户操作的方法，然后调用起来优美一些。有build这一层的 话，具体类就不需要向外暴露那么多接口的了。
+能够达到分层的目的。
+
+感觉kotlin由于闭包的存在 对内部赋值本身就是比较优雅的了。 就算不用build 这一层包装一下，也是能接受的。
+用多一层build接口来包一层  并不是必须的。但是少了build层，那么还是会有向外暴露太多的问题。
+
+## 适配器模式
+
+
+主要参考RecyclerView.Adapter。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 架构
+
+Mvc 、Mvp   、MVVM
+
+
+
+mvc就是最理所当然的把业务逻辑，数据请求都放在了activity里面去实现。
+
+
+为啥出现mvp ？
+因为mvc下 复杂业务时，activity太臃肿了。
+
+那为啥出现mvvm？
+因为mvp 一个activity出来就要实现好几个相关类
+麻烦。
+而且mvvm可以完成 数据和视图的双向绑定。
+
+**双向绑定**
+
+- 数据驱动 ui - 数据改变是 自动改变ui
+- ui同步数据 - ui改变是 自动去请求新的数据
+
+
+
+
+
+### MVVM
+
+
+
+#### 传统的MVVM
+
+
+
+activity里面只需要做些绑定操作。
+
+数据的绑定通过dataBind来完成。
+这个DataBinding 就是数据绑定 放在了xml里面去做，
+使得activity里面的模板代码更少一些。
+DataBinding是能支持 view和 model的双向绑定的
+
+
+
+```java
+public class Scene2Activity extends AppCompatActivity {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ActivityScene2Binding binding = DataBindingUtil.setContentView(this, R.layout.activity_scene2);
+
+        final HomeViewModel model = new HomeViewModel();
+        binding.setViewModel(model);
+
+        model.queryUserInfo();
+
+        binding.editAddress.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                //当输入框文本变更后，userFiled的address的数据会自动更新，变成输入框输入的内容。这就是双向绑定
+                Log.e(TAG, "afterTextChanged: " + model.userFiled.get().address);
+            }
+        });
+    }
+
+```
+
+
+
+```xml
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="viewModel"
+type="org.devio.as.proj.hi_arch.scene2.HomeViewModel" />
+    </data>
+    <LinearLayout>
+         //单向绑定@
+        <TextView
+            android:id="@+id/nick_name"
+            android:text="@{viewModel.userFiled.nickName}" />
+
+        //双向绑定@=
+        <EditText
+            android:id="@+id/edit_address"
+            android:text="@={viewModel.userFiled.address}" />
+    </LinearLayout>
+</layout>
+
+```
+
+
+
+#### Jetpack的MVVM
+
+![img](https://img.mukewang.com/wiki/5ee81fdd09b7963719221442.jpg)
+
+
+
+
+
+
+
+
+
+
+
+# Android组件
+
+## DataBinding
+
+原理
+
+![image-20201209154133470](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20201209154133470.png)
+
+
+
+
+
 
 
 
