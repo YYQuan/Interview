@@ -1,5 +1,7 @@
 package com.yyqtest.mx.sort;
 
+import java.util.Random;
+
 /**
  *
  */
@@ -22,7 +24,8 @@ public class QuickTwoWaysSort {
         if(start > end)  return;;
 
 //        Comparable c = arr[0];
-        int index =  handle(arr, start ,end);
+//        int index =  handle(arr, start ,end);
+        int index =  handle2(arr, start ,end);
         quickTwoWaysSort(arr,start,index-1);
         quickTwoWaysSort(arr,index+1,end);
 
@@ -81,6 +84,43 @@ public class QuickTwoWaysSort {
     }
 
 
+    public static int handle2(Comparable[] nums ,int l,int r){
+        if(l>=r)     return l;
+        int randomIndex =  new Random().nextInt(r-l)+l;
+//        int randomIndex = Math.random((int)(r-l))+l;
+        swap(nums,randomIndex,l);
+        Comparable base = nums[l];
+        // 找到 第一个大于base的值的 范围是(l,r]
+        // 找到 第一个小于base的值的 范围是(l,r]
+        // i，j 的左右位置关系只能决定他们需不需要交换
+        int i =l+1;// 从左 找 第一个大于 base的值
+        int j = r; // 从右找 第一个小于 base的值
+        while(i<j){
+
+
+            while(i<=r&&nums[i].compareTo(base)<=0){
+                i++;
+            }
+            while(j>l+1&&nums[j].compareTo(base)>=0){
+                j--;
+            }
+
+            if(i<j &&nums[i].compareTo(nums[j])>0){
+                swap(nums,i,j);
+            }
+
+        }
+
+        swap(nums,l,j);
+
+        return j;
+    }
+
+    private static void swap(int[] arr, int l , int r){
+        int tmp = arr[l];
+        arr[l] = arr[r];
+        arr[r]= tmp ;
+    }
 
 
 }

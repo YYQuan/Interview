@@ -466,6 +466,46 @@ private  static  int partition(Comparable[] arr,int l , int r){
 
 ```
 
+```java
+public void quickSort(int[] nums){
+    
+    quickSort(nums,0,nums.length);
+    
+}
+
+public void quickSort(int[] nums ,int l , int r){
+    if(l>=r) return ;
+    
+    int m = insert(nums,l,r);
+    quickSort(nums,l,m);
+    quickSort(nums,m,r);
+}
+
+public void insert(int[] nums ,int l ,int r){
+    if(l<=r) return ;
+    
+    int base = nums[l];
+    
+    int i =l;// （l，i] 小于base
+    int j =l+1;
+    while(j<=r){
+        if(nums[j]<base){
+            i++;
+            swap(nums,i,j);
+        }else{
+	        j++;            
+        }
+
+    }
+}
+
+public void swap(int[] nums ,int l ,int r){
+    int tmp = nums[l];
+    nums[l] = nums[r];
+    nums[r] = tmp;
+}
+```
+
 
 
 优化
@@ -535,6 +575,43 @@ private static  void partition(Comparable[] arr, int l ,int r){
 }
 ```
 
+练习
+
+```java
+public int handle(int[] nums ,int l ,int r){
+    if(l>r) return l;
+    int randomIndex = new Random().nextInt(r-l)+l;
+    
+    swap(nums,randomIndex, l);
+    
+    int base = nums[l];
+    
+    int i =l+1;//从左往右 找 第一个大于等于base的index
+    int j = r;//从右往左 找第一个小于等于base的index
+    // 等于的也交换一下  会平均一些
+    while(i<j){
+        //找到第一个大于base的index 
+        while(i<r&&nums[i]<base){
+            i++;
+        }
+        
+        while(j>l+1&&nums[j]>base){
+			j--;
+        }
+        
+        
+    }
+    
+    
+    
+}
+
+```
+
+
+
+
+
 ##### 三路快排
 
 优化：
@@ -595,34 +672,34 @@ private static void sort(Comparable[] arr){
 
 private static void sort(Comparable[] arr,int l,int r){
     
-    int randomInex = ((int)Math.random()*(r-l+1))+l;
-    swap（arr,l,randomIndex );
+    if(l>r) return ;
     
-    Combarable base = arr[l];
-    //arr(l...lt]<base
-    int lt = l;
-    //arr[rt...r]>base
-    int rt = r+1;
-    //arr[lt+1...i) == base
-    int i = l+1;
+    //三路快排的关键 就在于要返回两个参数 base的左边界 和 右边界 的index;
+    int randonIndex = new  Random().nextInt(r-1)+l;
+    swap(arr,randomIndex,l);
+    Comparable base = arr[l];
+    
+    int i =l+1;//从左往右遍历一遍的index
+    int lt = l;// 值为base的左边界 保持（start,lt] <base
+    int rt = r +1;// 值为base的有边界  保湿[rt,r] >base
     
     while(i<rt){
-        if(arr[i].compareTo（）<0)		{
-            // 不要简写成，简写后 看不出变量定义的维护过程
-            //swap(arr,++i,++lt);
-            
-            
-            //根据 变量的定义 arr[lt +1]肯定是 == base的
-            swap(arr,i,lt+1);
-			//swap 之后要维护变量的定义
-            i++;
-            lt++;
-        }else         if(arr[i].compareTo(base)>0){
-            swap(arr,i,rt-1)；
+        if(arr[i].compareTo(base)>0){
+            swap(arr,i,rt-1);
             rt--;
-    }else {
-        	i++;
-		}
+        }else if(arr[i].compareTo(base)<0){
+            swap(arr,i,lt+1);
+            lt++;
+            i++
+        }else{
+            i++;
+        }
+    }
+    
+    swap(arr,l,lt);
+    
+    sort(arr,l,lt-1);
+    sort(arr,rt,r);
     
 }
 ```
@@ -690,7 +767,7 @@ public void shiftDown(){
     int i  = 1;
     // 数组申请内存的时候最多申请一些的 ，不会发生数组越界
     while(2*i < count){
-        int j = 2*i;
+        int j = 2*
     	//筛选出 两个子节点中大的那个
         if(j+1<count&&arr[j].compateTo(arr[j+1])<0)    {
             j++;
