@@ -55,9 +55,9 @@ public class QuickSort {
 
     public static void main(String[] args) {
 
-        Integer[] arr = {10,9,8,7,6,5,4,3,2,1};
+        int[] arr = {10,9,8,7,6,5,4,3,2,1};
 //        BubbleSort.sort(arr);
-        QuickSort.quickSort(arr);
+        new QuickSort().quickSort(arr);
         for( int i = 0 ; i < arr.length ; i ++ ){
             System.out.print(arr[i]);
             System.out.print(' ');
@@ -65,6 +65,52 @@ public class QuickSort {
         System.out.println();
     }
 
+    public void swap(int[] nums,int i,int j){
+        int tmp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = tmp;
+    }
+
+    public void quickSort(int[] nums ){
+
+        quickSort(nums,0,nums.length-1);
+    }
+
+    public void  quickSort(int[] nums ,int l , int r ){
+
+        if(l >=r ) return ;
+
+        int m = handle(nums,l,r);
+        quickSort(nums,l,m-1);
+        quickSort(nums,m+1,r);
+
+    }
+
+    public int handle(int[] nums,int l , int r){
+
+        if(l>=r)  return 0;
+
+
+
+        int base = nums[l];
+
+        int i = l ; // (l,i] 小于base
+        int j =l+1;
+
+        while(j<=r){
+
+            if(nums[j]<base){
+                i++;
+                swap(nums,i,j);
+            }else{
+
+            }
+            j++;
+        }
+
+        swap(nums,i,l);
+        return i;
+    }
 
 
 
