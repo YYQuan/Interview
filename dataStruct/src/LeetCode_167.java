@@ -6,7 +6,8 @@ public class LeetCode_167 {
     public static void main(String[] args) {
         LeetCode_167 code = new LeetCode_167();
         int[] ints  = new int[]{2,7,11,15};
-        int[] result = code.solution(ints,9);
+//        int[] result = code.solution(ints,9);
+        int[] result = code.twoSum(ints,9);
         System.out.println(result[0]+"  "+result[1]);
 
     }
@@ -38,4 +39,29 @@ public class LeetCode_167 {
 
         return result;
     }
+
+    public int[] twoSum(int[] nums, int target){
+        int[]  result = new int[]{1,1};
+
+        if(nums.length<2) return result;
+
+        int i = 0;
+        int j = nums.length-1;
+
+        while(i<j){
+            if(nums[i]+nums[j]>target){
+                j--;
+            }else if(nums[i]+nums[j]<target){
+                i++;
+            }else{
+                result[0] = i+1;
+                result[1] = j+1;
+                return result;
+            }
+        }
+
+
+        return result;
+    }
+
 }
