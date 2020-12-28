@@ -3696,27 +3696,13 @@ https://www.imooc.com/wiki/mobilearchitect/aapt2.html
 上面只是对基础的编译过程，
 并没有涉及到 多模块的资源合并等处理。
 
-# 其他
 
-## Apk加固原理
 
-![image-20201222113855520](https://i.loli.net/2020/12/22/tGnpDHKf9jSxIwA.png)
+# 性能、稳定性
 
 
 
 
-
-![image-20201222114253174](https://i.loli.net/2020/12/22/lmqzQX1kOdWvDAU.png)
-
-
-
-![image-20201222113942507](https://i.loli.net/2020/12/22/hm78tICjsa4npqg.png)
-
-![img](https://img.mukewang.com/wiki/5f4e485d0956a96046441278.jpg)
-
-
-
-![image-20201222114214548](https://i.loli.net/2020/12/22/KzGDU7qQ1xClvLd.png)
 
 ## 稳定性优化
 
@@ -3744,7 +3730,7 @@ xlog 是已打点的形式来进行文件写入
 
 
 
-## Code Review
+### Code Review
 
 
 
@@ -3754,7 +3740,7 @@ xlog 是已打点的形式来进行文件写入
 
 
 
-## Java & Native Crash监控
+### Java & Native Crash监控
 
 
 
@@ -3766,7 +3752,7 @@ xlog 是已打点的形式来进行文件写入
 
 
 
-### java -DispatchUncaughtExecption
+#### java -DispatchUncaughtExecption
 
  java 捕获到一个 异常 exception 之后  就会交给线程的dispatchUncaughtException() 去处理
 
@@ -3839,7 +3825,7 @@ private static class KillApplicationHandler implements Thread.UncaughtExceptionH
 
 
 
-### Native
+#### Native
 
 native crash的监控其实是开启了一个线程去监控的。
 
@@ -3850,6 +3836,254 @@ handleApplicationCrashInner。
 
 
 应用层是无法直接监听native  CRASH的
+
+
+
+## 性能优化
+
+
+
+
+
+### 页面显示速度优化
+
+![image-20201228111116398](https://i.loli.net/2020/12/28/MhLs7UVFRX4HZWA.png)
+
+### 启动优化
+
+![image-20201228111124899](https://i.loli.net/2020/12/28/rV7UJYspKPcGzdx.png)
+
+
+
+
+
+分3个问题来解决：
+
+- 启动耗时统计
+- 启动阶段白屏优化
+- 异步并发启动框架
+
+#### 启动耗时统计
+
+
+
+冷启动流程
+
+- 创建进程
+
+  - 加载window
+  - 创建进程
+  - 启动应用
+
+  完全是由系统控制，和我们的代码没关系
+
+- 启动应用
+
+  - 启动主线程
+  - 创建Application
+  - 创建MainActivity
+
+  这里开始就和代码有关系了
+
+- 绘制界面
+
+  - 加载布局
+  - 首帧绘制
+
+![img](https://img.mukewang.com/wiki/5f9cfb6a09f6ac2d09760516.jpg)
+
+application 的onAttachBaseContext 是应用的第一个生命周期。 可以从这里开始计时。
+
+
+
+那该在哪 结束计时呢？
+activity.onResume吗？
+答案是 不行的。 因为activity.onResume时，view还没开始测绘。这也是在onResume时，不能拿到View的height,width的原因。
+
+应该是activity.onwindowFocusChange方法。
+
+看下onWindowFocusChange的注释
+
+注释上说了， 这个回调是activity被user看到的最佳时间点。
+
+![image-20201228161912701](https://i.loli.net/2020/12/28/yUTAPrROG3K4Yl8.png)
+
+不过 onWindowFocusChange 回调了之后， 也只是说明能响应 写死在xml 里面的内容了。
+那些依赖于接口 ，数据库的内容 还是没有加载的。
+
+如果需要看到指定的view的话， 那么可以使用  predrawListener来处理。
+
+
+
+onPreDraw()的调用时机是在 该ViewTree下的view的测量都完成了之后，准备开始绘制时来回调的。
+
+```java
+
+
+findViewById(R.id.root_container)
+    .getViewTreeObserver()
+    .addOnPreDrawListener();
+
+
+    /**
+     * Interface definition for a callback to be invoked when the view tree is about to be drawn.
+     */
+    public interface OnPreDrawListener {
+        /**
+         * Callback method to be invoked when the view tree is about to be drawn. At this point, all
+         * views in the tree have been measured and given a frame. Clients can use this to adjust
+         * their scroll bounds or even to request a new layout before drawing occurs.
+         *
+         * @return Return true to proceed with the current drawing pass, or false to cancel.
+         *
+         * @see android.view.View#onMeasure
+         * @see android.view.View#onLayout
+         * @see android.view.View#onDraw
+         */
+        public boolean onPreDraw();
+    }
+```
+
+
+
+
+
+
+
+所以启动的完整流程 是从
+appliation.onAttachBaseContext 开始，
+一直到 activity.onWindowFocusChange
+
+打点耗时统计eg.
+
+```java
+1.application:
+attachBaseContext:           0ms
+attachBaseContext-end:       13ms
+onCreate:                    85ms
+onCreate-end:                300ms
+
+2.MainActivity:                   
+onCreate:                    378ms
+onCreate-end:                667ms
+onResume-end:                777ms
+onWindowFocusChanged-end:    2s215ms   //xml渲染成view tree.用户可交互
+
+3.RecyclerView:BannerItem.onPreDrawCallback
+onFirtDraw:                  2s425ms  //response数据返回，第一帧开始渲染
+
+```
+
+
+
+
+
+#### 耗时方法统计的手段
+
+
+
+除了正常的 
+
+```
+System.nanoTime();
+```
+
+还可以利用TraceCompat.beginSection(...)
+
+```java
+class RecyclerView{
+  protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        TraceCompat.beginSection("sectin名称***");
+        dispatchLayout();
+        TraceCompat.endSection();
+    }
+}
+
+```
+
+然后用android sdk 内置的 python脚本来处理 
+
+```
+$ cd ANDROID_HOME/platform_tools/systrace //切换到systrace工作所在的目录
+
+$ python systrace.py -t 5 sched gfx view wm am app -a "org.devio.as.proj.main" -o start.html
+
+```
+
+然后会生成 一个html 文件
+
+html文件eg.
+
+![img](https://img.mukewang.com/wiki/5f9cfb750926fccf28781430.jpg)
+
+就可以用可视化的方式来观察启动信息了。
+
+
+
+
+
+#### 启动阶段白屏优化
+
+
+
+#### 异步并发启动框架
+
+
+
+![img](https://img.mukewang.com/wiki/5f9cfb8d09904b6611480876.jpg)
+
+对于初始化， 有些任务可能有依赖关系
+这时的异步启动框架需要考虑进去。
+
+
+
+
+
+
+
+
+
+### 响应速度优化
+
+![image-20201228111741341](https://i.loli.net/2020/12/28/bpmBivY4yd5Dw93.png)
+
+
+
+爱奇艺的xcrash的原理是在系统层 用c++去注册了sign的监听， 然后去获取堆栈信息 存储起来。
+
+
+
+### 内存优化
+
+
+
+
+
+
+
+# 其他
+
+## Apk加固原理
+
+![image-20201222113855520](https://i.loli.net/2020/12/22/tGnpDHKf9jSxIwA.png)
+
+
+
+
+
+![image-20201222114253174](https://i.loli.net/2020/12/22/lmqzQX1kOdWvDAU.png)
+
+
+
+![image-20201222113942507](https://i.loli.net/2020/12/22/hm78tICjsa4npqg.png)
+
+![img](https://img.mukewang.com/wiki/5f4e485d0956a96046441278.jpg)
+
+
+
+![image-20201222114214548](https://i.loli.net/2020/12/22/KzGDU7qQ1xClvLd.png)
+
+
 
 
 
