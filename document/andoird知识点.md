@@ -4024,6 +4024,14 @@ html文件eg.
 
 #### 启动阶段白屏优化
 
+```xml
+<!--  在主题里加入 windowBackground -->
+    <style name="LaunchTheme" parent="AppTheme">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@drawable/launch_splash</item>
+    </style>
+```
+
 
 
 #### 异步并发启动框架
@@ -4035,7 +4043,11 @@ html文件eg.
 对于初始化， 有些任务可能有依赖关系
 这时的异步启动框架需要考虑进去。
 
+![img](https://img.mukewang.com/wiki/5f9cfb96096d8b4311301040.jpg)
 
+需求就是完成这样的启动器。
+其中任务1,3,5完成之后 ，就拉起 activity.
+其他的任务继续在后台执行。
 
 
 

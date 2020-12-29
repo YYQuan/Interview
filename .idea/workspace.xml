@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e84021db-92be-427c-a582-b34f1cd46f79" name="Default" comment="update">
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/LeetCode_209.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/LeetCode_438.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/document/andoird知识点.md" beforeDir="false" afterPath="$PROJECT_DIR$/document/andoird知识点.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/document/interviewTips.md" beforeDir="false" afterPath="$PROJECT_DIR$/document/interviewTips.md" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -26,12 +27,12 @@
     <session id="546279935">
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="1976" />
+          <entry key="java" value="5668" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="1976" />
+          <entry key="JAVA" value="5668" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.lifecycle.project">
@@ -47,41 +48,25 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="java" value="6" />
+          <entry key="java" value="8" />
           <entry key="md" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="JAVA" value="6" />
+          <entry key="JAVA" value="8" />
           <entry key="Markdown" value="2" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.vcs.git.usages">
+        <counts>
+          <entry key="git.branch.merge" value="1" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dataStruct/src/com/yyqtest/mx/sort/QuickTwoWaysSort.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1598">
-              <caret line="94" column="34" selection-start-line="94" selection-start-column="34" selection-end-line="94" selection-end-column="34" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dataStruct/src/Main.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1904">
-              <caret line="115" column="25" selection-start-line="115" selection-start-column="25" selection-end-line="115" selection-end-column="25" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dataStruct/src/com/yyqtest/mx/sort/QuickThreeWaysSort.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -100,11 +85,32 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_209.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="293">
-              <caret line="54" lean-forward="true" selection-start-line="54" selection-end-line="54" />
+            <state relative-caret-position="11">
+              <caret line="60" lean-forward="true" selection-start-line="60" selection-end-line="60" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_438.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="168">
+              <caret line="114" column="16" selection-start-line="114" selection-start-column="16" selection-end-line="114" selection-end-column="16" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/java/lang/String.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="1957" column="18" selection-start-line="1957" selection-start-column="18" selection-end-line="1957" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -201,6 +207,7 @@
         <option value="$PROJECT_DIR$/dataStruct/src/com/yyqtest/mx/sort/QuickTwoWaysSort.java" />
         <option value="$PROJECT_DIR$/dataStruct/src/Main.java" />
         <option value="$PROJECT_DIR$/dataStruct/src/LeetCode_209.java" />
+        <option value="$PROJECT_DIR$/dataStruct/src/LeetCode_438.java" />
       </list>
     </option>
   </component>
@@ -211,8 +218,7 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="143" />
-    <option name="y" value="55" />
+    <option name="x" value="-8" />
     <option name="width" value="1587" />
     <option name="height" value="962" />
   </component>
@@ -244,45 +250,6 @@
               <item name="dataStruct" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="Interview" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Interview" type="462c0819:PsiDirectoryNode" />
-              <item name="dataStruct" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="mx" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Interview" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Interview" type="462c0819:PsiDirectoryNode" />
-              <item name="dataStruct" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="mx" type="462c0819:PsiDirectoryNode" />
-              <item name="sort" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Interview" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Interview" type="462c0819:PsiDirectoryNode" />
-              <item name="document" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Interview" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Interview" type="462c0819:PsiDirectoryNode" />
-              <item name="document" type="462c0819:PsiDirectoryNode" />
-              <item name="Mooc" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Interview" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Interview" type="462c0819:PsiDirectoryNode" />
-              <item name="document" type="462c0819:PsiDirectoryNode" />
-              <item name="Mooc" type="462c0819:PsiDirectoryNode" />
-              <item name="移动Master" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Interview" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Interview" type="462c0819:PsiDirectoryNode" />
-              <item name="document" type="462c0819:PsiDirectoryNode" />
-              <item name="面试题" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -293,7 +260,8 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1609151865262" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1609228038715" />
+    <property name="extract.method.default.visibility" value="private" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="settings.github" />
@@ -315,7 +283,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.LeetCode_209">
+  <component name="RunManager" selected="Application.LeetCode_438">
     <configuration name="LeetCode_209" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="src.LeetCode_209" />
       <module name="Interview" />
@@ -330,8 +298,8 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Main$ReadFile" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="src.Main$ReadFile" />
+    <configuration name="LeetCode_438" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="src.LeetCode_438" />
       <module name="Interview" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <extension name="coverage">
@@ -344,8 +312,8 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Main$TestSyn" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="src.Main$TestSyn" />
+    <configuration name="Main$ReadFile" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="src.Main$ReadFile" />
       <module name="Interview" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <extension name="coverage">
@@ -407,19 +375,19 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="Application.Main$TestSyn" />
       <item itemvalue="Application.Test" />
       <item itemvalue="Application.QuickTwoWaysSort" />
       <item itemvalue="Application.Main$ReadFile" />
       <item itemvalue="Application.LeetCode_209" />
+      <item itemvalue="Application.LeetCode_438" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.LeetCode_438" />
         <item itemvalue="Application.LeetCode_209" />
         <item itemvalue="Application.Main$ReadFile" />
         <item itemvalue="Application.QuickTwoWaysSort" />
         <item itemvalue="Application.Test" />
-        <item itemvalue="Application.Main$TestSyn" />
       </list>
     </recent_temporary>
   </component>
@@ -557,10 +525,10 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="49304000" />
+    <option name="totallyTimeSpent" value="66707000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="143" y="55" width="1587" height="962" extended-state="0" />
+    <frame x="-8" y="0" width="1587" height="962" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14734773" />
@@ -572,12 +540,12 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.23163138" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.3399751" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.34744707" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3399751" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Version Control" order="7" weight="0.3632236" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.5205479" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
@@ -670,17 +638,41 @@
           <properties />
           <option name="timeStamp" value="14" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/dataStruct/src/LeetCode_438.java</url>
+          <line>105</line>
+          <properties />
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/dataStruct/src/LeetCode_438.java</url>
+          <line>115</line>
+          <properties />
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
         <watch expression="r-l+1" language="JAVA" />
         <watch expression="minCurrentBound &gt;r-l+1" language="JAVA" />
+        <watch expression="s.substring(l,r+1)" language="JAVA" />
+        <watch expression="s.charAt(r)-'a'" language="JAVA" />
       </configuration>
     </watches-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="watch">
+      <expression>
+        <expression-string>s.charAt(r)-'a'</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>s.substring(l,r+1)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>minCurrentBound &gt;r-l+1</expression-string>
         <language-id>JAVA</language-id>
@@ -799,8 +791,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_209.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="293">
-          <caret line="54" lean-forward="true" selection-start-line="54" selection-end-line="54" />
+        <state relative-caret-position="11">
+          <caret line="60" lean-forward="true" selection-start-line="60" selection-end-line="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/java/lang/String.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="1957" column="18" selection-start-line="1957" selection-start-column="18" selection-end-line="1957" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_438.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="114" column="16" selection-start-line="114" selection-start-column="16" selection-end-line="114" selection-end-column="16" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
