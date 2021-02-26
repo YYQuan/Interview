@@ -1,3 +1,7 @@
+package src;
+
+import javafx.collections.transformation.SortedList;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,37 +11,42 @@ public class LeetCode_77 {
     public static void main(String[] args) {
         System.out.println("Hello World!");
         LeetCode_77  code = new LeetCode_77();
-        System.out.println(code.combine(4,2));
+        System.out.println(code.combine(3,3));
 
     }
 
+    // 击败 5
+    public List<List<Integer>> combine(int n, int k) {
 
-    List<List<Integer>> res = new ArrayList();
-    public List<List<Integer>> combine(int n ,int k ){
-        res = new ArrayList<List<Integer>>();
-        LinkedList<Integer> c  = new LinkedList();
-        solution(n,k,1,c);
-        return res;
-
+        List<List<Integer>> result = new ArrayList<>();
+        combine(n,k,new boolean[n+1],new ArrayList<>(),result);
+        return result;
     }
 
-    private void solution(int n ,int k ,int start ,LinkedList<Integer> c){
-        if(c.size() == k) {
-            res.add((List<Integer>) c.clone());
+    public void combine(int n, int k,boolean[] isReads,List<Integer> list , List<List<Integer>> lists) {
+
+        if(list.size()== k){
+
+            lists.add(list);
             return ;
-        }
+         }
 
-        // 核心在这
-        // 都从自己的后面取 能保证没有重复的。
-        // 但其实还是不太理解怎么就保证没重复的了
-        // 因为是组合 组合是不在乎 顺序的
-        // 比如 1-3-4 和 1-4-3
-
-        for(int i = start ;i<=n;i++){
-            c.addLast(i);
-            solution(n,k,i+1,c);
-//            这里实现回溯
-            c.removeLast();
+        int i = 1;
+        // 有值的时候， 只往后找 ，这样就能避免排列不同引起的多余解
+        if(list.size()>0){
+            i = list.get(list.size()-1);
         }
+         for( ; i<=n;i++){
+             boolean[] tmpReads = isReads.clone();
+             List<Integer> tmpList = new ArrayList<>(list);
+             if(!tmpReads[i]){
+                 tmpReads[i] = true;
+                 tmpList.add(i);
+                 combine(n,k,tmpReads,tmpList,lists);
+             }
+         }
     }
+
+
+
 }

@@ -2,14 +2,13 @@ package src;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
-public class LeetCode_51 {
+public class LeetCode_52 {
 
     public static void main(String[] args) {
 //        System.out.println("Hello World!");
-        LeetCode_51 solution = new LeetCode_51();
+        LeetCode_52 solution = new LeetCode_52();
 //        System.out.println(solution.solution(4));
 //        System.out.println(solution.solveNQueens(4));
 //        System.out.println(solution.solveNQueens(5));
@@ -28,6 +27,11 @@ public class LeetCode_51 {
 //        System.out.println(solution.solveNQueens(5).size());
 //        System.out.println(solution.solution(5).size());
 
+    }
+
+    // 直接用51 的方式来处理 击败 百分之5
+    public int totalNQueens(int n) {
+        return solveNQueens(n).size();
     }
 
     // 击败 百分之7

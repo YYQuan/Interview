@@ -1,76 +1,77 @@
-import java.util.ArrayList;
-import java.util.List;
+package src;
 
 public class LeetCode_200 {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
         LeetCode_200 code = new LeetCode_200();
-        char[][] ints  = {
 
-                {'1','1','1','1','0'},
-                {'1','1','0','1','0'},
-                {'1','1','0','0','0'},
-                {'0','0','0','0','0'}
-        };
+        char[][] chars = new char[4][];
+//        chars[0]=new char[]{'A','B','C','E'};
+//        chars[1]=new char[]{'S','F','C','S'};
+//        chars[2]=new char[]{'A','D','E','E'};
+
+        chars[0]=new char[]{'1','1','1','1','0'};
+        chars[1]=new char[]{'1','1','0','1','0'};
+        chars[2]=new char[]{'1','1','0','0','0'};
+        chars[3]=new char[]{'0','0','0','0','0'};
 
 
-
-        System.out.println(code.numIslands(ints));
+//        System.out.println(code.exist(chars,"ABCCED"));
+//        System.out.println(code.exist(chars,"SEE"));
+//        System.out.println(code.exist(chars,"ABCB"));
+        System.out.println(code.numIslands(chars));
 
     }
 
-
-    boolean[][]  isVisited ;
-    int m ; //行数
-    int n ;// 列数
+    //击败91
     public int numIslands(char[][] grid) {
+        boolean[][] isReads = new boolean[grid.length][grid[0].length];
+        return numIslands(grid,isReads);
+    }
+    public int numIslands(char[][] grid,boolean[][] isReads) {
 
-        if(grid == null || grid.length == 0 ||grid[0].length == 0) return 0;
+        int result = 0 ;
+        for(int i = 0 ; i<grid.length;i++){
+            for(int j = 0 ; j<grid[0].length;j++){
 
-        m  = grid.length; //行数
-        n  = grid[0].length;// 列数
-
-
-        isVisited = new boolean[m][n];
-
-        int result = 0;
-        for(int i = 0 ;i<m ;i++)
-            for(int j = 0 ; j<n;j++)
-                if(isArea(i,j)&&grid[i][j]=='1'&&!isVisited[i][j]) {
-                    System.out.println("-- i "+i +"  -- j "+ j );
-
-                    handle(grid,i,j);
+                if(grid[i][j] == '1'){
+                    if(isReads[i][j]) continue;
+                    expandIsland(grid,isReads,i,j);
                     result++;
                 }
-
-        return  result;
-    }
-
-
-    int[][]  d = {{-1,0},{0,+1},{1,0},{0,-1}};
-
-
-    private void handle(char[][] grid,int i, int j) {
-
-        if(!isArea(i,j)) return;
-
-        if(isVisited[i][j]) return;
-
-        if(grid[i][j] == '0') return;
-
-        isVisited[i][j] = true;
-
-        for(int p = 0 ; p<4;p++) {
-            int newi = i + d[p][0];
-            int newj = j + d[p][1];
-            handle(grid,newi,newj);
+            }
         }
-    }
-
-    private boolean isArea(int i ,int j){
-        return  i>=0 &&j>=0 &&i<m&&j<n;
+        return result;
     }
 
 
+    void expandIsland(char[][] grid ,boolean[][] isReads,int i , int j){
+        isReads[i][j] = true;
+
+        //左上右下
+        if(j>0){
+            if(grid[i][j-1] =='1'&&!isReads[i][j-1]){
+                expandIsland(grid,isReads,i,j-1);
+            }
+        }
+
+        if(i>0){
+            if(grid[i-1][j] =='1'&&!isReads[i-1][j]){
+                expandIsland(grid,isReads,i-1,j);
+            }
+        }
+
+        if(j<grid[0].length-1){
+            if(grid[i][j+1] =='1'&&!isReads[i][j+1]){
+                expandIsland(grid,isReads,i,j+1);
+            }
+        }
+
+        if(i<grid.length-1){
+            if(grid[i+1][j] =='1'&&!isReads[i+1][j]){
+                expandIsland(grid,isReads,i+1,j);
+            }
+        }
+
+    }
 }

@@ -1,30 +1,29 @@
 package src;
 
-import src.TreeNodeUtil.TreeNode;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class LeetCode_46 {
+public class LeetCode_47 {
 
     public static void main(String[] args) {
-        LeetCode_46 code = new LeetCode_46();
+        LeetCode_47 code = new LeetCode_47();
 //        int[] ints = new int[]{236,104,701,227,911};
-        int[] ints = new int[]{1,2,3};
+        int[] ints = new int[]{1,1,2};
 
 //        TreeNode  result = code.lowestCommonAncestor(head,new TreeNode(2),new TreeNode(8));
 
 //        List<String> result = code.restoreIpAddresses("25525511135");
 //        List<String> result = code.restoreIpAddresses("010010");
 //        boolean result = code.isIllegat("01010");
-        List<List<Integer>>  result = code.permute(ints);
+        List<List<Integer>>  result = code.permuteUnique(ints);
 
         System.out.println(result);
 //        TreeNodeUtil.printOrderTree(result);
     }
 
-    // 击败百分之10
-    public List<List<Integer>> permute(int[] nums) {
+
+    // 击败 5
+    public List<List<Integer>> permuteUnique(int[] nums) {
         List<List<Integer>> result = new ArrayList<>();
         permute(nums,new boolean[nums.length],new ArrayList<>(),result);
         return result;
@@ -41,7 +40,9 @@ public class LeetCode_46 {
         }
 
         if(isReadAll){
-            lists.add(list);
+            if(!lists.contains(list)) {
+                lists.add(list);
+            }
             return;
         }
 
