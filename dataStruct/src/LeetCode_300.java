@@ -1,3 +1,5 @@
+package src;
+
 import java.util.Arrays;
 
 public class LeetCode_300 {
@@ -7,7 +9,10 @@ public class LeetCode_300 {
 //        int[] ints =new int[] {10,11,2};
 //        System.out.println(new LeetCode_300().solution2(
 //                ints));
-        int nums1[] = {10, 9, 2, 5, 3, 7, 101, 18};
+//        int nums1[] = {10, 9, 2, 5, 3, 7, 101, 18};
+//        int nums1[] = {0,1,0,3,2,3};
+//        int nums1[] = {4,10,4,3,8,9};
+        int nums1[] = {1,3,6,7,9,4,10,5,6};
         // 4
         int nums2[] = {4, 10, 4, 3, 8, 9};
         // 3
@@ -19,32 +24,14 @@ public class LeetCode_300 {
         // 6
 
 
-//
-//        System.out.println((new  LeetCode_300().lengthOfLIS(nums1)));
-//        System.out.println((new  LeetCode_300().lengthOfLIS(nums2)));
-//        System.out.println((new  LeetCode_300().lengthOfLIS(nums3)));
-//        System.out.println((new  LeetCode_300().lengthOfLIS(nums4)));
-//        System.out.println((new  LeetCode_300().lengthOfLIS(nums5)));
-//
-//        System.out.println((new  LeetCode_300().solution2(nums1)));
-//        System.out.println((new  LeetCode_300().solution2(nums2)));
-//        System.out.println((new  LeetCode_300().solution2(nums3)));
-//        System.out.println((new  LeetCode_300().solution2(nums4)));
-//        System.out.println((new  LeetCode_300().solution2(nums5)));
-
-
-
-//        System.out.println((new  LeetCode_300().solution(nums1)));
-//        System.out.println((new  LeetCode_300().solution(nums2)));
-//        System.out.println((new  LeetCode_300().solution(nums3)));
-//        System.out.println((new  LeetCode_300().solution(nums4)));
-//        System.out.println((new  LeetCode_300().solution(nums5)));
 
         System.out.println((new  LeetCode_300().solutionDync(nums1)));
-        System.out.println((new  LeetCode_300().solutionDync(nums2)));
-        System.out.println((new  LeetCode_300().solutionDync(nums3)));
-        System.out.println((new  LeetCode_300().solutionDync(nums4)));
-        System.out.println((new  LeetCode_300().solutionDync(nums5)));
+        System.out.println((new  LeetCode_300().lengthOfLISD(nums1)));
+
+//        System.out.println((new  LeetCode_300().solutionDync(nums2)));
+//        System.out.println((new  LeetCode_300().solutionDync(nums3)));
+//        System.out.println((new  LeetCode_300().solutionDync(nums4)));
+//        System.out.println((new  LeetCode_300().solutionDync(nums5)));
 
 
 
@@ -52,6 +39,31 @@ public class LeetCode_300 {
     }
 
 
+    // 击败73
+    public int lengthOfLISD(int[] nums) {
+
+        int[] dp  = new  int[nums.length];
+
+        dp[0] = 1;
+//        int nums1[] = {1,3,6,7,9,4,10,5,6};
+
+        for(int i = 1 ; i<nums.length;i++){
+            int max = 1;
+            for(int j = i-1 ;j>=0;j--){
+                if(nums[i]>nums[j]){
+                    max = Math.max(max , dp[j]+1);
+                }
+            }
+            dp[i] = max;
+        }
+
+        int result = 0;
+        for(int value :dp){
+            result = Math.max(result,value);
+        }
+        return result;
+
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

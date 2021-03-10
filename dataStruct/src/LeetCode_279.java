@@ -24,9 +24,58 @@ public class LeetCode_279 {
 //        List<Integer> result =code.rightSideView(node1);
 
 //        System.out.println(code.numSquares(13));
-        System.out.println(code.numSquares2(13));
+        System.out.println(code.numSquares2(56));
+        System.out.println(code.numSquaresMyself(56));
+        System.out.println(code.numSquaresMyselfD(56));
 
     }
+
+
+    // 动态规划
+    // 击败 82
+    public int numSquaresMyselfD(int n) {
+        if(n == 1 ) return 1;
+        if(n == 2 ) return 2;
+        int[] ints = new int[n+1];
+        Arrays.fill(ints,-1);
+        ints[1] = 1;
+        ints[2] = 2;
+        a:for(int i  = 3 ;i<n+1;i++){
+            boolean isOne =  false;
+            int min = Integer.MAX_VALUE;
+            for(int j = 1;j*j<=i;j++){
+                if(j*j == i){
+                    ints[i] = 1;
+                    continue  a;
+                }
+                min = Math.min(min,1+ints[i-j*j]);
+            }
+            ints[i] = min;
+        }
+        return ints[n];
+
+    }
+
+    // 普通递归
+    // f(n) =  Math.min(result , 1+f(n-i^2));
+    public int numSquaresMyself(int n) {
+
+        if(n == 1 ) return 1;
+        if(n == 2 ) return 2;
+
+        int result = Integer.MAX_VALUE;
+
+        for(int i = 1 ; i*i <= n ;i++){
+            if(i*i == n ) return 1;
+            result = Math.min( 1+numSquaresMyself(n-i*i),result);
+
+        }
+        return result;
+
+    }
+
+
+
 
     // 解法 1 时间复杂度是 2^n   一个裂成了多个 复杂度就是幂函数
     public int numSquares(int n) {
@@ -86,7 +135,7 @@ public class LeetCode_279 {
     }
 
 
-        public static class TreeNode {
+    public static class TreeNode {
         int val;
         TreeNode left;
         TreeNode right;
