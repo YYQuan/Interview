@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e84021db-92be-427c-a582-b34f1cd46f79" name="Default" comment="算法专题基本 over">
-      <change afterPath="$PROJECT_DIR$/java/src/Test.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+    <list default="true" id="e84021db-92be-427c-a582-b34f1cd46f79" name="Default" comment="update 面试资料">
+      <change afterPath="$PROJECT_DIR$/java/src/StringTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/interviewTips.md" beforeDir="false" afterPath="$PROJECT_DIR$/document/interviewTips.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/document/java/java基础.md" beforeDir="false" afterPath="$PROJECT_DIR$/document/java/java基础.md" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -44,15 +43,15 @@
     <session id="546279935">
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="dummy" value="4" />
-          <entry key="java" value="107642" />
-          <entry key="txt" value="31" />
+          <entry key="dummy" value="8" />
+          <entry key="java" value="108336" />
+          <entry key="txt" value="43" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="107642" />
-          <entry key="PLAIN_TEXT" value="35" />
+          <entry key="JAVA" value="108336" />
+          <entry key="PLAIN_TEXT" value="51" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.lifecycle.project">
@@ -61,8 +60,9 @@
           <entry key="project.open.time.120" value="1" />
           <entry key="project.open.time.138" value="1" />
           <entry key="project.open.time.15" value="1" />
+          <entry key="project.open.time.151" value="1" />
           <entry key="project.open.time.274" value="1" />
-          <entry key="project.open.time.46" value="1" />
+          <entry key="project.open.time.46" value="2" />
           <entry key="project.open.time.59" value="1" />
           <entry key="project.open.time.62" value="1" />
           <entry key="project.open.time.64" value="2" />
@@ -72,19 +72,19 @@
           <entry key="project.open.time.73" value="1" />
           <entry key="project.open.time.74" value="1" />
           <entry key="project.open.time.99" value="1" />
-          <entry key="project.opened" value="16" />
+          <entry key="project.opened" value="18" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="java" value="142" />
+          <entry key="java" value="147" />
           <entry key="md" value="4" />
           <entry key="xml" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="JAVA" value="142" />
+          <entry key="JAVA" value="147" />
           <entry key="Markdown" value="4" />
           <entry key="XML" value="1" />
         </counts>
@@ -98,36 +98,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_139.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="697">
-              <caret line="44" column="12" selection-start-line="44" selection-start-column="12" selection-end-line="44" selection-end-column="12" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_494.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="595">
-              <caret line="38" column="25" selection-start-line="38" selection-start-column="25" selection-end-line="38" selection-end-column="25" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_300.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="697">
-              <caret line="41" column="11" selection-start-line="41" selection-start-column="11" selection-end-line="41" selection-end-column="11" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_376.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -153,16 +123,55 @@
         <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_90.java">
           <provider selected="true" editor-type-id="text-editor">
             <state>
-              <caret column="12" lean-forward="true" selection-start-column="12" selection-end-column="12" />
+              <caret column="12" selection-start-column="12" selection-end-column="12" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/java/src/Test.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="15" column="41" selection-start-line="15" selection-start-column="41" selection-end-line="15" selection-end-column="41" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/com/sun/corba/se/spi/orbutil/threadpool/ThreadPoolManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="102">
+              <caret line="29" column="17" selection-start-line="29" selection-start-column="17" selection-end-line="29" selection-end-column="17" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/java/util/concurrent/Executors.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="189">
+              <caret line="215" column="29" selection-start-line="215" selection-start-column="29" selection-end-line="215" selection-end-column="29" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/java/src/Test.java">
+        <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/java/util/concurrent/ThreadPoolExecutor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="18" column="5" lean-forward="true" selection-start-line="18" selection-start-column="5" selection-end-line="18" selection-end-column="5" />
+            <state relative-caret-position="228">
+              <caret line="1196" column="29" selection-start-line="1196" selection-start-column="21" selection-end-line="1196" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/java/src/StringTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="238">
+              <caret line="17" column="66" selection-start-line="17" selection-start-column="66" selection-end-line="17" selection-end-column="66" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -170,7 +179,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/java/util/HashMap.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="509">
+            <state relative-caret-position="11662">
               <caret line="731" column="38" selection-start-line="731" selection-start-column="32" selection-end-line="731" selection-end-column="38" />
             </state>
           </provider>
@@ -179,8 +188,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/java/lang/String.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="32062">
-              <caret line="1957" column="18" selection-start-line="1957" selection-start-column="18" selection-end-line="1957" selection-end-column="18" />
+            <state relative-caret-position="52037">
+              <caret line="3166" column="25" selection-start-line="3166" selection-start-column="25" selection-end-line="3166" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -250,8 +259,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/dataStruct/src/LeetCode_437.java" />
-        <option value="$PROJECT_DIR$/dataStruct/src/LeetCode_783.java" />
         <option value="$PROJECT_DIR$/dataStruct/src/LeetCode_235.java" />
         <option value="$PROJECT_DIR$/dataStruct/src/LeetCode_98.java" />
         <option value="$PROJECT_DIR$/dataStruct/src/LeetCode_450.java" />
@@ -301,6 +308,8 @@
         <option value="$PROJECT_DIR$/java/src/duotai.java" />
         <option value="$PROJECT_DIR$/dataStruct/src/duotai.java" />
         <option value="$PROJECT_DIR$/java/src/Test.java" />
+        <option value="$PROJECT_DIR$/java/src/String2.java" />
+        <option value="$PROJECT_DIR$/java/src/StringTest.java" />
       </list>
     </option>
   </component>
@@ -316,8 +325,296 @@
       <select />
     </treeState>
   </component>
+  <component name="NodePackageJsonFileManager">
+    <packageJsonPaths>
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/align-text/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/amdefine/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/ansi-red/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/ansi-regex/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/ansi-styles/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/ansi-wrap/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/argparse/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/asn1/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/assert-plus/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/async/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/autolinker/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/aws-sign2/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/balanced-match/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/bcrypt-pbkdf/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/bindings/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/bl/node_modules/readable-stream/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/bl/node_modules/string_decoder/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/bl/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/boolbase/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/boom/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/brace-expansion/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/camelcase/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/caseless/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/center-align/node_modules/lazy-cache/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/center-align/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/chalk/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/cheerio/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/clipboard/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/cliui/node_modules/wordwrap/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/cliui/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/coffee-script/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/colors/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/combined-stream/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/commander/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/concat-map/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/concat-stream/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/core-util-is/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/cryptiles/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/css-select/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/css-what/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/cycle/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/dashdash/node_modules/assert-plus/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/dashdash/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/debug/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/decamelize/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/delayed-stream/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/delegate/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/diacritics-map/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/dnode-protocol/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/dnode/example/shoe/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/dnode/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/dom-serializer/node_modules/domelementtype/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/dom-serializer/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/domelementtype/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/domhandler/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/domutils/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/ecc-jsbn/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/emojify.js/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/entities/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/escape-string-regexp/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/esprima/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/expand-range/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/extend-shallow/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/extend/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/extract-zip/node_modules/concat-stream/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/extract-zip/node_modules/minimist/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/extract-zip/node_modules/mkdirp/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/extract-zip/node_modules/readable-stream/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/extract-zip/node_modules/string_decoder/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/extract-zip/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/extsprintf/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/eyes/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/faye-websocket/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/fd-slicer/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/fill-range/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/for-in/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/forever-agent/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/form-data/node_modules/async/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/form-data/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/fs-extra/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/fs.realpath/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/generate-function/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/generate-object-property/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/getpass/node_modules/assert-plus/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/getpass/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-3-ba/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-ace/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-advanced-emoji/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-anchor-navigation-ex/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-anchors/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-disqus/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-donate/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-edit-link/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-emphasize/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-expandable-chapters-small/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-favicon/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-github-buttons/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-github/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-include-codeblock/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-katex/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-local-video/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-mermaid/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-prism-themes/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-prism/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-search-plus/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-sectionx/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-simple-page-toc/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-sitemap-general/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-splitter/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-tbfed-pagefooter/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-todo/node_modules/cheerio/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-todo/node_modules/css-select/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-todo/node_modules/css-what/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-todo/node_modules/domhandler/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-todo/node_modules/domutils/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-todo/node_modules/htmlparser2/node_modules/domutils/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-todo/node_modules/htmlparser2/node_modules/entities/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-todo/node_modules/htmlparser2/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-todo/node_modules/isarray/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-todo/node_modules/lodash/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-todo/node_modules/readable-stream/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-todo/node_modules/string_decoder/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-todo/node_modules/underscore/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gitbook-plugin-todo/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/github-slugid/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/glob/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/good-listener/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/graceful-fs/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/gray-matter/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/handlebars/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/har-validator/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/has-ansi/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/hasha/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/hawk/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/highlight.js/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/hoek/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/html-entities/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/html-escape/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/htmlparser2/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/http-signature/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/inflight/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/inherits/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/is-buffer/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/is-extendable/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/is-my-json-valid/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/is-number/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/is-property/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/is-stream/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/is-typedarray/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/isarray/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/isexe/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/isobject/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/isstream/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/js-yaml/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/jsbn/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/json-schema/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/json-stringify-safe/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/jsonfile/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/jsonify/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/jsonpointer/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/jsprim/node_modules/assert-plus/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/jsprim/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/katex/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/kew/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/kind-of/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/klaw/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/language-map/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/lazy-cache/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/list-item/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/lodash.assignin/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/lodash.bind/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/lodash.defaults/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/lodash.filter/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/lodash.flatten/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/lodash.foreach/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/lodash.map/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/lodash.merge/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/lodash.pick/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/lodash.reduce/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/lodash.reject/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/lodash.some/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/lodash/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/longest/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/markdown-link/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/markdown-toc/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/match-at/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/mime-db/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/mime-types/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/minimatch/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/minimist/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/mixin-deep/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/mkdirp/node_modules/minimist/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/mkdirp/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/moment/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/nan/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/nan/tools/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/node-uuid/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/nth-check/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/oauth-sign/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/object.pick/node_modules/isobject/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/object.pick/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/once/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/optimist/node_modules/minimist/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/optimist/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/path-is-absolute/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/pend/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/phantom/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/phantomjs/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/pinkie-promise/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/pinkie/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/prism-themes/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/prismjs/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/process-nextick-args/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/progress/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/q/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/qs/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/randomatic/node_modules/is-number/node_modules/kind-of/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/randomatic/node_modules/is-number/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/randomatic/node_modules/kind-of/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/randomatic/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/readable-stream/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/remarkable/node_modules/argparse/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/remarkable/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/repeat-element/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/repeat-string/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/request-progress/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/request/node_modules/node-uuid/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/request/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/right-align/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/rimraf/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/safe-buffer/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/select/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/set-getter/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/shoe/example/dnode/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/shoe/example/invert/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/shoe/node_modules/sockjs-client/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/shoe/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/sitemap/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/sntp/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/sockjs/examples/echo/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/sockjs/examples/express-3.x/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/sockjs/examples/express/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/sockjs/examples/multiplex/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/sockjs/examples/test_server/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/sockjs/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/source-map/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/sprintf-js/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/sshpk/node_modules/assert-plus/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/sshpk/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/stack-trace/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/string_decoder/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/stringstream/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/strip-ansi/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/strip-color/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/supports-color/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/throttleit/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/tiny-emitter/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/to-object-path/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/toml/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/tough-cookie/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/traverse/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/tunnel-agent/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/tweetnacl/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/typedarray/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/uglify-js/node_modules/source-map/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/uglify-js/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/uglify-to-browserify/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/underscore.string/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/underscore/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/url-join/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/util-deprecate/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/verror/node_modules/assert-plus/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/verror/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/weak/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/which/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/win-spawn/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/window-size/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/winston-color/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/winston/node_modules/async/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/winston/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/wordwrap/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/wrappy/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/xtend/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/yargs/package.json" />
+      <path value="$PROJECT_DIR$/document/网络资料/android_interview-master/node_modules/yauzl/package.json" />
+    </packageJsonPaths>
+  </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-9" />
     <option name="width" value="1175" />
     <option name="height" value="869" />
   </component>
@@ -329,6 +626,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -344,13 +642,13 @@
             <path>
               <item name="Interview" type="b2602c69:ProjectViewProjectNode" />
               <item name="Interview" type="462c0819:PsiDirectoryNode" />
-              <item name="dataStruct" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Interview" type="b2602c69:ProjectViewProjectNode" />
               <item name="Interview" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -358,14 +656,13 @@
       </pane>
       <pane id="AndroidView" />
       <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="SearchEverywhereHistoryKey" value="HashMap&#9;PSI&#9;JAVA://java.util.HashMap" />
+    <property name="SearchEverywhereHistoryKey" value="newcac&#9;PSI&#9;JAVA://java.util.concurrent.Executors#newCachedThreadPool&#10;cachedThreadPool&#9;PSI&#9;JAVA://com.sun.corba.se.spi.orbutil.threadpool.ThreadPoolManager&#10;HashMap&#9;PSI&#9;JAVA://java.util.HashMap" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1615458715511" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1616095212117" />
     <property name="extract.method.default.visibility" value="private" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -376,6 +673,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="" />
       <recent name="src" />
     </key>
   </component>
@@ -391,7 +689,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.Test">
+  <component name="RunManager" selected="Application.StringTest">
     <configuration name="LeetCode_300" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="src.LeetCode_300" />
       <module name="Interview" />
@@ -420,16 +718,10 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="LeetCode_494" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="src.LeetCode_494" />
-      <module name="Interview" />
+    <configuration name="StringTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="StringTest" />
+      <module name="java" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="src.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -477,19 +769,19 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="Application.LeetCode_494" />
       <item itemvalue="Application.LeetCode_300" />
       <item itemvalue="Application.LeetCode_376" />
       <item itemvalue="Application.duotai" />
       <item itemvalue="Application.Test" />
+      <item itemvalue="Application.StringTest" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.StringTest" />
         <item itemvalue="Application.Test" />
         <item itemvalue="Application.duotai" />
         <item itemvalue="Application.LeetCode_376" />
         <item itemvalue="Application.LeetCode_300" />
-        <item itemvalue="Application.LeetCode_494" />
       </list>
     </recent_temporary>
   </component>
@@ -527,7 +819,9 @@
       <workItem from="1614413280808" duration="6745000" />
       <workItem from="1614562019179" duration="1115000" />
       <workItem from="1614563238592" duration="109928000" />
-      <workItem from="1615358704701" duration="5627000" />
+      <workItem from="1615358704701" duration="155267000" />
+      <workItem from="1615788019498" duration="6945000" />
+      <workItem from="1616058963134" duration="984000" />
     </task>
     <task id="LOCAL-00001" summary="update">
       <created>1603065137201</created>
@@ -774,17 +1068,23 @@
       <option name="project" value="LOCAL" />
       <updated>1615347111347</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="update 面试资料">
+      <created>1615459527002</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1615459527002</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="543305000" />
+    <option name="totallyTimeSpent" value="700874000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="0" width="1175" height="869" extended-state="0" />
-    <editor active="true" />
+    <frame x="0" y="0" width="1175" height="869" extended-state="0" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25112107" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2600897" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -792,8 +1092,8 @@
       <window_info id="UI Designer" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32805756" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.22676057" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32676056" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.22676057" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.40985915" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -856,7 +1156,8 @@
     <MESSAGE value="update" />
     <MESSAGE value="回溯  专题 over" />
     <MESSAGE value="算法专题基本 over" />
-    <option name="LAST_COMMIT_MESSAGE" value="算法专题基本 over" />
+    <MESSAGE value="update 面试资料" />
+    <option name="LAST_COMMIT_MESSAGE" value="update 面试资料" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1468,6 +1769,12 @@
           <properties />
           <option name="timeStamp" value="254" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/java/src/StringTest.java</url>
+          <line>68</line>
+          <properties />
+          <option name="timeStamp" value="255" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
@@ -1550,41 +1857,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_93.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="25" column="11" selection-start-line="25" selection-start-column="11" selection-end-line="25" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_131.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="84">
-          <caret line="32" column="12" selection-start-line="32" selection-start-column="12" selection-end-line="32" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_46.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="223">
-          <caret line="58" selection-start-line="26" selection-start-column="2" selection-end-line="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_47.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="291">
-          <caret line="34" column="15" selection-start-line="34" selection-start-column="15" selection-end-line="34" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/javafx-src.zip!/javafx/collections/transformation/SortedList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="73" column="11" selection-start-line="73" selection-start-column="11" selection-end-line="73" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_77.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="563">
@@ -1838,16 +2110,28 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="408">
           <caret line="25" selection-start-line="25" selection-end-line="25" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#findMaxFormD#0;class#LeetCode_474#0" />
-            <element signature="method#calculatorCount#0;class#LeetCode_474#0" />
-            <element signature="method#findMaxForm#0;class#LeetCode_474#0" />
-            <element signature="method#findMaxForm#1;class#LeetCode_474#0" />
-          </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/document/Tips.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="289">
+            <caret line="17" selection-start-line="17" selection-end-line="17" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/document/andoird知识点.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dataStruct/src/duotai.java" />
     <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_139.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="697">
@@ -1858,6 +2142,7 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/java/src/String2.java" />
     <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_494.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="595">
@@ -1889,56 +2174,62 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/java/lang/String.java">
+    <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_90.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="32062">
-          <caret line="1957" column="18" selection-start-line="1957" selection-start-column="18" selection-end-line="1957" selection-end-column="18" />
+        <state>
+          <caret column="12" selection-start-column="12" selection-end-column="12" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/document/Tips.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="289">
-            <caret line="17" selection-start-line="17" selection-end-line="17" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/document/andoird知识点.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor />
-          <second_editor />
+    <entry file="file://$PROJECT_DIR$/java/src/StringTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="17" column="66" selection-start-line="17" selection-start-column="66" selection-end-line="17" selection-end-column="66" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/java/util/HashMap.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="509">
+        <state relative-caret-position="11662">
           <caret line="731" column="38" selection-start-line="731" selection-start-column="32" selection-end-line="731" selection-end-column="38" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dataStruct/src/duotai.java">
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/java/lang/String.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="20" column="5" selection-start-line="5" selection-end-line="20" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dataStruct/src/LeetCode_90.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="12" lean-forward="true" selection-start-column="12" selection-end-column="12" />
+        <state relative-caret-position="52037">
+          <caret line="3166" column="25" selection-start-line="3166" selection-start-column="25" selection-end-line="3166" selection-end-column="25" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/java/src/Test.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="5" lean-forward="true" selection-start-line="18" selection-start-column="5" selection-end-line="18" selection-end-column="5" />
+        <state relative-caret-position="255">
+          <caret line="15" column="41" selection-start-line="15" selection-start-column="41" selection-end-line="15" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/com/sun/corba/se/spi/orbutil/threadpool/ThreadPoolManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="29" column="17" selection-start-line="29" selection-start-column="17" selection-end-line="29" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/java/util/concurrent/Executors.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="215" column="29" selection-start-line="215" selection-start-column="29" selection-end-line="215" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/java/util/concurrent/ThreadPoolExecutor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="1196" column="29" selection-start-line="1196" selection-start-column="21" selection-end-line="1196" selection-end-column="29" />
         </state>
       </provider>
     </entry>

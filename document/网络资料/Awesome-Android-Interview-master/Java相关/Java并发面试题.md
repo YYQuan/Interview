@@ -22,7 +22,7 @@ Java有四种线程池：
                                     60L, TimeUnit.SECONDS,
                                     new SynchronousQueue<Runnable>());
     }
-    
+
 可缓存线程池：
 
 1、线程数无限制。
@@ -41,7 +41,7 @@ Java有四种线程池：
                                     new LinkedBlockingQueue<Runnable>(),
                                     threadFactory);
     }
-    
+
 定长线程池：
 
 1、可控制线程最大并发数（同时执行的线程数）。
@@ -72,7 +72,7 @@ Java有四种线程池：
     public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize) {
         return new ScheduledThreadPoolExecutor(corePoolSize);
     }
-    
+
 注意：前三种线程池是ThreadPoolExecutor不同配置的实例，最后一种是ScheduledThreadPoolExecutor的实例。
 
 
@@ -85,7 +85,7 @@ Java有四种线程池：
     2、如果正在运行的线程数 >= coreSize，把该task放入阻塞队列；
     3、如果队列已满 && 正在运行的线程数 < maximumPoolSize，创建新的非核心线程执行该task；
     4、如果队列已满 && 正在运行的线程数 >= maximumPoolSize，线程池调用handler的reject方法拒绝本次提交。
-    
+
 理解记忆：1-2-3-4对应（核心线程->阻塞队列->非核心线程->handler拒绝提交）。
 
 ##### 线程池的线程复用：
@@ -200,15 +200,15 @@ synchronized修饰普通方法或代码块获取的是对象锁。这种机制�
 它俩是不冲突的，也就是说：获取了类锁的线程和获取了对象锁的线程是不冲突的！
 
     public class Widget {
-
+    
         // 锁住了
         public synchronized void doSomething() {
             ...
         }
     }
-
+    
     public class LoggingWidget extends Widget {
-
+    
         // 锁住了
         public synchronized void doSomething() {
             System.out.println(toString() + ": calling doSomething");
@@ -257,7 +257,7 @@ synchronized修饰普通方法或代码块获取的是对象锁。这种机制�
 锁状态 | 无法判断 | 可以判断 |
 锁类型 | 可重入 不可中断 非公平	| 可重入 可判断 可公平（两者皆可） |
 性能 | 少量同步 | 大量同步 |
-    
+
 Lock（ReentrantLock）的底层实现主要是Volatile + CAS（乐观锁），而Synchronized是一种悲观锁，比较耗性能。但是在JDK1.6以后对Synchronized的锁机制进行了优化，加入了偏向锁、轻量级锁、自旋锁、重量级锁，在并发量不大的情况下，性能可能优于Lock机制。所以建议一般请求并发量不大的情况下使用synchronized关键字。
 
 
@@ -311,9 +311,9 @@ Java内存模型规定了所有字段（这些字段包括实例字段、静态�
 举个例子：
 
     private volatile int start = 0;
-
+    
     private void volatile Keyword() {
-
+    
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -322,7 +322,7 @@ Java内存模型规定了所有字段（这些字段包括实例字段、静态�
                 }
             }
         };
-
+    
         for (int i = 0; i < 10; i++) {
             Thread thread = new Thread(runnable);
             thread.start();
@@ -440,7 +440,7 @@ synchronized：当某个线程访问被synchronized标记的方法或代码块�
             return instance;
         }
     }
-    
+
 这是一个经典的DCL单例。
 
 它的字节码如下：
@@ -515,7 +515,7 @@ CopyOnWriteArrayList这是一个ArrayList的线程安全的变体，CopyOnWriteA
 
 3、实时性要求不高，为什么，因为有可能会读取到旧的集合数据。
 
-    
+
 #### 3、ConcurrentHashMap加锁机制是什么，详细说一下？
 
 ##### Java7 ConcurrentHashMap
@@ -589,7 +589,7 @@ ConcurrentHashMap 初始化的时候会初始化第一个槽 segment[0]，对于
             }
         }
     }
-    
+
 造成死锁的四个条件：
 
 - 互斥条件：一个资源每次只能被一个线程使用。
@@ -832,7 +832,7 @@ JDK 1.5 以后的 AtomicStampedReference 类一定程度上解决了这个问题
 Run方法运行结束，
 此线程终止，
 而CPU再运行其它线程，在Android中一般是主线程。
- 
+
 2.run()方法当作普通方法的方式调用，程序还是要顺序执行，还是要等待run方法体执行完毕后才可继续执行下面的代码：
 
 而如果直接用Run方法，
