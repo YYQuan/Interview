@@ -168,7 +168,39 @@ Tips:
 
 
 
+### ABA问题
 
+以栈的头节点为例子
+
+
+stack: visuaHhead -> node1 ->node2 -> node3
+
+Thread1 :   读 stack head   为 node1 
+Thread2:    读stack head   为 node1 
+Thread1： 准备移除node1 
+（期望结果 ：  visualHead -> node2 -> node3 ）
+Thread2  :  准备移除node1
+（期望结果 ：  visualHead -> node2 -> node3 ）
+
+Thread1:  执行 cas 操作 把 node1 移除了
+此时：stack: visualHead -> node2 ->node3
+
+Thread3:  读 stack head 为 node2
+Thread3:  把 node1-> node3  插入 stack 头中
+此时： stack :visualHead -> node1 -> node3 -> node2
+
+Thread2:  发现内存里面 的头是 node1 就继续执行cas操作
+此时： statck visualHead -> node3 ->node2
+
+实际上和Thread2 的预期并不一致。
+也不是Thread3的预期
+
+
+
+### Java解决ABA问题的方式
+
+java 提供了  类 在原子操作的后面加上执行序号。
+以原子操作的序号来判定执行是否有效， 是否该被继续执行。
 
 
 
