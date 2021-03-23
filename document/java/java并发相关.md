@@ -108,7 +108,7 @@ Java是采用了用户线程 映射 到内核线程的方案的。  一般映射
 
 ## CAS和原子操作
 
-
+### 原子操作
 
 原子操作是 指CPU 不可分割的一个操作
 
@@ -122,18 +122,85 @@ i++;  // 不是 i++ 是三个原子操作结合而成的，
 
 
 
+### CAS指令
+
+CAS 的 指定cpu以原子的方式去设置一个地址的值。
+函数体
+
+```
+cas(&oldValue,expectedValued,targetValue)
+```
+
+
+
+但是 CAS 指定成了原子操作之后， 拒绝了竞争条件，但是仍然没有解决拒绝竞争条件之后，要怎么解决赋值的问题。
+
+那要怎么解决呢？
+加上个外部循环 在操作被拒绝了之后，重新读取一次，然后再来一次即可。
+
+```
+while(!cas(&i,i,i+1)){
+	// 什么都不用做
+}
+```
+
+
+
+所以从这里也看出为啥   原子操作只能操作基本数据类型了。
+
+
+
+### TAS指令
+
+TAS 可以理解成为只有 0，1的CAS 操作 
+
+TAS 可以用来做互斥操作。
+全部线程都 指定从 0-》1
+先竞争到的线程可以 把 内存 从0 改成1， 处理完之后 再改回0， 
+这样其他的线程才可能继续往下执行。
 
 
 
 
 
+Tips:
+不是所有的cpu都支持 cas指令的。
 
 
 
+### ABA问题
+
+以栈的头节点为例子
+
+
+stack: visuaHhead -> node1 ->node2 -> node3
+
+Thread1 :   读 stack head   为 node1 
+Thread2:    读stack head   为 node1 
+Thread1： 准备移除node1 
+（期望结果 ：  visualHead -> node2 -> node3 ）
+Thread2  :  准备移除node1
+（期望结果 ：  visualHead -> node2 -> node3 ）
+
+Thread1:  执行 cas 操作 把 node1 移除了
+此时：stack: visualHead -> node2 ->node3
+
+Thread3:  读 stack head 为 node2
+Thread3:  把 node1-> node3  插入 stack 头中
+此时： stack :visualHead -> node1 -> node3 -> node2
+
+Thread2:  发现内存里面 的头是 node1 就继续执行cas操作
+此时： statck visualHead -> node3 ->node2
+
+实际上和Thread2 的预期并不一致。
+也不是Thread3的预期
 
 
 
+### Java解决ABA问题的方式
 
+java 提供了  类 在原子操作的后面加上执行序号。
+以原子操作的序号来判定执行是否有效， 是否该被继续执行。
 
 
 
