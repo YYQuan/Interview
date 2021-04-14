@@ -30,7 +30,6 @@ public class LeetCode_15 {
 //            }
 //        }
         System.out.println(result);
-        result.stream()stream().mapToInt(value -> {return (value+1);}).toArray();
     }
 
     /**

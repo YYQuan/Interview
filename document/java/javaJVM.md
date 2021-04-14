@@ -319,6 +319,249 @@ G1的难点在于  各个小段之间 相互有引用在怎么处理。
 
 
 
+## Java对象的生命周期
+
+
+
+- **加载** ： 也就是类加载器去加载class文件 ，一般发生在 静态 成员被访问、new了新对象 。 执行了 静态代码块 和 静态成员的初始化。
+
+- **创建**：在内存中分配了内存空间，执行了构造方法
+
+- **存活**：就是创建完成后的状态。但是存活内部也是分状态的
+
+  - 正在使用中的
+
+  - 可达，但是没有在使用的
+    比如
+
+          ```
+    void main(){
+    	
+    	ClassA cA   = new ClassA();
+    	.....
+    	
+    	....
+    	//cA不再被使用 这时内存中有cA 但是cA不会再被访问了。
+    
+        // 把cA 置空， 虽然 main函数还没有执行完，但是cA的对象的实例就变为不可达了。
+    	// GC 就能回收它的了。 
+        cA = null;
+    	
+    
+    
+    
+    }
+          ```
+
+     
+
+  - 不可达的， 但是还没被回收的
+
+- 回收阶段 - GC
+
+  -  回收标记阶段 -  mark
+  - 在sweep前 如果对象重写了finalize 的，那么就先执行finalize
+  - 回收内存
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## Java对象在内存中的结构
+
+
+
+可以简要的说
+主要分为 对象头  对象实例数据， 以及8字节补齐。
+
+对象头中 主要有mark  word。
+其中主要是 锁的标志，配合锁的 monitor的地址 以及  gc的标志
+
+![image-20210406093133036](https://i.loli.net/2021/04/06/u21xeQTKGUi4nRp.png)
+
+
+
+**ps**
+
+Q:一个空对象 栈多少字节？
+A: 对象头就占8个字节 ，加上 补齐 最少也是16个字节。复杂的数据 比如 数组  可能就占24个。 如果关闭了压缩的话， 那么可能会变多，但是最少是占16个字节。
+
+
+
+
+
+## ClassLoader双亲委派模式
+
+
+
+
+
+### ClassLoader
+
+运行时 ，加载类到JVM当中。
+
+实际上 classLoader只做一件事情， 那就是把.class文件 转化成为 二进制， 并加载到内存当中。
+
+![image-20210406104536574](https://i.loli.net/2021/04/06/PhrxIaTnGZ4MsEp.png)
+
+### 只有一个classLoader 够用吗？
+
+- 数据来源 不同， 缓存策略不同..
+  class的来源不同，也就需要classLoader处理的数据源不一样。
+
+  - 从文件
+
+  - 从网络
+
+  - 从其他库
+
+  - 从内存
+
+    针对数据源的不一样， classLoader需要做的处理也不一样。但是目的都是得到执行用的二进制码。
+
+- 版本问题
+  如果一个虚拟机里，有多个服务，这些服务都依赖于某一个class。
+  但是他们的版本不一样。
+  那么我们就可以用 不同的classLoader去加载不同的版本。从而在不同的服务内， 用不同的版本去处理
+  这个是 java处理 库不同版本的重要方式。
+
+  ![image-20210406105756111](https://i.loli.net/2021/04/06/vefrlQB4SR16nh5.png)
+
+- 需要公用一部分类的情况
+     委托给父类加载。
+     父类加载的类 子类都能够使用。
+    这样可以避免 多次无意义的多次加载。
+
+
+
+从这三点触发， 所以classLoader应该具有如下的特性
+
+- 具有树状关系， （具有父子关系）
+- 拥有委托特性
+
+因此 java设计了 双亲委派模型。
+
+**PS**：双亲委派名字有点误导， 实际上就是 父亲委派。就是委派给父节点。
+
+
+
+
+
+### 自定义一个ClassLoader
+
+
+
+```java
+import javassist.CannotCompileException;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+
+public class TestClassLoader {
+
+
+    public static void main(String[] args) throws InterruptedException {
+        MyClassLoader myClassLoader = new MyClassLoader();
+        Class mClass = null;
+        try {
+
+            // 調用多次 也只會调用到一次findClass
+            // 缓存和双亲委派  内部已经实现好了。
+            mClass = myClassLoader.loadClass("YYQTest");
+            mClass = myClassLoader.loadClass("YYQTest");
+            mClass = myClassLoader.loadClass("YYQTest");
+            mClass = myClassLoader.loadClass("YYQTest");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("123456");
+        try {
+            try {
+                Object  o = mClass.getConstructor().newInstance();
+                o.getClass().getMethod("testMethod").invoke(o);
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public  static byte[] genByte(){
+        ClassPool  pool = ClassPool.getDefault();
+//        pool.getOrNull()
+
+        CtClass clazz =pool.makeClass("YYQTest");
+        CtMethod method = new CtMethod(CtClass.voidType,"testMethod",new CtClass[]{},clazz);
+        method.setModifiers(Modifier.PUBLIC);
+        try {
+            method.setBody("System.out.println(\"123456789\");");
+        } catch (CannotCompileException e) {
+            e.printStackTrace();
+        }
+        try {
+            clazz.addMethod(method);
+        } catch (CannotCompileException e) {
+            e.printStackTrace();
+        }
+        try {
+            return clazz.toBytecode();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (CannotCompileException e) {
+            e.printStackTrace();
+        }
+        return  null;
+    }
+
+    static class MyClassLoader extends  ClassLoader{
+        @Override
+        protected Class<?> findClass(String name) throws ClassNotFoundException {
+            System.out.println("hello");
+            // 不用考虑 先调用 super 还是先 判断类名。
+			// findClass 只会调用进来一次。
+            if(name.equals("YYQTest")){
+                byte[] bytes = genByte();
+                return  defineClass(name,bytes,0,bytes.length);
+            }
+            return super.findClass(name);
+        }
+    }
+}
+
+```
+
+
+
+### 如何打破双亲委派？
+
+复写classLoader的loadClass即可。
+
+
+
+
+
+
+
+
+

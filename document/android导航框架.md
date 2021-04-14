@@ -13,10 +13,22 @@ A：
 1. 不利于解耦
    传统的路由：
    显示intent： 存在直接的类的依赖，
+   
+   弊端：需要能够直接访问目标类才行。
+   
    隐式intent：各个组件需要在相互调用的时候 主要想mainfest里面去注册才行。也就是需要统一的管理，不利于多人协作
-   也是组件化的基础
+   
+   弊端： 需要在manifest下配置标签属性。
+   
+   
+   
+   
 2. 原生的路由方式,无法插手启动的任何环节。在startActivity之后无法拦截，不能捕获，降级，只能交给系统，这是如果跳转失败的时候 就有可能发生异常；
+
 3. 原生和H5之间的跳转
+   同一 原生和H5的跳转
+
+
 
 
 
@@ -30,13 +42,60 @@ ARouter		： ali的方案
 
 ![image-20201016100312669](https://i.loli.net/2020/10/16/ZLN7AvHYknw5chy.png)
 
-
 从表格来看，
 navigation  不支持模块间通讯 、不支持拦截器、不支持降级操作 是最大的缺点。
 但是navigation是支持在android生成导航视图。
 而且支持回退
 
-## Navigation架构原理
+## Navigation
+
+### Navigation的用法
+
+navigation是依托于NavController的。
+NavController   是依托于NavHostFragment。 
+
+
+
+#### 配置NavHostFragmetn
+
+![image-20210414145458741](https://i.loli.net/2021/04/14/RL8ezNriBHqxyQE.png)
+
+![image-20210414145602294](https://i.loli.net/2021/04/14/GyTaSLR98md5n3J.png)
+
+![image-20210414162748264](https://i.loli.net/2021/04/14/HYmudPpSnaDJyZT.png)
+
+
+
+#### 获取NavController对象
+
+```java
+NavHostFragment.findNavController(Fragment)
+Navigation.findNavController(Activity, @IdRes int viewId/*NavHostFragment的id*/)
+Navigation.findNavController(View/*NavHostFragment的view*/)
+
+```
+
+
+
+#### 跳转
+
+```java
+NavHostFragment.findNavController(FirstFragment.this).navigate(
+    R.id.action_FirstFragment_to_NavgationActivity/*配置文件中的配置的id*/,
+    Bundle.EMPTY/*传参*/);
+
+
+```
+
+
+
+
+
+
+
+
+
+### Navigation架构原理
 
 ![img](https://img.mukewang.com/wiki/5ef5fd8709f1047a40342042.jpg)
 
@@ -54,10 +113,10 @@ NavHostFragment路由间的跳转是怎么完成的？
 
 先来分析 NavHostFragment的解析是哪开始的？
 
-### NavHostFragment的解析
+#### NavHostFragment的解析
 
 onFlate函数是NavHostFragment的路由xml的入口
-**PS**：对于可以在xml文件中声明的类， 在创建完毕之后 都会回调到其onFlate函数。
+**PS**：对于可以在xml文件中声明的类， 在创建完毕之后 都会回调到其onInflate函数。
 
 ![image-20201017045528448](https://i.loli.net/2020/10/17/lOqLBtU4jEucNMH.png)
 
@@ -95,7 +154,7 @@ onflate中拿到了自定义的属性  graphid 以及  defaultNavHost
 
 接着跟 setGraph
 
-
+![image-20210414182107758](https://i.loli.net/2021/04/14/fZGltT82OEib4m1.png)
 
 
 
@@ -107,13 +166,12 @@ onflate中拿到了自定义的属性  graphid 以及  defaultNavHost
 
 
 
-
 在NavigartorProvider中 根据传入的NavDestination的类型来选择Navigator来完成跳转
 要注意 传给Navigator的Destination 是NavGraph 类型的， 里面还包含着navigationd xml的全部节点
 
 
 
-### NavHostFragment的缺点
+#### NavHostFragment的缺点
 
 
 
@@ -126,7 +184,7 @@ onflate中拿到了自定义的属性  graphid 以及  defaultNavHost
 
 
 
-### NavHostFragment的优化
+#### NavHostFragment的优化
 
 优化点
 
@@ -135,7 +193,7 @@ onflate中拿到了自定义的属性  graphid 以及  defaultNavHost
   导致的重置fragment生命周期
 - 配置化 APP 主页架构， （这样可以支持服务端下发）
 
-### NavHostFragment的优化
+#### NavHostFragment的优化
 
 优化点 
 
@@ -147,7 +205,7 @@ onflate中拿到了自定义的属性  graphid 以及  defaultNavHost
 
 
 
-#### 注解处理器 Proceesor
+##### 注解处理器 Proceesor
 
 ![image-20201023070739497](https://i.loli.net/2020/10/23/pNWFe1o3dmXBLAn.png)
 
@@ -157,11 +215,13 @@ onflate中拿到了自定义的属性  graphid 以及  defaultNavHost
 
 主题逻辑很直接 ， 直接看源码即可。
 
-生成配置文件
+##### 生成配置文件
 
 ![image-20201023072941107](https://i.loli.net/2020/10/23/oqS1pfvEzBlUPtF.png)
 
 接着就是解析配置文件
+
+##### 解析配置文件
 
 ![image-20201023073619098](https://i.loli.net/2020/10/23/GyaOU3PnM7Cs62Z.png)
 
@@ -188,6 +248,19 @@ onflate中拿到了自定义的属性  graphid 以及  defaultNavHost
 由于原本的FragmentNavitor fragment的相关属性是私有的，不能通过继承得到。 因此我们可以把全部源码拷贝出来，然后针对 navigate() 中的replace来进行修改。
 
 ![image-20201023075109451](https://i.loli.net/2020/10/23/SJ3vbPZVwIWzg25.png)
+
+
+
+### 总结
+
+
+
+navigation其实就分两个部分： **加载器**（Navigator） 和 **节点信息**(NavDestination)。
+加载器 由 NavigatorProvider 统一管理
+节点信息由 NavGraph  统一管理
+
+navigation 就是把 配置文件加载下载  储存成 NavGraph。
+由于NavGraph有activiyt,fragment dialog等类型,所以需要用不同的加载器去加载。
 
 
 
