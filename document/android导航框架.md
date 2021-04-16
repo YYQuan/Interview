@@ -251,9 +251,72 @@ onflate中拿到了自定义的属性  graphid 以及  defaultNavHost
 
 
 
+前面说多Module下 navigation会有坑，啥坑呢？
+
+### navigation 多模块支持
+
+参考
+https://itnext.io/android-multimodule-navigation-with-the-navigation-component-99f265de24
+
+https://github.com/DDihanov/android-multimodule-navigation-example
+
+理解一下：这个多模块的实现就能大致知道 多模块下 有什么坑了。
+
+有5个module:
+
+- app
+  依赖
+
+  - 其他四个module
+
+- commonui
+  mainActivity在这里
+  依赖
+
+  - navigation
+
+- dashboard
+  有DashBoardFragment
+  依赖
+
+  - navigation
+
+- home
+  有HomeFragment
+
+  依赖
+
+  - navigation
+
+- navigation
+  没有依赖其他module
+
+MainActivity中需要跨  commonui(自己所在module),home module ,dashboard Module来做路由跳转。
+
+commonui module 感知不到 home和 dashboard module的。
+
+此时他的做法就是 用公共的 module  navigation里面去声明 路由关系。
+为了完成编译， 还需要在公共的navigation module下，声明一份假的同名路由文件。
+真正的路由实现在各自的module下面。
+
+![image-20210415110611545](https://i.loli.net/2021/04/15/ldzQ6Kw2VERoigY.png)
+
+公共module下的 路由 通过 id 来避免直接声明 类。
+
+从而避开了 获取不到其他module的类名的问题。
+
+![image-20210415112253840](https://i.loli.net/2021/04/15/qArveEuUmgIJtiO.png)
+
+也就是说 这个navigation的 多模块方案是利用了  通过公共的 module 去预先声明出  子模块的 路由文件（假文件），然后公共模块中实现跨模块的路由配置文件。
+配置文件中也不直接使用类名，而是使用id,从而避免编译时找不到类名的情况。
+公共模块中预先定义好 跳转的id， 其他模块通过公共模块中定义好的id就能得到对应路由操作的映射。
+
+从这里可以看出来，navigation在跨模块下的工作时， 最大的障碍就是 获取不到类名。
+虽然说可以通过用些虚假的id 通过编译，然后再在子moduel中具体的去实现。但是需要做很多假文件， 还需要在公共模块中去做路由操作的映射，人工维护起来还是挺 麻烦的。
+
+
+
 ### 总结
-
-
 
 navigation其实就分两个部分： **加载器**（Navigator） 和 **节点信息**(NavDestination)。
 加载器 由 NavigatorProvider 统一管理
@@ -303,11 +366,56 @@ Arouter的功能分为了三个阶段：
 
 IProvider 可以支持跨模块的服务调用， 这样可以避免无关模块之间的强耦合。
 
+IProvider的用法。
 
+https://blog.csdn.net/u010194271/article/details/105216495
+
+ARouter的跨模块调用流程：
+一共四个Moduel
+
+- app
+  依赖其他三个
+
+- base
+  
+
+- library1
+
+  有一个Activity1
+  只依赖base
+
+- library2
+  有一个Activity2
+
+  只依赖base
+
+如果是跳转Activity的话，那么直接在各个moduel下加@ARouter就行了。
+
+但是ARouter还支持 跨模块通讯功能。
+
+### 跨模块通讯
+
+跨模块通讯怎么弄呢？
+
+比如library2中 Activity2中 要使用library1 下的某函数。
+那么就可以在Base包(公共包)下 声明一个接口 A ，A继承ARouter的IProvider
+
+然后library1中 实现一个A的实现类， 这个类加上@Router.
+
+library2要使用的时候 ，直接使用Router的autoWired来注入即可。
+
+![image-20210415164002389](https://i.loli.net/2021/04/15/qIEXlM4UwY1LHKS.png)
 
 
 
 ### 编译时原理
+
+ARouter通过注解处理器，收集开发者 做的标记，同时做出处理。
+ARouter里面一般只有这三种注解标记：
+
+- @Router   : 路由节点声明
+- @AutoWired ： 参数自动注入
+- @Interceptor ： 路由拦截器声明
 
 **三个注解处理器**
 
@@ -336,9 +444,12 @@ IProvider 可以支持跨模块的服务调用， 这样可以避免无关模块
 
 ![image-20201027073340826](https://i.loli.net/2020/10/27/gGUvN8KwzJft7T1.png)
 
+解析 Router的参数  解析成RouterMete 然后  分组存储到GroupMap当中。
+GroupMpa是一个以group名为key的Map  
+
+![image-20210415180921601](https://i.loli.net/2021/04/15/wpLdxJKce81Rba5.png)
 
 
-这个是啥判断方法呀 。以前没见过
 
 创建.java文件
 
@@ -376,7 +487,7 @@ javapoet的简单生成java文件的方法
 
 
 对于TradeDetailActivity来说 ，AutowiredProcessor这个注解的 作用就生成
-TradeDetailActivity$$Arouter$$Autowired .这个类。
+TradeDetailActivity$$$$Arouter$$$$Autowired .这个类。
 
 然后在TradeDetailActivity调用ARouter的inject()的时候 会通过反射去调用对应Autowired类的inject函数。 从而完成赋值。
 
@@ -397,6 +508,57 @@ TradeDetailActivity$$Arouter$$Autowired .这个类。
 #### InterceptorProcessor
 
 和AutoWiredProcessor 类似。
+
+#### ARouter编译时 生成的类分析
+
+以前面跨模块的验证demo生成类来分析一下。
+
+- app
+  ![image-20210416103824085](https://i.loli.net/2021/04/16/pFLDAqMj8RSGkBW.png)
+
+- base
+  虽然继承了IProvider但是并无ARouter的生成的文件
+  因为并没有标注这些注解 @Router ，@AutoWir*  ,@Interceptor 
+
+  
+
+- library1
+  ![image-20210416104246281](https://i.loli.net/2021/04/16/5LKd8oJBiO2X7MT.png)
+
+- library2
+  ![image-20210416104258215](https://i.loli.net/2021/04/16/9LURocukjDs4ETM.png)
+
+
+
+以library1 为例（因为library1里 有 IProvider的实现类）。 
+
+
+
+![image-20210416105818210](https://i.loli.net/2021/04/16/yKEQISutZXWFAM8.png)
+
+从上面这个图 ，来猜测流程
+arouter 在进行 init的时候 就把各个module下的root 类给加载了。
+这样就能获取到  路由组 对应的类。这是并没真正加载对应类，而是等待执行路由的时候再分组按需加载。
+
+等待执行路由的时候， 就会能知道要去哪个类执行加载。
+这是ARouter的分组加载的实现。
+
+路由组的文件中 就存贮了各个节点的 路由路径和 路由节点类型和路由真正实现类的对应。
+
+有了真正实现的class，就能通过反射来获取。
+
+所以可以说 神秘的路由其实就是通过 注解 ，然后编译是收集信息（路由路径和实际实现类的对应），执行时 通过反射去获取实现类。
+整体的思路应该就是这样的。
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -530,12 +692,16 @@ ARouter里面读取类名是用了多个线程同时执行， 但是加了个同
    c.降级处理
 2. 按需 按组加载
 
-怎么完成路由的呢？
-为啥模块间调用能减少耦合呢？ 体现在哪呢？
-还是一样要在manifest里面去注册呀。
-后面再感受一下。
 
 
+### ARouter的缺点 -对比 navigation
+
+arouter 对于fragment的处理 只能获取fragment对象实例， 然后再自己维护。
+
+![image-20210415165921136](https://i.loli.net/2021/04/15/e4pwy1AOlXHEKnb.png)
+
+但是navigation在同module下的 fragment跳转的处理就 方便很多。
+虽然说navigation在跨module的时候 实现很麻烦，但是 同module下还是很方便的。
 
 ### 总结
 
@@ -551,6 +717,16 @@ ARouter里面读取类名是用了多个线程同时执行， 但是加了个同
 ​	然后在执行router跳转的时候，在按照组来加载进Router 维护的 资源类当中。在加载的过程当中，ARouter 提供了三次拦截操作， 路径替换，预加载，加载失败的降级处理。
 ​    这个就是ARouter的简单流程。
 ​	感觉这里面最有价值的就是 javaPoet。  看了这才发现 还可以这样来写java类的。
+
+
+
+## 路由方案选择
+
+navigation在 处理同module 同一个activity下的fragment的跳转 很方便
+ARouter在处理 activity之间的跳转， 以及跨模块的 通讯时，很方便。
+所以可以选择两个路由框架都使用，在同一个activity下的fragment跳转时，就可以使用navigation.(一般情况下，同一个activitiy的使用的fragment应该都是同module下的)。
+其他的情况就使用ARouter.
+这样两种路由框架的优点都能够汲取到。
 
 
 
