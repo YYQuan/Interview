@@ -1287,6 +1287,20 @@ GsonConverterFactory 是比较常用的 ConvertFactory。
 
 ## 总结
 
+retrofit当中重点就是三点：
+
+1. 怎么把接口类转换成为具体的实现类。
+2. 怎么把注解 解析成实际要使用的网络请求，默认是OkHttp的call
+3. 怎么把网络的响应转换成为 接口中定义的泛型 一般通GsonFactory来处理
+
+第一点 是通过动态代理的方式来完成
+第二点 默认是通过CallFactory来实现的 也就是构建Retrofit的client的时候传入的
+第三点 也是在构建Retrofit的时候传入的
+
+
+
+具体实现
+
 ***retrofit就是用动态代理的方式去运行时解析 接口的注解，从而发起网络请求。
 重要的两步就是 calladapter 和 convert
 calladadapter只可以控制网络的发起 和 回调的线程的切换
@@ -1337,6 +1351,94 @@ Retrofit的 协程的适配    要适配协程那么 该函数一定是被suspen
 所以经过编译处理之后 ，最后一个参数一定是Continuation 类型的，Retrofit 就是用过这个来判断的。
 然后Retrofit对协程支持的转换过程的闭包代码块中就是直接包含了execute函数
 所以协程启动 网络请求就发起了。不需要显式的执行execute。
+
+
+
+
+
+## 相关面试题
+
+
+
+### Retrofig是怎么解析泛型的？
+
+先来看看常规的解析泛型。
+首先 要获取用于反射的Method 对象。
+然后通过Method去  反射拿泛型
+
+```java
+ //通过方法来获取参数的返回值类型 Call<User>
+                        ParameterizedType parameterizedType = (ParameterizedType) method.getGenericReturnType();
+                        //关键步骤，通过返回类型Call<User>,提取User的Type。Retrofit是在ExecutorCallAdapterFactory中的 Utils.getCallResponseType(returnType)方法获取，原理一样
+                        Type returnType = Utils.getParameterUpperBound(0,parameterizedType);
+T user = gson.fromJson((String)args[0],returnType);  
+```
+
+但是从上图可知 ，拿方法的泛型返回的是一个列表  有多处的泛型 有返回值里的 ，有传入的参数的，是怎么对应的呢？
+实际上 method是有分 retureType和paramsType的 也就是 返回值类型和参数类型的。
+
+以下是用接口的实现类的实例去获取 方法体的返回值类型和 参数类型
+
+![image-20210422111153089](https://i.loli.net/2021/04/22/uno4BawqmNsvgFb.png)
+
+发现是有泛型的实际类型的。
+
+接下来看看动态代理的时候有没有
+![image-20210422112059877](https://i.loli.net/2021/04/22/2ZizCQXqdxLktbH.png)
+
+所以说反射拿到的返回值信息里是有泛型信息的。
+
+那怎么获取到 里面的泛型信息呢？
+
+从Retrofit.create处开始跟踪 就可以得到其获取返回值泛型的方式
+![image-20210422141716617](https://i.loli.net/2021/04/22/jDdoYAQXhe5Lan3.png)
+
+尝试用retrofit里面这中方法来试试。
+
+![image-20210422143732877](https://i.loli.net/2021/04/22/dMPKUmxr6LhVCFk.png)
+
+发现type里面的actualType里就存储着泛型的信息。
+那多个泛型的话会怎么样的，试试
+
+![image-20210422144128201](https://i.loli.net/2021/04/22/1RZcJihQMmraIS6.png)
+
+![image-20210422144251386](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20210422144251386.png)
+
+同样的从type.actualType里面可以按顺序获取到。
+
+r如果泛型是通配符怎么处理呢？
+参考retorfit里的处理 就是 用 type.upper  和type.lower 返回的数组进行处理即可。
+
+```java
+//tips:
+upperBounds 是直接拿到上界 不是一级一级的返回。  所以不太清楚 为啥返回值设计成数组。
+
+```
+
+![image-20210422145740230](https://i.loli.net/2021/04/22/AChVQqUt57oF2OD.png)
+
+从上面几步就清除了， java泛型要怎么解析了。
+
+#### 小结
+
+以函数返回值中的泛型为例子。
+首先要通过反射获取到Method对象
+然后获取其返回值信息的类型type。
+接着从type中的actualType里获取到全部泛型信息。
+这里泛型信息分成 两种情况
+
+1. 是通配符类型的
+2. 不是通配符类型的
+
+是不是通配符类型可以通过是不是WildcardType的子类的判断。
+
+如果不是WildCardType,那只用用该类即可。
+如果是WildCardType的话，那么就是通配符类型了。
+这个时候直接读类信息意义不大。
+在意的应该是通配符的上界和下界。
+可以通过wildCard的upbound和lowBound来获取 上下界。
+
+
 
 # RxJava
 
@@ -2476,7 +2578,7 @@ SourceGenerator 中的FetcherReadyCallback  传的是DecodeJob对象
 
 重头再整理一遍主流程
 
-<img src="https://i.loli.net/2020/09/30/hcOJB6bEMSLfmQo.png"  />
+![](https://i.loli.net/2021/04/23/dO4Sob7DaYj1uQs.png)
 
 
 
@@ -2497,6 +2599,10 @@ DecodeJob 这个任务有分三个部分
 读取数据通过 DataFetcher来完成
 解码数据通过 ResourceDecode 来完成
 转换格式通过ResourceTranscoder 来完成
+
+
+
+Glide 对数据资源的支持就是通过DtaFetcher ,ResourceDecode ，ResourceTranscoder的大量重载来实现 对各种输入的资源类型（比如http,byte数组， file ，stream等等）以及各种解码类型 和各种的目标类型进行适配和转换。
 
 转换完之后 再通过 一层一层的回调 最终回调到ViewTarget的ready回调用，viewTarget内部维护了用户传入的view,由其完成贴图操作
 转换完成 - > DecodeJob.callback --> EngineJob.callback --> 
@@ -2530,3 +2636,212 @@ DataFetcherGenerator  是怎么获取 LoadData的?
 
 
 GlideContext 是全局唯一的
+
+
+
+## Glide 总流程补充
+
+Glide.with(context) 去获取requestManager。
+这个RequestManager对于 一个activity来说是唯一的。
+也就是Glide中activity 多次调用with(this)。
+获取到的是同一个RequestManager.
+
+是怎么做到的呢？
+下图所示
+对于同一个activity 会去找是否有glide绑定activity的fragment.如果有没有就创建一个， 如果有那么就从里面拿RequestManager.
+
+![image-20210423114633702](https://i.loli.net/2021/04/23/jU9xtZ4JLiGabkC.png)
+
+![image-20210423114757747](https://i.loli.net/2021/04/23/x4Y7i1pInJS9WO3.png)
+
+所以同一个activity 里用的with(activity)， 用的requestManager是同一个。
+
+RequestManager.load()
+
+实际调用的是RequestBuilder .load()
+也就是RequestManager.as().load
+![image-20210423115603612](https://i.loli.net/2021/04/23/4WSsnq71bIQF8RL.png)
+
+上图看出，  每次requestManager没有load ,都是new 出了一个新的requestBuilder.
+
+
+Engine 是负责读取 和管理 缓存的。
+是Glide全局唯一的。在Glide初始化的时候 就构建出来的。
+
+
+
+## Glide 面试题
+
+### Glide的优点
+
+1. 链式调用 流程清晰
+2. 代码侵入性小
+3. 默认情况下 使用的是 565 编码 ，比8888编码的省一半的内存
+4. 绑定activity生命周期，避免护内存泄露
+5. 内部维护着三级lru缓存，而且还对不同尺寸的view 缓存不同的尺寸的图片
+
+
+
+
+
+### Glide生命周期绑定原理
+
+通过给activity 添加一个空的fragment ,然后通过fragment的lifecycler监听 fragment的生命周期，再生命周期函数的回调中进行相应的处理。从而实现了生命周期的绑定。
+
+这个实现和Androidx的LifeCycler的实现是思路是一致的。
+都是通过加入一个空的fragment来监听activity。
+这样做的主要目的就是为了支配老版本的activity.
+因为activity是在appcompatActivity之后才实现了LifecyclerOnwer这个接口的。否则就不需要解除fragment去处理了。
+
+
+
+### Glide怎么保证绑定activity的空Fragment的唯一性的
+
+给在activity 的fm找固定tag的fragment ，如果有就说明绑定上了。没有再加上。 fragment manager 的tag是唯一的 那么自然 activity对应发fragment就是唯一的了。
+
+
+
+### 缓存原理
+
+从glide的真正开始加载 ，管理的 Engine类开始分析。
+
+从Engine.load开始
+
+![image-20210423143059644](https://i.loli.net/2021/04/23/FpdMPRYWaUVAKCD.png)
+
+#### 内存缓存 -ActivityResource & MemoryCache
+
+先看看内存缓存。
+内存缓存内两块，
+ 一个是活动缓存  随着activity销毁会把里面的内容转移到内存缓存当中。
+另一个内存缓存。
+
+下图是 活动缓存 ， 使用的是以弱引用由为value 的map来维护的
+这是一个没有显示数量的 map   和MemoryCache 不一样， MemoryCache作为LruCache 是由数量限制的
+
+![image-20210423143528287](https://i.loli.net/2021/04/23/jDeSsitnOzfLRTk.png)
+
+下图是 内存缓存 ， 使用的是map来维护的  不是弱应用
+
+![image-20210423143855658](https://i.loli.net/2021/04/23/VyEigcr5NARvpWh.png)
+
+这里是对于内存缓存怎么取的内容
+
+接着再往下看。
+如果在ActivityResource和MemmoryCache中都找不到的话
+
+就会进入下图。
+
+![image-20210423145006481](https://i.loli.net/2021/04/23/Lqdgoy3jw86vkSm.png)
+
+根据前面的分析  可以看出 核心就会执行到
+DecodeJob当中的run里 跟下代码 就能找到关键。
+
+![image-20210423145429984](https://i.loli.net/2021/04/23/RFeLE3oUbpVwa9W.png)
+
+
+
+根据上图 分析 内存缓存中拿不到的话， 还有三个数据来源。
+
+- DataCahcheGenerator
+- ResourceCacheGenerator
+- SourceGenerator
+
+根据缓存优先级顺序来看。
+
+#### ResourceCacheGenerator
+
+下图可以判断 是磁盘缓存
+
+![image-20210423152054155](https://i.loli.net/2021/04/23/2JRrqndMjeZXHga.png)
+
+#### DataCacheGenerator
+
+下图看出DataCache也是磁盘缓存
+
+![image-20210423152219239](https://i.loli.net/2021/04/23/cbtvEAYzmZIlpMW.png)
+
+
+#### SourceGenerator
+
+这里就是没有缓存直接从源 出读取。
+
+
+
+可以发现网上说的三级缓存 这说法不太对哇。
+应该是三级数据来源。
+内存缓存 -》  磁盘缓存 -》 原数据
+
+内存缓存有两级：
+
+ActivityResource 和 MemoryCache
+为啥要弄成两级呢？
+
+lru算法 是没有管正在被使用着的图片的。
+如果只有一级 cache的话，那么就可能会存在 正在被使用的相片被移除了。
+
+如果加多一级 ，然后配合下图的逻辑  ， 就可以 先把正在使用的图片用一个非lru的map给存储起来,然后activity被销毁时 ，再转移到MemoryCache里面。
+
+活动缓存中用的图片存储起来 用的是弱应用， 用弱应用这样可以有效的避免 内存溢出。
+但是用弱应用也不是绝对可靠的。
+毕竟GC的线程优先级不高。
+
+![image-20210423161854574](https://i.loli.net/2021/04/23/M3OYfaFkKHEjBxe.png)
+
+另外磁盘 缓存也分成了两步：
+ResourceCache 和 DataResource
+
+这两个都是 磁盘缓存  但是 ResourceCache是缓存编码后的数据，DataCache缓存的是实际的源数据。
+比如说
+同一张图片 应用了 两个尺寸。
+这个时候的缓存状态应该是怎么样的呢？
+
+从下面的图可以看出 在 ActivityResource ,MemoryCache，ResourceCache当中  的key都是包含 宽高信息的， 而DataCache是不包含宽高信息的。
+所以可以判断出同一张图片两个尺寸在非源数据缓存中 只有一份，但是其他缓存中是由两份的。
+
+![image-20210423175810277](https://i.loli.net/2021/04/23/rwyN5xYAOiT1aB3.png)
+
+![image-20210423175732898](https://i.loli.net/2021/04/23/xJUFCfKEWMX94ew.png)
+
+
+
+
+
+### Glide的存在内存泄露的情况吗
+
+严格来说  应该是不存在内存泄露。
+但是他的缓存机制是由可能造成 内存溢出的。
+
+Glide 用了两点 来保证 内存不泄露
+
+- Glide能绑定activity的生命周期 ，及时的释放 活动缓存，另外活动缓存里还用的是弱应用来处理，避免内存溢出
+- Glide的内存缓存 用的是LRU算法 来保持缓存区的大小
+
+但是为啥还会有 内存泄露的情况呢？
+分两种情况 
+
+1. 绑定的是application 而不是 activity 这样的话就不能及时的手动释放 活动内存了
+2. 绑定的是activity的话  活动内存导致的内存溢出问题出现的概率就降低了 ，但是并不是就不可能了。 因为导致内存溢出的原因是 活动内存里 维护的 弱应用对象 没有被GC 扫描到， 没有被回收。所以导致的内存溢出； 如果说gc的够快的话， 理论上绑定在Application上的话， 也是不会有内存溢出的情况发生的。
+
+所以 Glide 虽然没有设计上的内存泄露  但是 实际上还是有可能会导致内存溢出的。
+
+
+
+### 使用Glide时 with 在子线程中执行会有问题吗？
+
+Glide内部只有在主线程中构建RequestManager的时候 才会去绑定生命周期的。比如给activity添加空白Fragment的操作。
+如果在子线程构建RequestManager的话，就不能自动释放 活动内存了。
+
+
+
+### BitmapPool
+
+Glide当中 bitmapPool的作用  对bitmap 进行复用。
+从下图的引用来看  就是在DecoderJob中的   格式转换 中用的比较多。
+
+![image-20210423182835182](https://i.loli.net/2021/04/23/oEnfeQs8AR9rKPj.png)
+
+### App 内存紧张时 如何避免Glide 引发的OOM?
+
+监听onLowMemory、onTrimMemory回调，及时释放memoryCache、bitmapPool、arrayPool
+
