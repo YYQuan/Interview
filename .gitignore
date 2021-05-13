@@ -6,10 +6,12 @@
 .idea
 *.iml
 /.idea/
-
+.idea/
 out
 gen
 
 
 !/.idea/
 /.idea/workspace.xml
+.idea/workspace.xml
+"document/\347\275\221\347\273\234\350\265\204\346\226\231/Awesome-Android-Interview-master/.DS_Store"

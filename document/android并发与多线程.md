@@ -642,7 +642,7 @@ kotlin 代码  ： 没有 suspend
 
 
 
-![image-20201116100128226](https://i.loli.net/2020/11/16/hUDCp8oFjTNb7yP.png)
+
 
 
 
@@ -650,7 +650,7 @@ kotlin 代码  ： 没有 suspend
 
 分析一下  加上delay之后
 
-
+![image-20210416162452335](https://i.loli.net/2021/04/16/SVQx5epI9HbKnyR.png)
 
 变化点 ：
 1.增加了一个 Continuation的入参，先对入参进行包装
@@ -881,7 +881,6 @@ ps: delay这些是怎么触发回调的
 
 小结：
 
-
 协程的挂起 本质:方法的挂起， 方法被分成的多个部分来分开执行。
 也就是return  +callback
 
@@ -914,6 +913,32 @@ lifeccleScope只能在activity/fragment当中使用
 别的地方就只能用和application绑定的 GlobalScope了
 
 ![image-20201116164122952](https://i.loli.net/2020/11/16/knNA2bwsHtCWfc5.png)
+
+
+
+小结：
+kotlin的协程的性质（注意是性质）就是Java本身支持的FutureTask的用法外面再加一层回调的包装。使得协程代码不会阻塞住当前线程。
+
+对比一下 协程代码 和 FutureTask的代码。
+
+
+
+
+协程
+
+![image-20210416173805506](https://i.loli.net/2021/04/16/gCPOpr9ZRVl1KXW.png)
+
+futureTask
+
+![image-20210416173839438](https://i.loli.net/2021/04/16/9fmwLX7atNrkB25.png)
+
+futureTask的get和 协程中异步操作的await 是一个性质的。都是会阻塞的。
+
+但是协程可以让 协程后面的代码先执行，然后触发到协程内部的逻辑的时候再阻塞，而FutureTask的get 执行后就阻塞了。
+
+协程的本质就是 把看似同步的代码块， 用异步回调的方式去执行。
+
+
 
 
 
