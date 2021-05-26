@@ -1796,7 +1796,7 @@ ps: 所以说弱引用也不一定一来GC就释放的。如果没有弱应用�
 
 所以如果一个thread的threadLocalMap中存储了值，
 那么这个threadLocal就不能被回收，
-这时候需要手动的把 threadLocal的强引用给手动置空才能使得ThreadLocal被回收。
+这时候需要手动的把 threadLocal的强引用给手动置空才能清除这部分内存。
 
 ```
 泄露场景：
@@ -1821,11 +1821,24 @@ ps: 所以说弱引用也不一定一来GC就释放的。如果没有弱应用�
 另外 从网上的说法来推断
 当GC 检测到是， Entry的key 是会被回收的。
 但是value 没有被回收，导致的Entry没有被回收。
+（ 这种说法是不对的。
+ entry 一直都存在的， 被回收的只是entry下面的 value）
 所以
 
 ![image-20201204181942534](https://i.loli.net/2020/12/04/mC8Y7BwXo2K1Zdk.png)
 
 ![image-20201204182230534](https://i.loli.net/2020/12/04/MEHu6w9fDSVyzjl.png)
+
+
+
+
+
+为啥ThreadLocalMap.Entry的key做成弱引用，而value是强引用呢？
+
+因为啥呢？ 如果value是弱引用 那么别的地方这个value的地方就会突然非法的指向了。
+比如Looper的mainloop,如果gc到了主线程的ThreadLocal 然后把mainLooper给回收了，
+那么主线程的handler机制都失效了。
+所以说要entry的value不能是弱引用。要回收的话，得手动去回收。
 
 
 
