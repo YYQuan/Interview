@@ -98,6 +98,19 @@ zygote启动之后 做甚呢？
 - 创建了 socket服务端， 监听创建新进程的请求
 - fork了systemServer
 
+
+
+### QA:
+
+#### 为啥会zygote采用 socket来和systemServer 来进行ipc通讯，而systemServer却是采用Binder 来和其他进程进行  ipc通讯呢？
+
+因为 binder 机制 需要在systemServerManager中进行注册， 而 systemServerManager 是在SystemServer中初始化的，所以在zygote启动的时候， 还没有systemServerManager。
+如果zygote要使用 binder的话， 就得对 zygote进程 和systemServer 进程 做额外同步，不如socket方便。
+
+
+
+
+
 ## SystemServer启动流程
 
 
