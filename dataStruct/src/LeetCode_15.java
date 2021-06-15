@@ -1,9 +1,6 @@
 package src;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class LeetCode_15 {
 
@@ -13,7 +10,8 @@ public class LeetCode_15 {
 //        int[] ints  = new int[]{-1, 0, 1, 2, -1, -4};
 //        int[] ints  = new int[]{0, 0, 0};
 //        int[] ints  = new int[]{-1,0, 1, 0};
-        int[] ints  = new int[]{-2,0,0,0,2,2,2};
+//        int[] ints  = new int[]{-2,0,0,0,0,0,2,2,2};
+        int[] ints  = new int[]{1,1,-2};
 //        int[] ints  = new int[]{-1,0,1,2,-1,-4};
 //        int[] ints  = new int[]{-1,0,1,2,-1,-4};
 //        int[] result = code.solution(ints,9);
@@ -22,14 +20,16 @@ public class LeetCode_15 {
 //        code.quickSort(ints);
 
 
-        List<List<Integer>> result = code.threeSum(ints);
+//        List<List<Integer>> result = code.threeSum(ints);
+        List<List<Integer>> result2 = code.threeSum2(ints);
 
 //        for(List<Integer> list:result){
 //            for(int value:list) {
 //                System.out.print(value + " ");
 //            }
 //        }
-        System.out.println(result);
+//        System.out.println(result);
+        System.out.println(result2);
     }
 
     /**
@@ -176,5 +176,69 @@ public class LeetCode_15 {
         int tmp = nums[l];
         nums[l] = nums[r];
         nums[r] = tmp;
+    }
+
+
+    /**
+     * 核心思路
+     * 排序  + 双指针
+     *
+     * 不能用遍历加 set 来代替双指针。
+     *
+     * 为啥不能代替。 set   处理不了 出现的次数。 对于（0,0,0） 得特殊处理
+     * 双指针的话，同样有遍历的效果， 对于 全 0的情况是不需要特殊处理的
+     *
+     * @param nums
+     * @return
+     */
+    public List<List<Integer>> threeSum2(int[] nums) {
+        List<List<Integer>>  result = new ArrayList<>();
+
+        if(nums==null||nums.length<3) return result;
+
+        Arrays.sort(nums);
+
+        A:for(int i  =0 ; i<nums.length;i++){
+            int tmpI = nums[i];
+            if(tmpI>0)  break;
+
+            if(i>0){
+                if(nums[i] ==nums[i-1]){
+
+                    continue A;
+                }
+            }
+
+
+           for(int l = i+1 ,r= nums.length-1; l<r ;){
+
+               if(l>i+1&&(nums[l] == nums[l-1])){
+                   l++;
+                   continue ;
+               }
+
+               if(r<nums.length-1&&(nums[r]==nums[r+1])){
+                   r--;
+                   continue ;
+               }
+               int sum = nums[l]+nums[r]+nums[i];
+               if(sum == 0){
+                   List<Integer> ints = new ArrayList<>();
+                   ints.add(nums[i]);
+                   ints.add(nums[l]);
+                   ints.add(nums[r]);
+                   result.add(ints);
+                   l++;
+               }else if(sum <0){
+                   l++;
+               }else{
+                   r--;
+               }
+
+
+           }
+
+        }
+        return result;
     }
 }
