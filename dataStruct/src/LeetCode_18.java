@@ -21,9 +21,15 @@ public class LeetCode_18 {
 //        List<List<Integer>> result = code.fourSum(ints,0);
 //        List<List<Integer>> result = code.fourSum(ints,-11);
         List<List<Integer>> result = code.fourSum(ints,-9);
+        List<List<Integer>> result2 = code.fourSum2(ints,-9);
 
 //        Arrays.toString(Arrays.toString(new List[]{result}));
-        for(List<Integer> item : result) {
+               for(List<Integer> item : result) {
+
+            System.out.println(Arrays.toString(item.toArray()));
+        }
+        System.out.println("--------------");
+        for(List<Integer> item : result2) {
 
             System.out.println(Arrays.toString(item.toArray()));
         }
@@ -216,6 +222,85 @@ public class LeetCode_18 {
         int tmp = nums[l];
         nums[l] = nums[r];
         nums[r] = tmp;
+
+    }
+
+    public List<List<Integer>> fourSum2(int[] nums, int target) {
+
+        List<List<Integer>>  result = new ArrayList<>();
+        Arrays.sort(nums);
+        if(nums ==null ||nums.length<4) return result;
+
+        for( int i = 0 ;i <nums.length-3;i++){
+
+            if(i>0&&nums[i]==nums[i-1])  continue;
+
+            if(nums[i]+nums[i+1]+nums[i+2]+nums[i+3]>target){
+                break;
+            }
+
+            if(nums[i]+nums[nums.length-1]+nums[nums.length-2]+nums[nums.length-3] < target){
+                continue;
+            }
+
+            for(int j = i+1 ; j<nums.length-2;j++){
+                if(j>i+1&&nums[j]==nums[j-1])  {
+
+                    continue;
+                }
+
+                if(nums[i]+nums[j]+nums[j+1]+nums[j+2]>target){
+                    break;
+                }
+
+                if(nums[i]+nums[j]+nums[nums.length-1]+nums[nums.length-2]<target){
+                    continue;
+                }
+
+                for(int l = j+1 ,r = nums.length-1;l<r;){
+
+
+                    if(l>j+1&&nums[l]==nums[l-1])  {
+                        l++;
+                        continue;
+                    }
+
+                    if(r<nums.length-1&&nums[r]==nums[r+1])  {
+                        r--;
+                        continue;
+                    }
+
+                    int sum = nums[i]+nums[j]+nums[l]+nums[r];
+
+                    if(sum == target){
+
+
+                        List<Integer> list = new ArrayList<>();
+                        list.add(nums[i]);
+                        list.add(nums[j]);
+                        list.add(nums[l]);
+                        list.add(nums[r]);
+                        result.add(list);
+
+                        l++;
+                    }else  if(sum>target){
+                        r--;
+                    }else{
+                        l++;
+                    }
+
+
+                }
+
+
+            }
+
+
+        }
+
+
+
+        return result;
 
     }
 }

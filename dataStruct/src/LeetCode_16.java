@@ -12,8 +12,9 @@ public class LeetCode_16 {
 //        int[] ints  = new int[]{1,-2,-5,-4,-3,3,3,5};
 //        int[] ints  = new int[]{-1,0,-5,-2,-2,-4,0,1,-2};
 //        int[] ints  = new int[]{-1,2,1,-4};
+        int[] ints  = new int[]{-3,-2,-5,3,-4};
 //        int[] ints  = new int[]{1,1,1,0};
-        int[] ints  = new int[]{13,2,0,-14,-20,19,8,-5,-13,-3,20,15,20,5,13,14,-17,-7,12,-6,0,20,-19,-1,-15,-2,8,-2,-9,13,0,-3,-18,-9,-9,-19,17,-14,-19,-4,-16,2,0,9,5,-7,-4,20,18,9,0,12,-1,10,-17,-11,16,-13,-14,-3,0,2,-18,2,8,20,-15,3,-13,-12,-2,-19,11,11,-10,1,1,-10,-2,12,0,17,-19,-7,8,-19,-17,5,-5,-10,8,0,-12,4,19,2,0,12,14,-9,15,7,0,-16,-5,16,-12,0,2,-16,14,18,12,13,5,0,5,6};
+//        int[] ints  = new int[]{13,2,0,-14,-20,19,8,-5,-13,-3,20,15,20,5,13,14,-17,-7,12,-6,0,20,-19,-1,-15,-2,8,-2,-9,13,0,-3,-18,-9,-9,-19,17,-14,-19,-4,-16,2,0,9,5,-7,-4,20,18,9,0,12,-1,10,-17,-11,16,-13,-14,-3,0,2,-18,2,8,20,-15,3,-13,-12,-2,-19,11,11,-10,1,1,-10,-2,12,0,17,-19,-7,8,-19,-17,5,-5,-10,8,0,-12,4,19,2,0,12,14,-9,15,7,0,-16,-5,16,-12,0,2,-16,14,18,12,13,5,0,5,6};
 
 //        int[] result = code.solution(ints,9);
 //        int[] result = code.solution(ints,9);
@@ -21,11 +22,13 @@ public class LeetCode_16 {
 
 //        int result = code.threeSumClosest(ints,1);
 //        int result = code.threeSumClosest(ints,100);
-        int result = code.threeSumClosest(ints,-59);
+        int result = code.threeSumClosest(ints,-1);
+        int result2 = code.threeSumCloses2(ints,-1);
 //        List<List<Integer>> result = code.quickSork(ints);
 
-        System.out.println(Arrays.toString(ints));
+//        System.out.println(Arrays.toString(ints));
         System.out.println(result);
+        System.out.println(result2);
 
 //        for(List<Integer> item : result) {
 //
@@ -50,19 +53,19 @@ public class LeetCode_16 {
 
             int twoSumClosest = twoSumClosest(nums,target-nums[i],i+1,nums.length-1);
             if(twoSumClosest == target-nums[i]){
-                System.out.println(" currentTargetCloest target --> "+currentTargetCloest);
+//                System.out.println(" currentTargetCloest target --> "+currentTargetCloest);
 
                 return target;
             }else{
                 if(currentTargetCloest ==Integer.MAX_VALUE){
                     currentTargetCloest = twoSumClosest+nums[i];
-                    System.out.println(" currentTargetCloest init --> "+currentTargetCloest);
+//                    System.out.println(" currentTargetCloest init --> "+currentTargetCloest);
                 }else{
                     int adsSum = Math.abs(target-nums[i] - twoSumClosest);
                     int adsCurrent = Math.abs(target- currentTargetCloest);
                     if (adsSum < adsCurrent) {
                         currentTargetCloest =twoSumClosest+nums[i];
-                        System.out.println(" currentTargetCloest --> "+currentTargetCloest);
+//                        System.out.println(" currentTargetCloest --> "+currentTargetCloest);
                     }
                 }
             }
@@ -83,13 +86,13 @@ public class LeetCode_16 {
 
         int i = start ;
         int j = end;
-        System.out.println(" twoSumClosest TARGET target--> "+target);
+//        System.out.println(" twoSumClosest TARGET target--> "+target);
 
 
         while(i<j) {
             int sum  = nums[i]+nums[j];
             if (sum == target) {
-                System.out.println(" twoSumClosest TARGET --> "+currentTargetCloest);
+//                System.out.println(" twoSumClosest TARGET --> "+currentTargetCloest);
 
                 return target;
             } else if (sum > target) {
@@ -110,7 +113,7 @@ public class LeetCode_16 {
             }
         }
 
-        System.out.println(" twoSumClosest --> "+currentTargetCloest);
+//        System.out.println(" twoSumClosest --> "+currentTargetCloest);
 
         return currentTargetCloest;
     }
@@ -163,10 +166,10 @@ public class LeetCode_16 {
                 swap(nums,i,j);
                 i++;
                 j--;
-                System.out.println(" start --> "+start);
-                System.out.println(" end --> "+end);
-                System.out.println(" I --> "+i);
-                System.out.println(" j --> "+j);
+//                System.out.println(" start --> "+start);
+//                System.out.println(" end --> "+end);
+//                System.out.println(" I --> "+i);
+//                System.out.println(" j --> "+j);
 
             }else{
                 break;
@@ -188,4 +191,68 @@ public class LeetCode_16 {
         nums[r] = tmp;
     }
 
+
+    // 主题思路和 15题基本一致。
+    // 但是要注意 result的初始值
+
+    public int threeSumCloses2(int[] nums, int target) {
+
+        if(nums ==null ||nums.length<3) {
+            throw  new IllegalArgumentException();
+        }
+
+
+        Arrays.sort(nums);
+
+        int result =Integer.MAX_VALUE;
+
+        for(int i =0 ;i<nums.length;i++){
+
+            if(i>0&&(nums[i-1]==nums[i])){
+                continue;
+            }
+
+            for(int l = i+1,r = nums.length-1;l<r;){
+
+
+                if(l>i+1&&(nums[l]==nums[l-1])){
+                    l++;
+                    continue;
+                }
+                if(r>nums.length-1&&(nums[r]==nums[r+1])){
+                    r--;
+                    continue;
+                }
+
+                int tmpSum = nums[i] +nums[l]+nums[r];
+
+                if(result ==Integer.MAX_VALUE) {
+                    result  =  tmpSum;
+                }
+
+
+
+
+                if(tmpSum == target){
+                    return target ;
+                }else if(tmpSum>target){
+                    r--;
+                }else{
+                    l++;
+                }
+
+
+                if(Math.abs(tmpSum-target) < Math.abs(result-target)){
+                    result = tmpSum;
+                }
+
+
+            }
+
+
+        }
+
+        return result;
+
+    }
 }
