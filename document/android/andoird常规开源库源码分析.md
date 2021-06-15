@@ -560,7 +560,7 @@ OkHttp 连接池的肯定是和这个socket有关联。
 
 分为三种方式获取connection：
 
-- 拿已经存在的connection
+- 拿已经存在的connection  也就是重定向的请求（之前已经绑定过了）
 - 从连接池里拿
 - 新创建一个connection
 
@@ -2701,7 +2701,6 @@ RequestManager.load()
 
 上图看出，  每次requestManager没有load ,都是new 出了一个新的requestBuilder.
 
-
 Engine 是负责读取 和管理 缓存的。
 是Glide全局唯一的。在Glide初始化的时候 就构建出来的。
 
@@ -2727,7 +2726,7 @@ Engine 是负责读取 和管理 缓存的。
 
 这个实现和Androidx的LifeCycler的实现是思路是一致的。
 都是通过加入一个空的fragment来监听activity。
-这样做的主要目的就是为了支配老版本的activity.
+这样做的主要目的就是为了适配老版本的activity.
 因为activity是在appcompatActivity之后才实现了LifecyclerOnwer这个接口的。否则就不需要解除fragment去处理了。
 
 
@@ -2754,7 +2753,7 @@ Engine 是负责读取 和管理 缓存的。
 另一个内存缓存。
 
 下图是 活动缓存 ， 使用的是以弱引用由为value 的map来维护的
-这是一个没有显示数量的 map   和MemoryCache 不一样， MemoryCache作为LruCache 是由数量限制的
+这是一个没有限制数量的 map   和MemoryCache 不一样， MemoryCache作为LruCache 是有数量限制的
 
 ![image-20210423143528287](https://i.loli.net/2021/04/23/jDeSsitnOzfLRTk.png)
 

@@ -6,18 +6,9 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) {
-        Thread t1 = new Thread(new TestSyn());
-        Thread t2 = new Thread(new TestSyn());
-        t1.start();
-        t2.start();
 
-        try {
-            t1.join();
-            t2.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println(TestSyn.count);
+
+
 
     }
 

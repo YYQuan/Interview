@@ -1821,8 +1821,8 @@ ps: 所以说弱引用也不一定一来GC就释放的。如果没有弱应用�
 另外 从网上的说法来推断
 当GC 检测到是， Entry的key 是会被回收的。
 但是value 没有被回收，导致的Entry没有被回收。
-（ 这种说法是不对的。
- entry 一直都存在的， 被回收的只是entry下面的 value）
+（ ****这种说法是不对的。**
+ entry 一直都存在的， 被回收的只是entry下面的 value**）
 所以
 
 ![image-20201204181942534](https://i.loli.net/2020/12/04/mC8Y7BwXo2K1Zdk.png)
