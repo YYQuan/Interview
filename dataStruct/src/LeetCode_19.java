@@ -11,14 +11,20 @@ public class LeetCode_19 {
 
         ListNode head = new ListNode(ints1[0]);
         ListNode node = head;
+
         for( int i = 1; i<ints1.length ;i++){
             node.next = new ListNode(ints1[i]);
             node = node.next;
         }
-        ListNode result = code.removeNthFromEnd(head,2);
-        while(result !=null) {
-            System.out.println(result.val);
-            result = result.next;
+//        ListNode result = code.removeNthFromEnd(head,2);
+        ListNode result2 = code.removeNthFromEnd2(head,2);
+//        while(result !=null) {
+//            System.out.println(result.val);
+//            result = result.next;
+//        }
+        while(result2 !=null) {
+            System.out.println(result2.val);
+            result2 = result2.next;
         }
     }
 
@@ -69,4 +75,31 @@ public class LeetCode_19 {
 
     }
 
+    public ListNode removeNthFromEnd2(ListNode head, int n) {
+        if(head == null )  return null;
+
+        ListNode vitualHead = new ListNode();
+        vitualHead.next = head;
+        ListNode nNode= vitualHead;
+        ListNode end= vitualHead;
+        int i = 0;
+        while(i<n){
+            if(end !=null) {
+                end = end.next;
+            }
+            i++;
+        }
+
+
+        while(end.next!=null){
+            nNode = nNode.next;
+            end = end.next;
+        }
+
+
+        nNode.next =nNode.next.next;
+
+
+        return vitualHead.next;
+    }
 }

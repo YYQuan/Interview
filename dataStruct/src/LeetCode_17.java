@@ -14,9 +14,11 @@ public class LeetCode_17 {
         TreeNode head = TreeNodeUtil.transferArrays2Tree(ints);
 //        TreeNode  result = code.lowestCommonAncestor(head,new TreeNode(2),new TreeNode(8));
 
-        List<String> result = code.letterCombinations("");
+        List<String> result = code.letterCombinations("23");
+        List<String> result2 = code.letterCombinations2("23");
 
         System.out.println(result);
+        System.out.println(result2);
 //        TreeNodeUtil.printOrderTree(result);
     }
 
@@ -85,6 +87,33 @@ public class LeetCode_17 {
         }
 
         return result;
+
+    }
+
+    public List<String> letterCombinations2(String digits) {
+        List<String > result = new ArrayList<>();
+
+
+        handleLetter(digits,"",result);
+
+        return result;
+    }
+
+    public  void   handleLetter(String digits ,String currentS,List<String> list){
+
+        if(digits == null || digits.length()<=0){
+            if(!currentS.isEmpty()) {
+                list.add(currentS);
+            }
+            return ;
+        }
+
+        String sub = digits.substring(1);
+
+        for( char c: getChars(digits.charAt(0))){
+            handleLetter(sub,currentS+c,list);
+        }
+
 
     }
 }

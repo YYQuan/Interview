@@ -7,11 +7,13 @@ public class LeetCode_20 {
     public static void main(String[] args) {
         LeetCode_20 code = new LeetCode_20();
 //        String s = "()(";
-//        String s = "()[]{}";
+        String s = "()[]{}";
 //        String s = "[";
-        String s = "){";
+//        String s = "){";
         boolean result = code.isValid(s);
+        boolean result2 = code.isValid2(s);
         System.out.println(result);
+        System.out.println(result2);
 
     }
 
@@ -72,6 +74,62 @@ public class LeetCode_20 {
             this.next = next;
         }
 
+    }
+
+
+    public boolean isValid2(String s) {
+
+        if(s == null ) return  false;
+        Stack<Character>  cStack = new Stack<>();
+
+        for(char c :s.toCharArray()){
+
+            if(isLeftSign2(c)){
+                cStack.push(c);
+            }else if(isRightSign2(c)){
+                if(cStack.isEmpty()){
+                    return false;
+                }else {
+                    char  cPop = cStack.pop();
+                    if(!isAdapter(cPop,c)){
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return cStack.isEmpty();
+
+
+    }
+
+    public boolean isAdapter(char c,char c2){
+        if(c =='('){
+            return c2==')';
+        }
+        else if(c =='['){
+            return c2==']';
+        }
+        else{
+            return c2=='}';
+        }
+
+    }
+
+    public boolean isLeftSign2(char c){
+
+        if((c =='(')||(c =='[')||(c =='{')){
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean isRightSign2(char c){
+        if((c ==')')||(c ==']')||(c =='}')){
+            return true;
+        }
+        return false;
     }
 
 }
