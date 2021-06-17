@@ -7,16 +7,16 @@ public class LeetCode_21 {
     public static void main(String[] args) {
         LeetCode_21 code = new LeetCode_21();
 
-//        int[] ints1 = new int[]{1,1,1,2,3,4,5,6};
+        int[] ints1 = new int[]{1,1,1,2,3,4,5,6};
 //        int[] ints1 = new int[]{1,1,2,2,3,3,4,5,6};
 //        int[] ints1 = new int[]{1,2,3,3,4,4,5};
-//        int[] ints2 = new int[]{1,2,3,3,4,4,5};
+        int[] ints2 = new int[]{1,2,3,3,4,4,5};
 //        int[] ints1 = new int[]{1,2,4};
 //        int[] ints2 = new int[]{1,3,4};
 //        int[] ints1 = new int[]{0};
 //        int[] ints2 = new int[]{0};
-        int[] ints1 = new int[]{2};
-        int[] ints2 = new int[]{1};
+//        int[] ints1 = new int[]{2};
+//        int[] ints2 = new int[]{1};
         ListNode head = new ListNode(ints1[0]);
         ListNode node = head;
         for( int i = 1; i<ints1.length ;i++){
@@ -32,15 +32,21 @@ public class LeetCode_21 {
         }
 
 
-        ListNode result =  code.mergeTwoLists(head,head2);
+//        ListNode result =  code.mergeTwoLists(head,head2);
+        ListNode result2 =  code.mergeTwoLists2(head,head2);
 
 
 
 
 
-        while(result !=null) {
-            System.out.println(result.val);
-            result = result.next;
+//        while(result !=null) {
+//            System.out.println(result.val);
+//            result = result.next;
+//        }
+        System.out.println("-------------------");
+        while(result2 !=null) {
+            System.out.println(result2.val);
+            result2 = result2.next;
         }
 
     }
@@ -106,7 +112,44 @@ public class LeetCode_21 {
     }
 
 
-//    public ListNode mergeTwoLists2(ListNode l1, ListNode l2) {
-//
-//    }
+    public ListNode mergeTwoLists2(ListNode l1, ListNode l2) {
+        ListNode visualHead = new ListNode();
+
+        ListNode node = visualHead;
+        ListNode node1 = l1;
+        ListNode node2 = l2;
+
+        while(node1!=null||node2!=null){
+
+            if(node1==null){
+                node.next = node2;
+                node  = node2;
+
+                node2 = node2.next;
+                continue;
+            }
+
+            if(node2 == null){
+                node.next = node1;
+                node = node1;
+                node1 = node1.next;
+                continue;
+            }
+
+            if( node1.val>node2.val){
+                node.next = node2;
+                node = node2;
+                node2 = node2.next;
+            }else{
+                node.next = node1;
+                node = node1;
+                node1 = node1.next;
+            }
+
+
+        }
+
+
+        return visualHead.next;
+    }
 }

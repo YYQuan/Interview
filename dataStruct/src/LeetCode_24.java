@@ -16,7 +16,9 @@ public class LeetCode_24 {
 
 
 
-        ListNode result =  code.swapPairs(head);
+//        ListNode result =  code.swapPairs(head);
+        ListNode result =  code.swapPairs2(head);
+
 
 
 
@@ -73,6 +75,37 @@ public class LeetCode_24 {
             this.next = next;
         }
 
+    }
+
+    public ListNode swapPairs2(ListNode head) {
+
+        if(head == null) return null;
+        if(head.next ==null) return head;
+
+        ListNode visualHead  = new ListNode();
+        visualHead.next = head;
+
+        ListNode pre = visualHead;
+        ListNode node = visualHead.next;
+        ListNode next = node.next;
+
+        while(next!=null){
+            node.next = next.next;
+            pre.next = next ;
+            next.next = node;
+
+            pre  = node ;
+            if(pre.next==null){
+                break;
+            }
+            node = pre.next;
+            if(node.next==null){
+                break;
+            }
+            next = node.next;
+        }
+
+        return visualHead.next;
     }
 
 }
