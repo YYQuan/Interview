@@ -4,7 +4,8 @@
 2. Retrofit
 3. Rxjava
 4. glide 
-5. ButterKnife
+5. ButterKnife （未完成）
+6. Bugly（未完成）
 
 # OkHttp
 
