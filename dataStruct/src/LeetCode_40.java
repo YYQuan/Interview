@@ -17,7 +17,7 @@ public class LeetCode_40 {
         int[] ints = new int[]{10,1,2,7,6,1,1,5};
 //        System.out.println(code.combinationSum(ints,7));
 //        System.out.println(code.combinationSum2(ints,8));
-        System.out.println(code.combinationSum2(ints,8));
+        System.out.println(code.combinationSum22(ints,8));
 
     }
     List<List<Integer>> list = new ArrayList<>();
@@ -126,4 +126,34 @@ public class LeetCode_40 {
 
 */
 
+
+    public List<List<Integer>> combinationSum22(int[] candidates, int target) {
+        List<List<Integer>>  result   = new ArrayList<>();
+
+        Arrays.sort(candidates);
+
+        solution2(candidates,target,0,result,new ArrayList<>());
+        return result;
+
+    }
+
+    public void  solution2(int[] candidates ,int target ,int index,List<List<Integer>> result ,List<Integer> ints){
+
+        if(target<0) return ;
+        if(target==0){
+            result.add(new ArrayList<>(ints));
+            return ;
+        }
+
+        for(int i =  index; i< candidates.length;i++){
+
+            if(i>index&&candidates[i]==candidates[i-1])  continue;
+
+            ints.add(candidates[i]);
+            solution2(candidates,target-candidates[i],i+1,result,ints);
+            ints.remove((Object)candidates[i]);
+
+
+        }
+    }
 }
