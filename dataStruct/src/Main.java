@@ -2,14 +2,49 @@ package src;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class Main {
 
     public static void main(String[] args) {
 
+        System.out.println("03ae5a877482eeb73078e2f928f02a8b".toUpperCase());
+
+//        calculatorSign("","zkrx-jianyu","","AndroidTP","123456");
+    }
 
 
+    private static String  digest(String  accoutn ){
+        return "appid=zkrx-jianyu&nonce=123456&type=AndroidTP&username="+accoutn+"&secret=zkrx-jianyu-2020";
+    }
 
+    static String  getToken(String account ,String password ,String nonce ){
+
+        String string1 = account+":"+"app@mhearts.com"+password;
+        MD5
+    }
+
+    private static  String  calculatorSign(String  username ,String  appid ,String secret,String type,String nonce){
+
+        SortedMap<String, Object> params = new TreeMap<>();
+
+        params.put("appid", appid);
+//		params.put("appsecret", appsecret);
+//		params.put("password", password);
+//			固定的
+        params.put("type", type);
+        params.put("nonce", nonce);
+        params.put("username", username);
+
+        String  str = params.toString();
+        str = str.replace(", ","&");
+        str = str.substring(0,str.length()-1);
+        str+=("&secret="+secret+"}");
+
+        String  inStr = str.substring(1,str.length()-1);
+        System.out.println("s   "+inStr);
+        return inStr;
     }
 
     public  static void  test(){

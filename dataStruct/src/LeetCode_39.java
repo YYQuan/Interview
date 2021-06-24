@@ -1,9 +1,6 @@
 package src;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class LeetCode_39 {
 
@@ -15,7 +12,9 @@ public class LeetCode_39 {
         int[] ints = new int[]{2,3,5};
 //        System.out.println(code.combinationSum(ints,7));
 //        System.out.println(code.combinationSum(ints,8));
-        System.out.println(code.combinationSum2(ints,8));
+
+//        System.out.println(code.combinationSum2(ints,8));
+        System.out.println(code.combinationSum3(ints,8));
 
     }
 
@@ -141,4 +140,38 @@ public class LeetCode_39 {
 
 
 
+    public List<List<Integer>> combinationSum3(int[] candidates, int target) {
+        List<List<Integer>> result = new ArrayList<>();
+        Arrays.sort(candidates);
+        solution3(result ,null,candidates,target,0);
+        return result;
+    }
+
+    public void  solution3(List<List<Integer>>  result , List<Integer> tmpInts ,int[] candidatas ,int target,int index){
+
+        if(tmpInts == null){
+            tmpInts = new ArrayList<>();
+
+        }
+        if(target <0 ){
+            return ;
+        }
+        if(target == 0 ){
+            if(!result.contains(tmpInts)) {
+                result.add(tmpInts);
+            }
+            return ;
+        }
+
+        for(int i = index ;i<candidatas.length;i++){
+
+            if(i>0&&candidatas[i]==candidatas[i-1]) continue;
+
+            List<Integer> ints = new ArrayList<>(tmpInts);
+             ints.add(candidatas[i]);
+
+            solution3(result,ints ,candidatas,target-candidatas[i],i);
+        }
+
+    }
 }
