@@ -9,13 +9,20 @@ public class LeetCode_49 {
 
     public static void main(String[] args) {
         LeetCode_49 code = new LeetCode_49();
-//        String[] strings = new String[]{"eat", "tea", "tan", "ate", "nat", "bat"};
-        String[] strings = new String[]{"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab"};
+        String[] strings = new String[]{"eat", "tea", "tan", "ate", "nat", "bat"};
+//        String[] strings = new String[]{"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab"};
 //        String[] strings = new String[]{"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","aaaaaaaaaaaaaaaaaaaaaaaaab"};
 
-        List<List<String>> result = code.groupAnagrams2(strings);
+  //      List<List<String>> result = code.groupAnagrams(strings);
 
-        for(List<String> ss: result){
+//        for(List<String> ss: result){
+//            ;
+//            System.out.println(Arrays.toString(ss.toArray()));
+//
+//        }
+
+        List<List<String>> result3 = code.groupAnagrams3(strings);
+        for(List<String> ss: result3){
             ;
             System.out.println(Arrays.toString(ss.toArray()));
 
@@ -266,5 +273,43 @@ public class LeetCode_49 {
             return (int)hashCode;
         }
     }
+
+
+    static int[] nums3 = new int[]{3,5,7,11,13,17,23,29,31,37,41,43,47,59,61,67,71,73,79,83,97,101,103,107,109,113};
+    public List<List<String>> groupAnagrams3(String[] strs) {
+
+        List<List<String>>  result = new ArrayList<>();
+        List<String>  strsList = Arrays.stream(strs).collect(Collectors.toList());
+        List<String>  list = new ArrayList<>();
+
+
+
+        HashMap<Long,List<String>> map   = new HashMap<>();
+
+        for(String s : strs){
+            long l = caculator(s);
+            List<String> list1 =map.getOrDefault(l,new ArrayList<>());
+            list1.add(s);
+            map.put(l,list1);
+
+        }
+
+        for(List<String> l : map.values()){
+            result.add(l);
+        }
+        return result;
+
+
+    }
+
+    long caculator(String s){
+
+        long tmp = 1;
+        for(char c :s.toCharArray()){
+            tmp = tmp*nums3[c-'a'];
+        }
+        return tmp;
+    }
+
 
 }

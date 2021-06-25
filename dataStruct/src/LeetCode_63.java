@@ -8,23 +8,29 @@ public class LeetCode_63 {
         LeetCode_63 code = new LeetCode_63();
 
 //        System.out.println(code.uniquePaths(2,2));
-        int[][] ints = new int[4][3];
+        int[][] ints = new int[3][3];
         ints[0]=new int[]{0,0,0};
         ints[1]=new int[]{0,1,0};
         ints[2]=new int[]{0,0,0};
-        ints[3]=new int[]{0,0,0};
 
-        ints = new int[4][5];
-        ints[0]=new int[]{0,0,0,0,0};
-        ints[1]=new int[]{0,0,0,0,1};
-        ints[2]=new int[]{0,0,0,1,0};
-        ints[3]=new int[]{0,0,0,0,0};
+//        int[][] ints = new int[4][3];
+//        ints[0]=new int[]{0,0,0};
+//        ints[1]=new int[]{0,1,0};
+//        ints[2]=new int[]{0,0,0};
+//        ints[3]=new int[]{0,0,0};
 
-        ints[0]=new int[]{0,1,0,0,0};
-        ints[1]=new int[]{1,0,0,0,0};
-        ints[2]=new int[]{0,0,0,0,0};
-        ints[3]=new int[]{0,0,0,0,0};
+//        ints = new int[4][5];
+//        ints[0]=new int[]{0,0,0,0,0};
+//        ints[1]=new int[]{0,0,0,0,1};
+//        ints[2]=new int[]{0,0,0,1,0};
+//        ints[3]=new int[]{0,0,0,0,0};
+//
+//        ints[0]=new int[]{0,1,0,0,0};
+//        ints[1]=new int[]{1,0,0,0,0};
+//        ints[2]=new int[]{0,0,0,0,0};
+//        ints[3]=new int[]{0,0,0,0,0};
         System.out.println(code.uniquePathsWithObstacles(ints));
+        System.out.println(code.uniquePathsWithObstacles2(ints));
         System.out.println(code.uniquePathsWithObstaclesD(ints));
 //        System.out.println(code.uniquePathsWithObstacles(3,7));
 
@@ -79,4 +85,45 @@ public class LeetCode_63 {
         return true;
     }
 
+
+    public int uniquePathsWithObstacles2(int[][] obstacleGrid) {
+        int m = obstacleGrid.length;
+        int n = obstacleGrid[0].length;
+        if(m ==0 && n == 0) return 1;
+
+
+        int[][] tmpIntss = new  int[m][n];
+
+        for(int i = 0 ; i<n;i++){
+
+            if(obstacleGrid[0][i]==1){
+                while(i<n) {
+                    tmpIntss[0][i++] =0;
+                }
+            }else{
+                tmpIntss[0][i] =1;
+            }
+
+        }
+
+        for(int i =1 ;i<m;i++){
+
+            for(int j = 0;j<n;j++){
+
+                if(obstacleGrid[i][j] ==1){
+                    tmpIntss[i][j] =0;
+                }else {
+                    if(j==0) {
+                        // 重点在这 下一列的初始值要受上一列的影响
+                        tmpIntss[i][j] =tmpIntss[i-1][0];
+                        continue;
+                    }
+                    tmpIntss[i][j] = tmpIntss[i][j - 1] +tmpIntss[i - 1][j];
+                }
+            }
+        }
+
+        return tmpIntss[m-1][n-1];
+
+    }
 }
