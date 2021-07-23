@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import src.TreeNodeUtil.TreeNode;
 
 public class LeetCode_103 {
 
@@ -22,8 +23,12 @@ public class LeetCode_103 {
         node2.right = node4;
         TreeNode node1 = new TreeNode(1);
         node1.right= node2;
-        List<List<Integer>> result =code.zigzagLevelOrder(node1);
+        TreeNodeUtil.TreeNode node  =TreeNodeUtil.transferArrays2Tree(new Integer[]{1,2,3,4,null,null,5});
+
+        List<List<Integer>> result =code.zigzagLevelOrder(node);
+        List<List<Integer>> result2 =code.zigzagLevelOrder2(node);
         System.out.println(Arrays.toString(result.toArray()));
+        System.out.println(Arrays.toString(result2.toArray()));
 
     }
 
@@ -65,17 +70,49 @@ public class LeetCode_103 {
     }
 
 
-    public static class TreeNode {
-        int val;
-        TreeNode left;
-        TreeNode right;
-        TreeNode() {}
-        TreeNode(int val) { this.val = val; }
-        TreeNode(int val, TreeNode left, TreeNode right) {
-            this.val = val;
-            this.left = left;
-            this.right = right;
+
+    public List<List<Integer>> zigzagLevelOrder2(TreeNode root) {
+
+        List<List<Integer>> result = new ArrayList<>();
+        if(root == null) return result;
+
+        List<Integer> list = new ArrayList<>();
+        LinkedList<TreeNode> nodes  = new LinkedList<>();
+        boolean isL2R = true;
+        nodes.add(root);
+        while(!nodes.isEmpty()){
+            list.clear();
+
+            int size = nodes.size();
+
+            for( int i = 0 ; i<size ;i++){
+                TreeNode node ;
+                if(isL2R) {
+
+                    node =nodes.removeFirst();
+                    // 存都存成 从左往右 ， 取的时候 做区别
+                    if (node.left != null) {
+                        nodes.addLast(node.left);
+                    }
+                    if (node.right != null) {
+                        nodes.addLast(node.right);
+                    }
+                }else{
+                    //
+                    node =nodes.removeLast();
+                    if (node.right != null) {
+                        nodes.addFirst(node.right);
+                    }
+                    if (node.left != null) {
+                        nodes.addFirst(node.left);
+                    }
+                }
+                list.add(node.val);
+            }
+            isL2R =!isL2R;
+            result.add(new ArrayList<>(list));
         }
+        return result;
     }
 
 }

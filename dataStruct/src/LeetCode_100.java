@@ -67,14 +67,18 @@ public class LeetCode_100 {
 //        System.out.println(ints.get(2)==ints2.get(2));
 
 
-        System.out.println(ints.get(3)==ints2.get(3));
-        System.out.println(ints.get(4)==ints2.get(4));
-        System.out.println(ints.get(5)==ints2.get(5));
+//        System.out.println(ints.get(3)==ints2.get(3));
+//        System.out.println(ints.get(4)==ints2.get(4));
+//        System.out.println(ints.get(5)==ints2.get(5));
 
 
-//        boolean result = code.isSameTree(nodeT1,nodeT2);
-//        System.out.println(result);
-//        System.out.print(Arrays.toString(list.toArray()));
+        boolean result = code.isSameTree(nodeT1,nodeT2);
+        System.out.println(result);
+        System.out.print(Arrays.toString(list.toArray()));
+
+        boolean result2 = code.isSameTree2(nodeT1,nodeT2);
+        System.out.println(result2);
+
     }
 
     // 这个是算拆箱装箱的一个bug Integer(-685)==Integer(-685)  返回的是false
@@ -154,6 +158,27 @@ public class LeetCode_100 {
           this.left = left;
           this.right = right;
       }
+    }
+
+
+    public boolean isSameTree2(TreeNode p, TreeNode q) {
+        if(p == null &&q ==null) return true;
+
+        if(p == null) return false;
+        if(q == null) return false;
+
+        if(p.val != q.val) return false;
+
+        if(!isSameTree2(p.left,q.left)){
+            return false;
+        }
+        if(!isSameTree2(p.right,q.right)){
+            return false;
+        }
+
+        return true;
+
+
     }
 
 

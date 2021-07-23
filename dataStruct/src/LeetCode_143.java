@@ -1,5 +1,7 @@
 package src;
 
+import java.util.LinkedList;
+
 public class LeetCode_143 {
 
     public static void main(String[] args) {
@@ -16,11 +18,18 @@ public class LeetCode_143 {
             node.next = new ListNode(ints1[i]);
             node = node.next;
         }
-        ListNode result =head;
-                code.reorderList(head);
-        while(result !=null) {
-            System.out.println(result.val);
-            result = result.next;
+//        ListNode result =head;
+//                code.reorderList(head);
+//
+//        while(result !=null) {
+//            System.out.println(result.val);
+//            result = result.next;
+//        }
+        ListNode result2 =head;
+        code.reorderList2(head);
+        while(result2 !=null) {
+            System.out.println(result2.val);
+            result2 = result2.next;
         }
     }
 
@@ -76,6 +85,38 @@ public class LeetCode_143 {
             this.val = val;
             this.next = next;
         }
+
+    }
+
+
+
+    public void reorderList2(ListNode head) {
+
+        if(head == null) return ;
+
+        LinkedList<ListNode> nodes = new LinkedList<>();
+
+        ListNode node = head;
+        while(node!=null){
+            nodes.add(node);
+            node = node.next;
+        }
+        ListNode virsualHead = new ListNode();
+        node = virsualHead;
+        while(!nodes.isEmpty()){
+            ListNode lNode = nodes.removeFirst();
+            node.next=lNode;
+            if(nodes.isEmpty()){
+                lNode.next=null;
+            }else{
+                ListNode rNode = nodes.removeLast();
+                lNode.next=rNode;
+                rNode.next=null;
+                node = rNode;
+
+            }
+        }
+
 
     }
 

@@ -20,8 +20,10 @@ public class LeetCode_108 {
 //        TreeNode head = TreeNodeUtil.transferArrays2Tree(ints);
 //        TreeNode  result = code.lowestCommonAncestor(head,new TreeNode(2),new TreeNode(8));
         TreeNode result = code.sortedArrayToBST(ints);
-        System.out.println(result);
+        TreeNode result2 = code.sortedArrayToBST2(ints);
+
         TreeNodeUtil.printOrderTree(result);
+        TreeNodeUtil.printOrderTree(result2);
     }
     public static  TreeNode  sortedArrayToBST(int[] nums){
         if (nums == null||nums.length <=0) {
@@ -52,6 +54,27 @@ public class LeetCode_108 {
 
 
 
+    }
+
+
+    // 思路  ： 一直取中值， 从上到下的来构建链表
+    public TreeNode sortedArrayToBST2(int[] nums) {
+        if(nums == null ) return null;
+
+        return solution(nums,0,nums.length-1);
+    }
+
+    public TreeNode solution(int[] nums,int l ,int r) {
+        if(r == l) return new TreeNode(nums[l]);
+        else if(r< l ) return  null;
+
+        int middleIndex = l + (r-l)/2;
+        TreeNode node = new TreeNode(nums[middleIndex]);
+
+        node.left = solution(nums,l,middleIndex-1);
+        node.right = solution(nums,middleIndex+1,r);
+
+        return node;
     }
 
 }

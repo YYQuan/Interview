@@ -1,5 +1,6 @@
 package src;
 
+import java.util.LinkedList;
 import java.util.Stack;
 
 public class LeetCode_150 {
@@ -14,7 +15,9 @@ public class LeetCode_150 {
         String[] s = new String[]{"10","6","9","3","+","-11","*","/","*","17","+","5","+"};
 
         int result = code.evalRPN(s);
+        int result2 = code.evalRPN2(s);
         System.out.println(result);
+        System.out.println(result2);
 
     }
 
@@ -84,6 +87,66 @@ public class LeetCode_150 {
         return c =='+'||c =='-'||c =='*'||c =='/';
     }
 
+
+    public int evalRPN2(String[] tokens) {
+        if(tokens ==null||tokens.length<=0 ) return 0;
+        LinkedList<String> queue  = new LinkedList<>();
+        for(int i = 0 ; i<tokens.length;i++){
+            String s =tokens[i];
+            char c = s.charAt(0);
+            if(s.length()==1 &&isSign(c)){
+
+                if(queue.isEmpty()){
+                    throw  new IllegalArgumentException();
+                }
+                String op1 =queue.poll();
+
+                if(queue.isEmpty()){
+                    throw  new IllegalArgumentException();
+                }
+                String op = queue.poll();
+
+
+                int  opInt =Integer.parseInt(op);
+                int  opInt1 =Integer.parseInt(op1);
+
+                int newOp = 0;
+
+                switch(c){
+                    case '+':
+                        newOp = opInt+opInt1;
+                        break;
+                    case '-':
+                        newOp = opInt-opInt1;
+
+                        break;
+                    case '*':
+                        newOp = opInt1*opInt;
+
+                        break;
+
+                    case '/':
+                        newOp = opInt/opInt1;
+
+                        break;
+                    default:
+                        throw  new IllegalArgumentException();
+
+                }
+
+                queue.push(newOp+"");
+
+            }else{
+                queue.push(s);
+            }
+        }
+
+        if(queue.isEmpty()){
+            throw  new IllegalArgumentException();
+        }
+        return Integer.parseInt(queue.poll());
+
+    }
 
 
 }

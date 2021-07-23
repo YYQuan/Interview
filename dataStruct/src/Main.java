@@ -22,7 +22,7 @@ public class Main {
     static String  getToken(String account ,String password ,String nonce ){
 
         String string1 = account+":"+"app@mhearts.com"+password;
-        MD5
+        return  null;
     }
 
     private static  String  calculatorSign(String  username ,String  appid ,String secret,String type,String nonce){

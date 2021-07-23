@@ -1,5 +1,6 @@
 package src;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class LeetCode_215 {
@@ -10,10 +11,13 @@ public class LeetCode_215 {
 //        int[] nums1  = new int[]{1,2,3,0,0,0};
 //        int[] nums2   = new int[]{2,5,6};
 
-        int[] nums1  = new int[]{3,2,1,5,6,4};
-        int[] nums2   = new int[]{1};
+//        int[] nums1  = new int[]{3,2,1,5,6,4};
+        int[] nums1  = new int[]{3,2,3,1,2,4,5,5,6};
+//        int[] nums1  = new int[]{3,1,2,4};
+//        int[] nums1  = new int[]{2,1};
+//        int[] nums1   = new int[]{1};
 
-        int result = code.findKthLargest3(nums1,2);
+        int result = code.findKthLargest4(nums1,1);
 //        System.out.println(result+"  ");
         System.out.println(result+"  ");
         for(int i =0 ;i<nums1.length;i++){
@@ -123,6 +127,61 @@ public class LeetCode_215 {
 
 
 
+    public int findKthLargest4(int[] nums, int k) {
+        if(nums == null || nums.length==0) return 0;
+//        Arrays.sort(nums);
+        quickSork(nums,0,nums.length-1);
+        return nums.length>=k?nums[nums.length-k]:0;
+    }
 
+
+
+    // l  r  包前 包后
+    public  void quickSork(int[] nums,int l ,int r){
+        if(r<=l) return ;
+        int random =new Random().nextInt(r-l)+l;
+        swapO(nums,random,l);
+
+        int middle = handleO(nums,l,r);
+        quickSork(nums,l,middle-1);
+        quickSork(nums,middle+1,r);
+
+    }
+
+    public  int handleO(int[] nums, int l,int r){
+        if(l>=r) return l;
+        int  tmp = nums[l];
+        int tl = l+1;
+        int tr = r;
+        // 这里的边界条件也要注意  只有两个元素也要触发移位才行
+        while(tl<=tr){
+            // 快排 两个注意点  等于的 也要交换，  边界不是以 tl  tr   因为最后需要用tr来确定 l 来位置
+            while(tl<r&&nums[tl]<tmp){
+                tl++;
+            }
+            while(tr>l&&nums[tr]>tmp){
+                tr--;
+            }
+            if(tl<=r&&tr>tl){
+                swapO(nums,tl,tr);
+                tl++;
+                tr--;
+            }else{
+                break;
+            }
+        }
+        swapO(nums, l, tr);
+
+        return  tr;
+    }
+
+
+    public  void swapO (int[] nums,int l ,int r){
+
+        int tmp = nums[l];
+        nums[l] =nums[r];
+        nums[r] =tmp;
+
+    }
 
 }

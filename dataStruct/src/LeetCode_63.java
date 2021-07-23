@@ -25,6 +25,7 @@ public class LeetCode_63 {
         ints[2]=new int[]{0,0,0,0,0};
         ints[3]=new int[]{0,0,0,0,0};
         System.out.println(code.uniquePathsWithObstacles(ints));
+
         System.out.println(code.uniquePathsWithObstaclesD(ints));
 //        System.out.println(code.uniquePathsWithObstacles(3,7));
 
@@ -78,5 +79,8 @@ public class LeetCode_63 {
         if(obstacleGrid[m][n]==1) return false;
         return true;
     }
+
+
+
 
 }

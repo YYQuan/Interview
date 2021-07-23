@@ -18,8 +18,10 @@ public class LeetCode_235 {
         TreeNode head = TreeNodeUtil.transferArrays2Tree(ints);
 //        TreeNode  result = code.lowestCommonAncestor(head,new TreeNode(2),new TreeNode(8));
         TreeNode  result = code.lowestCommonAncestor(head,new TreeNode(2),new TreeNode(4));
+        TreeNode  result2 = code.lowestCommonAncestor2(head,new TreeNode(2),new TreeNode(4));
 //        int result = code.minDiffInBST(head);
-        System.out.print(result.val);
+        System.out.println(result.val);
+        System.out.print(result2.val);
     }
 
     // 击败 11
@@ -63,6 +65,38 @@ public class LeetCode_235 {
 
         return false;
     }
+
+
+    // 核心思路  根据 二叉搜索树的特性， 第一个 在p.val 和q.val之间的 node.val 就是 他们的最近公共祖先
+    public TreeNode lowestCommonAncestor2(TreeNode root, TreeNode p, TreeNode q) {
+
+        if(root == null) return null;
+        if(p== null) return q;
+        if(q== null) return p;
+        int intP = p.val;
+        int intq = q.val;
+
+        TreeNode node = root;
+
+        while(true){
+
+            if(node == null) return null;
+
+            if(node.val == intP) return p;
+            if(node.val == intq) return q;
+
+            if(node.val>intP &&node.val >intq)  {
+                node = node.left;
+            }else if(node.val<intP&&node.val<intq){
+                node = node.right;
+            }else{
+                return node;
+            }
+        }
+
+
+    }
+
 
 
 }

@@ -18,11 +18,13 @@ public class LeetCode_217 {
 //        boolean result = code.containsNearbyDuplicate(nums1,1);
           int[] nums1  = new int[]{2147483647,-2147483648,2147483647,-2147483648};
         boolean result = code.containsDuplicate(nums1);
+        boolean result2 = code.solution(nums1);
 
 
 
 //        System.out.println(result+"  ");
         System.out.println(result+"  ");
+        System.out.println(result2+"  ");
 
 
     }
@@ -41,5 +43,25 @@ public class LeetCode_217 {
         }
 
         return false;
+    }
+
+
+
+    public boolean  solution(int[] nums){
+        if(nums==null||nums.length<=1) return false;
+
+        HashSet<Integer> set = new HashSet<>();
+
+        for(int i :nums){
+
+            if(set.contains(i)){
+                return true;
+            }else{
+                set.add(i);
+            }
+
+        }
+        return false;
+
     }
 }

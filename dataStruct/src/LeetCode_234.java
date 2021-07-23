@@ -1,5 +1,7 @@
 package src;
 
+import java.util.LinkedList;
+
 public class LeetCode_234 {
 
     public static void main(String[] args) {
@@ -18,12 +20,14 @@ public class LeetCode_234 {
             node = node.next;
         }
         ListNode result =head;
-                boolean isPalindrome = code.isPalindrome(head);
+        boolean isPalindrome = code.isPalindrome(head);
+        boolean isPalindrome2 = code.isPalindrome2(head);
         while(result !=null) {
             System.out.println(result.val);
             result = result.next;
         }
         System.out.println(isPalindrome);
+        System.out.println(isPalindrome2);
 
     }
 
@@ -82,5 +86,30 @@ public class LeetCode_234 {
         }
 
     }
+
+    public boolean isPalindrome2(ListNode head) {
+        if(head == null)  return false;
+
+        LinkedList<ListNode> nodes = new LinkedList<>();
+
+        ListNode node = head;
+        while(node!=null){
+            nodes.add(node);
+            node = node.next;
+        }
+
+        while(!nodes.isEmpty()){
+
+            if(nodes.size() ==1) return true;
+            ListNode firstNode= nodes.poll();
+            ListNode lastNode = nodes.removeLast();
+            if(firstNode.val!=lastNode.val) return false;
+        }
+
+        return true;
+
+    }
+
+
 
 }

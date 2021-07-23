@@ -3,7 +3,7 @@ package src;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
+import src.TreeNodeUtil.TreeNode;
 public class LeetCode_110 {
 
     public static void main(String[] args) {
@@ -76,19 +76,34 @@ public class LeetCode_110 {
 
     }
 
-    public static  class TreeNode {
-      int val;
-      TreeNode left;
-      TreeNode right;
-      TreeNode() {}
-      TreeNode(int val) { this.val = val; }
-      TreeNode(int val, TreeNode left, TreeNode right) {
-          this.val = val;
-          this.left = left;
-          this.right = right;
-      }
-    }
+    public boolean isBalanced2(TreeNode root) {
 
+        if(root == null)  return true;
+
+        if((Math.abs(getDepth(root.left) - getDepth(root.right))<=1)
+                &&isBalanced2(root.left)
+                &&isBalanced2(root.right)){
+            return true;
+        }else{
+            return false;
+        }
+
+
+
+
+    }
+    public int getDepth(TreeNode root) {
+
+        if(root == null) return 0;
+
+        if(root.left ==null && root.right==null) return 1;
+
+
+        return Math.max(getDepth(root.left),getDepth(root.right))+1;
+
+
+
+    }
 
 
 }

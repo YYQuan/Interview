@@ -8,7 +8,7 @@ public class LeetCode_203 {
     public static void main(String[] args) {
         LeetCode_203 code = new LeetCode_203();
 
-        int[] ints1 = new int[]{1,2,3,4,5,6};
+        int[] ints1 = new int[]{6,1,2,3,4,5,6};
         ListNode head = new ListNode(ints1[0]);
         ListNode node = head;
         for( int i = 1; i<ints1.length ;i++){
@@ -18,7 +18,8 @@ public class LeetCode_203 {
 
 
 
-        ListNode result =  code.removeElements(head,6);
+//        ListNode result =  code.removeElements(head,6);
+        ListNode result =  code.removeElements2(head,6);
 
 
 
@@ -76,6 +77,38 @@ public class LeetCode_203 {
             this.next = next;
         }
 
+    }
+
+
+    public ListNode removeElements2(ListNode head, int val) {
+
+        if(head == null)  return null;
+        ListNode virtualHead = new ListNode();
+        virtualHead.next= head;
+
+        ListNode pNode = virtualHead;
+        ListNode node = pNode.next;
+        ListNode nNode = node.next;
+
+        while(node!=null){
+
+            if(node.val == val){
+
+                pNode.next = nNode;
+                node = nNode;
+                if(node!=null){
+                    nNode = node.next;
+                }
+            }else{
+                pNode = pNode.next;
+                node = node.next;
+                if(node!=null){
+                    nNode = node.next;
+                }
+            }
+
+        }
+        return virtualHead.next;
     }
 
 }

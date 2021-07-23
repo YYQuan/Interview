@@ -1,5 +1,7 @@
 package src;
 
+import javafx.util.Pair;
+
 import java.util.*;
 
 public class LeetCode_347 {
@@ -7,9 +9,10 @@ public class LeetCode_347 {
     public static void main(String[] args) {
         LeetCode_347 code = new LeetCode_347();
 
-        int[] ints = new  int[]{1,1,1,2,2,3};
+//        int[] ints = new  int[]{1,1,1,2,2,3};
+        int[] ints = new  int[]{1,2};
 
-        int[] result  = code.topKFrequent(ints,2);
+        int[] result  = code.topKFrequent2(ints,2);
 
         System.out.println(Arrays.toString(result));
     }
@@ -48,6 +51,10 @@ public class LeetCode_347 {
             this.count = count;
         }
 
+        @Override
+        public boolean equals(Object obj) {
+            return key == ((Pair)obj).key;
+        }
 
         @Override
         public int compareTo(Pair o) {
@@ -67,6 +74,32 @@ public class LeetCode_347 {
             this.left = left;
             this.right = right;
         }
+    }
+
+
+    // 不能直接用 treeMap 因为 treeMap 是用 key来排序的。 所以的自定义一个 compare 接口 ，然后又
+    public int[] topKFrequent2(int[] nums, int k) {
+        int[] result = new int[k];
+        if(nums == null||nums.length == 0) return result;
+
+        TreeMap<Integer,Integer>  treeMap = new TreeMap<>();
+
+        for(int i : nums){
+            treeMap.put(i,treeMap.getOrDefault(i,0)+1);
+        }
+        PriorityQueue<Pair>  queue = new PriorityQueue<>();
+
+        while(treeMap.size()>0) {
+            int key = treeMap.firstKey();
+            int value = treeMap.remove(key);
+            Pair pair = new Pair(key, value);
+            queue.add(pair);
+        }
+        for(int i = 0 ; i<k ;i++){
+            result[i]=  (Integer)(queue.poll().key);
+        }
+
+        return result;
     }
 
 }

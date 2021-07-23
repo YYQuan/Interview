@@ -23,6 +23,7 @@ public class LeetCode_64 {
         ints[0] = new int[]{1,2,3};
         ints[1] = new int[]{4,5,6};
         System.out.println(new LeetCode_64().minPathSum(ints));
+        System.out.println(new LeetCode_64().minPathSum3(ints));
 //        System.out.println(new LeetCode_120().minimumTotal2(list));
 
     }
@@ -86,5 +87,35 @@ public class LeetCode_64 {
             v2 = minPathSum2(grid,i,j-1)+grid[i][j];
         }
         return Math.min(v1,v2);
+    }
+
+
+
+    public int minPathSum3(int[][] grid) {
+
+        int m = grid.length;
+        int n = grid[0].length;
+
+        int[][] tmpIntss = new int[m][n];
+        for(int i  = 0 ; i<n ;i++){
+            if(i==0) {
+                tmpIntss[0][i] = grid[0][i];
+            }else{
+                tmpIntss[0][i] = grid[0][i]+tmpIntss[0][i-1];
+            }
+        }
+
+        for(int i=1 ; i<m ;i++){
+            for(int j = 0; j<n;j++){
+
+                if(j==0){
+                    tmpIntss[i][j] = grid[i][j]+tmpIntss[i-1][j];
+                }else{
+                    tmpIntss[i][j] =Math.min(tmpIntss[i-1][j],tmpIntss[i][j-1]) +grid[i][j];
+                }
+            }
+        }
+
+        return tmpIntss[m-1][n-1];
     }
 }

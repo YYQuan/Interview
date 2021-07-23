@@ -11,6 +11,7 @@ public class LeetCode_82 {
 //        int[] ints1 = new int[]{1,1,1,2,3,4,5,6};
 //        int[] ints1 = new int[]{1,1,2,2,3,3,4,5,6};
         int[] ints1 = new int[]{1,2,3,3,4,4,5};
+//        int[] ints1 = new int[]{1,1};
         ListNode head = new ListNode(ints1[0]);
         ListNode node = head;
         for( int i = 1; i<ints1.length ;i++){
@@ -20,7 +21,7 @@ public class LeetCode_82 {
 
 
 
-        ListNode result =  code.deleteDuplicates(head);
+        ListNode result =  code.deleteDuplicates2(head);
 
 
 
@@ -127,4 +128,53 @@ public class LeetCode_82 {
 
     }
 
+
+    // 核心思路  和左右 不一样的才保留下来
+
+    public ListNode deleteDuplicates2(ListNode head) {
+
+        if(head == null) return null;
+
+        ListNode  vitualHead = new ListNode();
+        ListNode  vitualHead2 = new ListNode();
+        vitualHead.next = vitualHead2;
+        vitualHead.val = Integer.MIN_VALUE;
+        vitualHead2.val = Integer.MIN_VALUE+1;
+        vitualHead2.next = head;
+
+
+        ListNode node = vitualHead;
+        ListNode pNode = vitualHead;
+        ListNode cNode = vitualHead2;
+        ListNode rNode = vitualHead2.next;
+
+        while(cNode!=null){
+
+            if(rNode!=null){
+
+                if(rNode.val != cNode.val&&pNode.val != cNode.val){
+                    node.next=cNode;
+                    node =node.next;
+                }
+                rNode  = rNode.next;
+            }else{
+                if(pNode.val != cNode.val){
+                    node.next=cNode;
+                    node =node.next;
+                }
+            }
+
+            pNode  = pNode.next;
+            cNode  = cNode.next;
+
+        }
+        // 注意 一个都没有保留下来的情况 要主动指向null
+        node.next =null;
+//        if(cNode.val!=rNode.val){
+//            node.next= rNode;
+//        }
+
+
+        return vitualHead2.next;
+    }
 }

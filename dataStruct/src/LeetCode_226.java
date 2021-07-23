@@ -24,7 +24,7 @@ public class LeetCode_226 {
 
         code.invertTree(node2);
         System.out.print(code.invertTree(node2));
-        System.out.print(code.invertTree(node2));
+        System.out.print(code.invertTree2(node2));
     }
 
     // 击败100
@@ -63,5 +63,16 @@ public class LeetCode_226 {
     }
 
 
+    public TreeNode invertTree2(TreeNode root) {
+        if(root == null)  return  null;
 
+        TreeNode node = root.left;
+        root.left = root.right;
+        root.right = node;
+
+        invertTree2(root.left);
+        invertTree2(root.right);
+
+        return root;
+    }
 }

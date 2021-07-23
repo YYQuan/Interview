@@ -15,7 +15,7 @@ public class LeetCode_148 {
             node.next = new ListNode(ints1[i]);
             node = node.next;
         }
-        ListNode result =  code.sortList(head);
+        ListNode result =  code.sortList2(head);
         while(result !=null) {
             System.out.println(result.val);
             result = result.next;
@@ -90,6 +90,44 @@ public class LeetCode_148 {
             this.next = next;
         }
 
+    }
+
+    public ListNode sortList2(ListNode head) {
+
+        if(head == null) return null;
+        ListNode virsualHead =  new ListNode(Integer.MIN_VALUE);
+        virsualHead.next = head;
+
+
+        ListNode pNode = virsualHead;
+        ListNode cNode  = head;
+        ListNode nNode = head.next;
+
+
+        ListNode node = head;
+        ListNode pre = virsualHead;
+
+        while(node!=null){
+            while(node!=null&&pre.val<=node.val){
+                pre = pre.next;
+                node = node.next;
+            }
+            if(node == null) break;
+            // 这里要注意  virsualHead 的next不一定是head了
+            pNode = virsualHead;
+            cNode = pNode.next;
+            nNode = cNode.next;
+            while(node.val>cNode.val){
+                pNode = pNode.next;
+                cNode = cNode.next;
+                nNode = nNode.next;
+            }
+            pre.next =node.next;
+            pNode.next = node;
+            node.next = cNode;
+            node  = pre.next;
+        }
+        return  virsualHead.next;
     }
 
 }
