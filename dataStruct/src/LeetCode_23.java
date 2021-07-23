@@ -39,7 +39,8 @@ public class LeetCode_23 {
         }
 
         ListNode[] nodes = new ListNode[]{head,head1,head2};
-        ListNode result = code.mergeKLists(nodes);
+//        ListNode result = code.mergeKLists2(nodes);
+        ListNode result = code.mergeKLists3(nodes);
 
         while(result!=null) {
             System.out.println(result.val+"-");
@@ -102,4 +103,113 @@ public class LeetCode_23 {
 
 
     }
+
+    public ListNode mergeKLists2(ListNode[] lists) {
+
+        if(lists == null ||lists.length==0 ) return  null;
+        if(lists.length ==1) return  lists[0];
+
+        ListNode node = lists[0];
+        for(int i = 1 ; i<lists.length;i++){
+            ListNode node1 = lists[i];
+            node = mergeTwo(node,node1);
+        }
+
+        return node;
+
+    }
+
+    public ListNode  mergeTwo(ListNode l1 ,ListNode l2 ){
+        ListNode  visualHead = new ListNode();
+        ListNode  node = visualHead;
+        ListNode node1 = l1;
+        ListNode node2 = l2;
+
+        while(node1!=null||node2!=null){
+
+            if(node1==null){
+                node.next = node2;
+                node = node2;
+                node2 = node2.next;
+                continue;
+            }
+
+            if(node2 ==null){
+                node.next = node1;
+                node = node1;
+                node1 = node1.next;
+                continue;
+            }
+
+            if(node1.val<node2.val){
+                node.next = node1;
+                node = node1;
+                node1 = node1.next;
+            }else{
+                node.next = node2;
+                node = node2;
+                node2 = node2.next;
+            }
+
+
+        }
+
+        return visualHead.next;
+
+    }
+
+
+
+
+    //
+    public ListNode mergeKLists3(ListNode[] lists) {
+
+
+        PriorityQueue<PriorityListNode> queue  = new PriorityQueue();
+
+        for(ListNode node : lists){
+
+            while(node !=null){
+                queue.add(new PriorityListNode(node));
+                node =node.next;
+
+            }
+        }
+
+        ListNode visualHead = new ListNode();
+        ListNode node = visualHead;
+
+        while(!queue.isEmpty()){
+
+
+            node.next = queue.poll().node;
+
+            node = node.next;
+
+        }
+        node.next =null;
+
+        return visualHead.next;
+    }
+
+    class PriorityListNode implements  Comparable<PriorityListNode> {
+
+        ListNode node;
+
+        public PriorityListNode(ListNode node) {
+            this.node = node;
+        }
+
+        @Override
+        public int compareTo(PriorityListNode o) {
+            return node.val-o.node.val;
+        }
+    }
+
+
+
+
+
+
 }
+
