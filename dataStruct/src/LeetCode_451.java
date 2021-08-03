@@ -1,8 +1,6 @@
 package src;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 
 public class LeetCode_451 {
 
@@ -10,7 +8,9 @@ public class LeetCode_451 {
         LeetCode_451 code = new LeetCode_451();
         String s = "tree";
         String result = code.frequencySort(s);
+        String result2 = code.frequencySort2(s);
         System.out.println(result);
+        System.out.println(result2);
 
     }
 
@@ -65,5 +65,44 @@ public class LeetCode_451 {
         Comparable integer = nums[l];
         nums[l] = nums[r];
         nums[r] = integer;
+    }
+
+    public String frequencySort2(String s) {
+        if(s == null ||s.length()==0)  return s ;
+
+
+
+        HashMap<Character,Integer>  freMap = new HashMap<>();
+
+        for(char c : s.toCharArray()){
+            freMap.put(c,freMap.getOrDefault(c,0)+1);
+        }
+
+        TreeMap<Integer,List<Character>>  map = new TreeMap<>();
+
+
+        for(char c : freMap.keySet()){
+            int count = freMap.get(c);
+            List<Character> list = map.getOrDefault(count,new ArrayList<>());
+            list.add(c);
+            map.put(count, list);
+
+        }
+
+        StringBuilder builder  = new StringBuilder();
+        for(; map.size()>0;) {
+            Map.Entry<Integer,List<Character>>  entry  =  map.pollLastEntry();
+
+            List<Character> list = entry.getValue();
+            for(char c:list) {
+                for (int j = 0; j < entry.getKey(); j++) {
+                    builder.append(c);
+                }
+            }
+
+
+        }
+
+        return builder.toString();
     }
 }

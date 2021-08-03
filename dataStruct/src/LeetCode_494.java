@@ -15,14 +15,15 @@ public class LeetCode_494 {
 //        int[] ints = {1, 5, 11, 5};
 //        int[] ints = {1, 5,  1,5};
 //        int[] ints = {1, 1, 1, 1, 1};
-        int[] ints = {0,0,0,0,0,0,0,0,1};
+//        int[] ints = {0,0,0,0,0,0,0,0,1};
 //        int[] ints = {0,0,1};
-//        int[] ints = {1};
+        int[] ints = {1};
 
 
 
-        System.out.println(code.findTargetSumWays(ints,1));
-        System.out.println(code.findTargetSumWaysD(ints,1));
+        System.out.println(code.findTargetSumWays(ints,2));
+        System.out.println(code.findTargetSumWaysD(ints,2));
+        System.out.println(code.findTargetSumWays2(ints,2));
 
     }
 
@@ -83,4 +84,35 @@ public class LeetCode_494 {
 
     }
 
+    public int findTargetSumWays2(int[] nums, int target) {
+        if(nums == null ||nums.length == 0 )  return 0 ;
+
+        int sum = 0;
+        for(int i :nums){
+            sum+=i;
+        }
+
+        if((2*sum+1) <=(target+sum)) return 0 ;
+
+        int[][]  dp =  new int[nums.length][2*sum+1];
+
+
+        if(nums[0]==0){
+            dp[0][sum]=2;
+        }else{
+            dp[0][nums[0]+sum] = 1;
+            dp[0][-nums[0]+sum] = 1;
+        }
+
+
+        for(int i = 1 ; i< nums.length;i++){
+            for(int j = 0; j<dp[0].length;j++){
+                if(dp[i-1][j]!=0){
+                    dp[i][j+nums[i]]+=dp[i-1][j];
+                    dp[i][j-nums[i]]+=dp[i-1][j];
+                }
+            }
+        }
+        return dp[nums.length-1][target+sum];
+    }
 }

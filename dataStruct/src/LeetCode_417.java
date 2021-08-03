@@ -26,6 +26,8 @@ public class LeetCode_417 {
 //        System.out.println(code.exist(chars,"ABCB"));
 
         System.out.println( code.pacificAtlantic(chars));
+        System.out.println( code.pacificAtlantic2(chars));
+
 
     }
 
@@ -121,6 +123,84 @@ public class LeetCode_417 {
     }
 
 
+
+    public List<List<Integer>> pacificAtlantic2(int[][] heights) {
+        List<List<Integer>> result  = new ArrayList<>();
+        if(heights==null||heights.length==0) return result;
+        if(heights[0]==null||heights[0].length==0) return result;
+
+
+        boolean[][] broad = new boolean[heights.length][heights[0].length];
+
+        for(int i = 0; i <heights.length;i++){
+            for(int j = 0 ; j<heights[0].length;j++){
+                    solution2(heights,broad,i,j);
+                    // 注意这里只能说明 i,j 这里的水 能留到 board为true的地方，
+                    // 不能代表 board true的地方都互通
+                    if(isLegat(broad)) {
+                        List<Integer> list = new ArrayList<>();
+                        list.add(i);
+                        list.add(j);
+                        result.add(list);
+
+                    }
+                    for(boolean[] bArray :broad){
+                        Arrays.fill(bArray,false);
+                    }
+
+
+
+            }
+        }
+
+
+
+        return result;
+
+    }
+
+
+
+    void solution2(int[][] heights ,boolean[][] broad,int row, int column){
+
+        broad[row][column] = true;
+
+        //左上右下
+        if(column>0){
+            if(!broad[row][column-1]&&heights[row][column]>=heights[row][column-1]) {
+//                broad[row][column-1] = true;
+//                isRead[row][column-1] = true;
+                solution2(heights, broad, row, column - 1);
+            }
+        }
+
+        if(row>0){
+            if(!broad[row-1][column]&&heights[row][column]>=heights[row-1][column]) {
+//                broad[row-1][column] = true;
+//                isRead[row-1][column] = true;
+                solution2(heights, broad, row - 1, column);
+            }
+        }
+
+        if(column<(heights[0].length-1)){
+            if(!broad[row][column+1]&&heights[row][column]>=heights[row][column+1]) {
+//                broad[row][column+1] = true;
+//                isRead[row][column+1] = true;
+                solution2(heights, broad, row, column + 1);
+            }
+        }
+
+        if(row<(heights.length-1)){
+            if(!broad[row+1][column]&&heights[row][column]>=heights[row+1][column]) {
+//                broad[row+1][column] = true;
+//                isRead[row+1][column] = true;
+                solution2(heights, broad, row + 1, column);
+            }
+        }
+
+
+
+    }
 
 
 }

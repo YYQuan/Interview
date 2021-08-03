@@ -1,6 +1,8 @@
 package src;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.TreeMap;
 
 public class LeetCode_697 {
 
@@ -9,13 +11,15 @@ public class LeetCode_697 {
 
 //        int[] ints  = new int[]{1, 2, 2, 3, 1};
 //        int[] ints  = new int[]{1,2,1};
-        int[] ints  = new int[]{1,2,2,3,1};
-//        int[] ints  = new int[]{3,3,4};
+//        int[] ints  = new int[]{1,2,2,3,1};
+        int[] ints  = new int[]{3,3,4};
 
         int result = code.findShortestSubArray(ints);
+        int result2 = code.findShortestSubArray2_2(ints);
 
 //        System.out.println(Arrays.toString(ints));
         System.out.println(result);
+        System.out.println(result2);
 
 
 
@@ -127,5 +131,40 @@ public class LeetCode_697 {
             }
         }
         return result;
+    }
+
+    public int findShortestSubArray2_2(int[] nums) {
+        if(nums==null||nums.length==0)  return 0 ;
+        int target = calculator(nums,0,nums.length-1);
+        if(target == 1)  return 1;
+        int min = Integer.MAX_VALUE;
+        for(int i  =0 ; i<nums.length;i++){
+            for(int j = i+1 ;j<nums.length;j++){
+
+                int count = calculator(nums,i,j);
+                if(count == target){
+                    min = Math.min(j-i+1,min);
+                }
+
+            }
+        }
+
+        return min;
+
+    }
+
+    public int calculator(int[] nums,int l ,int r ){
+        HashMap<Integer,Integer>  map = new HashMap<>();
+
+        for(int  i =l ;i<=r;i++){
+            map.put(nums[i], map.getOrDefault(nums[i],0)+1);
+        }
+
+        int max = 0;
+        for( int i :map.keySet()){
+            max = Math.max(max, map.get(i));
+        }
+
+        return max ;
     }
 }

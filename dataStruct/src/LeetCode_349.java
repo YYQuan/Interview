@@ -1,9 +1,6 @@
 package src;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class LeetCode_349 {
 
@@ -74,7 +71,7 @@ public class LeetCode_349 {
 
         if(nums1 == null ||nums2 ==null || nums1.length==0 ||nums2.length==0) return new int[]{};
 
-        List<Integer> resultList = new ArrayList<>();
+        Set<Integer> resultList = new HashSet<>();
         HashSet<Integer> set = new HashSet<>();
         for(int i :nums1){
             set.add(i);

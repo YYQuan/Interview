@@ -1,6 +1,9 @@
 package src;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 public class LeetCode_350 {
 
@@ -69,5 +72,29 @@ public class LeetCode_350 {
         }else{
             map.put(i,1);
         }
+    }
+
+
+    public int[] intersect2(int[] nums1, int[] nums2) {
+
+        if(nums1 == null ||nums2 ==null || nums1.length==0 ||nums2.length==0) return new int[]{};
+
+        List<Integer> resultList = new ArrayList<>();
+        HashMap<Integer,Integer> map = new HashMap<>();
+        for(int i :nums1){
+            map.put(i,map.getOrDefault(i,0)+1);
+        }
+
+        for(int i :nums2){
+            if(map.keySet().contains(i)){
+                int count  = map.getOrDefault(i,0);
+                if(count>0) {
+                    resultList.add(i);
+                    map.put(i,count-1);
+                }
+
+            }
+        }
+        return resultList.stream().mapToInt(p -> p ).toArray();
     }
 }

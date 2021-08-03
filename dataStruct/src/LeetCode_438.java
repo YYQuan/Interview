@@ -1,6 +1,7 @@
 package src;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class LeetCode_438 {
@@ -13,19 +14,21 @@ public class LeetCode_438 {
 //        int[] ints = {1, 2, 3, 5};
 //        System.out.println(code.solution(ints));
 //        System.out.println(code.solutionDync(ints));
-        String s = "cbaebabacd";
-        String p = "abc";
+//        String s = "cbaebabacd";
+//        String p = "abc";
 //        String s = "ababa";
 //        String p = "ab";
-//        String s = "ababababab";
-//        String p = "aab";
+        String s = "ababababab";
+        String p = "aab";
 //        String s = "baa";
 //        String p = "aa";
         List result1 = code.findAnagrams(s,p);
         System.out.println(result1);
         List result3 = code.findAnagrams3(s,p);
+        List result2 = code.findAnagrams2(s,p);
 
         System.out.println(result3);
+        System.out.println(result2);
     }
 
 
@@ -139,6 +142,47 @@ public class LeetCode_438 {
 
         for(int i = 0 ;i<nums1.length;i++){
             if(nums1[i]!=nums2[i]) return false;
+        }
+        return true;
+    }
+
+    public List<Integer> findAnagrams2(String s, String p) {
+
+        List<Integer>  result = new ArrayList<>();
+        if(p==null||p.length()==0||s==null||s.length()<p.length()) return result;
+
+        int[] tmp  = new int[26];
+        int[] tmpS2  = new int[26];
+
+        for(char c  : p.toCharArray()){
+            tmp[c-'a']++;
+        }
+        String s2  = s.substring(0,p.length());
+        for(char c  : s2.toCharArray()){
+            tmpS2[c-'a']++;
+        }
+
+        if(isLegal(tmp,tmpS2)){
+            result.add(0);
+        }
+
+        for(int i = p.length();(i)<s.length();i++){
+
+            tmpS2[s.charAt(i)-'a']++;
+            tmpS2[s.charAt(i-p.length())-'a']--;
+            if(isLegal(tmp,tmpS2)){
+                result.add(i-p.length()+1);
+            }
+
+        }
+        return result;
+    }
+
+    boolean isLegal(int[] ints1 ,int[] ints2){
+
+
+        for(int i = 0 ;i<26;i++){
+            if(ints1[i]!=ints2[i]) return false;
         }
         return true;
     }
