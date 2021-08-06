@@ -1498,12 +1498,112 @@ scroll 和fling都是在处理 recyclerView的滑动应该滑动到哪的问题�
 但实际上 recyclerView的滑动最终还是通过scroller来控制的。
 SnapHelper是计算出的目标的位置， 然后用scroller来完成滑动。
 
+## ViewPager源码分析
+
+要分析的点：
+
+- 怎么和fragment关联
+- viewPager怎么滑动
+- 怎么刷新数据
+
+ViewPager的使用的第一步是 setAdapter(PagerAdapter)
+
+ViewPager一般都是和Fragment关联起来的。
+
+### ViewPager和Fragment关联
+
+所以直接分析PagerAdapter的子类 FragmentPagerAdapter
+
+从adapter里分析， 就看到了 fragment和view的关联是在Adapter中的instantiateItem当中来处理的。
+和Fragment有关系的adapter有FragmentPagerAdapter、FragmentStatePagerAdapter 这两个。
+
+#### FragmentPagerAdapter 和FragmentStatePagerAdapter的区别
+
+FragmentStatePagerAdapter
+
+![image-20210804112311596](https://i.loli.net/2021/08/04/H74MpGZ1fASzaiR.png)
+
+FragmentPagerAdapter
+
+![image-20210804112327840](https://i.loli.net/2021/08/04/4NLJ9gKbfkwH6eM.png)
+
+从上面的处理fragment的方式就能看出差别，
+FragmentPagerAdapter  第一次是add 后面都是attach，
+而FragmentStatePagerAdapter,每次都是add。
+
+所以fragment在这两个的Adapter的生命周期是不同的。
+
+FragmentPagerAdapter 后面的加载是不需要重新onCreate的，而是到了 onCrreateView ，解绑的时候 fragment也只执行到 onDestroyView。
+
+而FragmentStatePagerAdapter每次都是add 所以每次fragment的加载都是从头开始的。
+onattach ->onCreate ->onCreateView ->onStart ->onResume  ,
+onPause->onStop->ondestoryView ->onDestory ->ondetach
+
+所以FragmentPagerAdapter 会更占内存。
+
+
+
+
+
+### Fragment的懒加载
+
+为啥要懒加载，因为viewPager 可能关联这很多fragment.
+如果不懒加载的话 ，有可能会大量不必要的网络请求和任务。
+
+为啥用setUserVisibleHint来做懒加载，而不用生命周期函数？
+以pager和fragment结合的场景来说，viewPager对预加载,
+在预加载时， 并不会调用到预加载的fragment的生命周期函数，但是会回调setUserVisibleHint。
+
+Fragment要懒加载的话 得设置ViewPager的limit
+然后把加载数据的逻辑写在Fragment的setUserVisibleHint（）当中。
+setUserVisibleHint 在 可见不可见之间切换的时候 才会被调用。
+
+![image-20210804120800687](https://i.loli.net/2021/08/04/FMWbSg2d5RnlAHa.png)
+
+
+
+观察下ViewPager 的fragment 的生命周期函数
+
+打印fragment的 resume/pause
+
+![image-20210805115044759](https://i.loli.net/2021/08/05/9PiGj47veSEL2cz.png)
+
+可以发现 对于ViewPager的预加载的fragment都是 resume的状态。
+并且只有在移除预加载列表的时候 才会执行pause ->stop和后序生命周期（根据adapter的类型不同，生命周期流程不同）。
+
+所以对于fragment和viewPager绑定的情况， 用生命周期函数来做懒加载不准确。fragment就算在resume状态， user也不一定能看得到。
+所以才用setUserVisiableHint 来做懒加载。setUserVisiableHint才是这种情况下感知 用户是否能看见 fragment的状态。
+
+
+
+### ViewPager的更新
+
+一般用 adapter的 notifyDataSetChanged来处理
+
+![image-20210805122036088](https://i.loli.net/2021/08/05/Lh3V9gomJTwRqMS.png)
+
+![image-20210805122325728](https://i.loli.net/2021/08/05/zyj4xVIBSThUgE5.png)
+
+刷新当前page
+
+
+
+![image-20210805142108199](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20210805142108199.png)
+
+![image-20210805142125783](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20210805142125783.png)
+最终会回调掉PagerAdapter的抽象函数 instantiateItem当中。
+调用adapter.instantiateItem中就会去处理 和fragment的绑定（**FragmentPagerAdapter/FragmentStatePagerAdapter的处理不一样**)了。
+
+刷新ViewPager的核心就是  要重写adapter的getItemPosition才能出发到刷新。
+
 
 
 ## ViewPager2源码分析
 
 ViewPager2 是google 推出用来解决  ViewPager 不支持 页面复用的的。ViewPager2可以直接通过传入接口来完成复用，不再需要自定义ViewPager的PageAdapterer来完成复用.
- 另外ViewPager2还可以支持activity被重新创建后的数据保存。避免由于旋转屏幕，低内存 ，低电量等情况下，activity重建后， fragment上的数据丢失。
+ 另外ViewPager2也支持activity被重新创建后的数据保存。避免由于旋转屏幕，低内存 ，低电量等情况下，activity重建后， fragment上的数据丢失。
+
+
 
 要分析的点：
 
@@ -2274,6 +2374,60 @@ AndroidStudio的INSTANCE Run的实现原理是 类加载方案。
 
 
 这里要强调， 下发的只是差分包，全量合并是在本地执行的。
+
+
+
+
+
+
+
+## 缓存机制
+
+[参考](https://www.jianshu.com/p/41b98118decc)
+
+缓存一般就分成了两级， 内存和磁盘。
+内存的缓存一般都是通过策略来控制。
+Lru算法就是最常用的缓存策略。
+
+用lru(Least recently use)算法 基本可以处理移动端的大多数的缓存场景
+
+
+android 提供了LruCache 来处理。
+
+接下来分析LruCache
+
+### LruCache
+
+![image-20210805155538386](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20210805155538386.png)
+
+看的LruCache的核心就是LinkedHashMap。
+
+
+LinkedHashMap是HashMap的子类。
+linkedHashMap  和hashmap有啥区别呢？
+
+实际上 LinkedHashMap 也是用数组来存根节点的。
+是控制根节点后面的链表 永远是链表。
+而不会想HashMap一样 退化成 红黑树。
+
+继续回到lrucache。
+
+初始化 lrucache的时候  需要传入的容量。
+默认每个元素的权重都是1，可以通过重写sizeof函数来自定义权重。
+
+android的 内存缓存 主要就是通过lruCache来完成的。
+
+文件缓存的话 就没有太大的限制了。
+
+
+
+
+
+
+
+
+
+
 
 
 
