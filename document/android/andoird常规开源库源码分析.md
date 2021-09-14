@@ -6,6 +6,7 @@
 4. glide 
 5. ButterKnife （未完成）
 6. Bugly（未完成）
+7. leakcanary（未完成）
 
 # OkHttp
 
@@ -628,7 +629,7 @@ ConnectionPool  类头先浏览一下。
 这样Connection 释放StreamAllocation的逻辑就比较清晰了。
 就是在ConnectInterceptor中 在ConnectionPool中找到一个connect,
 connect中维护上StreamAllocation的信息。
-然后再网络请求完毕后，回到RetryAndFollowupInterceptor中，让connect把streamAllocation释放掉。
+然后再网络请求完毕后，回到 RetryAndFollowupInterceptor中，让connect把streamAllocation释放掉。
 这样connect就有可能被其他请求给使用了。
 
 前面有说到 ConnectPool是用一个线程池维护connection，但是pool.get是在一个双向队列里面去取的。
@@ -771,6 +772,62 @@ new client -> new request -> new call(client,request)->
 
 
 
+口语化的总结
+
+对于OkHttp请求  用户有三个成员 
+
+- client
+- call 
+- request
+
+call 就是一次网络请求的载体， 
+request中是用户传入的网络请求的具体信息
+client 负责执行call。
+
+这call 的执行 又分成两个阶段：
+
+- OkHttp分发网络请求
+- 网络请求
+
+
+网络请求的分发 分为了 同步请求和异步请求。
+OkHttp中 用了 三个队列来维护。
+同步进行中的队列，异步进行中的请求的队列，异步等待执行的队列。
+其中异步进行汇总的请求队列是用线程池来驱动的。
+OkHttp中的Call本质就是一个runnable ， 能被线程池直接驱动。
+
+分发了网络请求之后， OkHttp就会用拦截链来对请求做一层一层的包装。
+每个拦截器都能对发起 ，和响应做处理
+
+Okhttp 默认有
+
+- retryXXX的拦截器 重定向 和 重试的拦截器，
+   这个拦截器也负责回收socket连接的回收  
+- bridge拦截器 
+  负责给请求的发起添加上Http请求头
+- cache 拦截器 ，
+  发起时 负责把缓存的信息添加上
+  处理响应时，服务器回复了304的话，那么给前一级拦截器返回缓存的内容
+- 连接拦截器 ，
+  发起时 负责在socket连接池里面找可用的连接
+- 网络连接拦截器
+  真正的通过socket连接去发起Http请求，
+  并且获取响应。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 OkHttp的默认线程池：
@@ -883,7 +940,7 @@ Retrofit的对象的构建是通过构建者模式 Build来创建。创建的过
 ![image-20200817110232819](E:/tools/Typora/res/andoirdCodeAnaly/image-20200817110232819.png)
 
 首先是在缓存cache里找对象，  DCL 双重检查锁来保证线程安全的。
-并且 cahce的数据结构是用 ConcurrentHashMap 来实现的。COncurrentHashMap是线程安全数据结构。
+并且 cahce的数据结构是用 ConcurrentHashMap 来实现的。ConcurrentHashMap是线程安全数据结构。
 
 ![image-20200817111346960](E:/tools/Typora/res/andoirdCodeAnaly/image-20200817111346960.png)
 
@@ -1420,6 +1477,11 @@ upperBounds 是直接拿到上界 不是一级一级的返回。  所以不太�
 
 从上面几步就清除了， java泛型要怎么解析了。
 
+
+
+其实从class文件中分析 可用知道  泛型的存储是全部泛型信息用一个字符串来存储的。
+所以反射拿到的泛型的信息是一个string数组， 需要自己去解析。
+
 #### 小结
 
 以函数返回值中的泛型为例子。
@@ -1440,6 +1502,10 @@ upperBounds 是直接拿到上界 不是一级一级的返回。  所以不太�
 可以通过wildCard的upbound和lowBound来获取 上下界。
 
 
+
+简单的来说就是可以通过反射来获取存在字节码里的泛型信息，
+因为在class文件中是把一个完整的泛型信息，里面可能有多个类， 里面
+但是字节码里的泛型信息直接拿的上下界，
 
 # RxJava
 
@@ -1833,7 +1899,7 @@ downStream.onComplete()和 downStream.onError() 是在线程任务完成的时�
 
 
 
-## 总结
+### 小结
 
 来总结一下线程切换：
 
@@ -1872,6 +1938,26 @@ ObservableA在threadA中执行了Observable的subscribe()
 但threadB是起了作用的
 
 所以subScribeOn是全部都会起作用的， 但是对于用户的代码是链下最近的那个subscribeOn才起作用
+
+
+
+## 总结
+
+
+
+RxJava的功能是 链式的异步调用。
+
+这里面就涉及到两个功能 链式的， 和异步。
+
+RxJava的内部定义了一些下游函数。
+把整个业务逻辑分成了 一层层的上下游关系。
+然后通过给上下游传入线程池，来指定在上下游之间指定运行的线程。
+
+所以实际上RxJava就是把 上游 包成一个runnable  传到subscribeOn指定的线程池中去执行，
+然后再把触发的下游函数包成runnable去 observerOn指定的线程池中去执行。
+通过一层一层的包装从而达到了链式的异步调用的效果。
+
+
 
 
 
@@ -1967,7 +2053,7 @@ get的重载  基本对应着 Glide.with()的重载。
 
 
 
-![image-20200918171604350](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20200918171604350.png)
+![image-20200918171604350](https://i.loli.net/2021/08/25/cLMG8qAhaBUPOXd.png)
 
 
 
@@ -2707,6 +2793,45 @@ Engine 是负责读取 和管理 缓存的。
 
 
 
+## 总结
+
+
+
+Glide 是一个 图片加载库。
+他的特点是：
+
+-  能绑定activity的生命周期
+- 通过lru算法和弱应用 来避免OOM
+- 更灵活的缓存管理 ，有 两级内存缓存 和两级磁盘缓存 
+- 默认565的模式 ，比8888省了一半的内存
+
+怎么做到绑定activity的生命周期的呢？
+在主线程new出glide的时候 ，根据传入的context判断是不是activity ，是的话就加入一个fragment,
+通过监听这个fragment来监听宿主activity的生命周期
+
+glide的分为了两级内存缓存， activity 这级的缓存是用弱引用来持有对象的。等actiivty被销毁的时候再把activity的缓存加入的到application级的缓存。
+glide分两级内存缓存的原因是 lru算法并没有考虑资源当前有没有被使用的，activity这级内存缓存并没有做lru。
+所以说如果gc不及时的话，那么这里是有OOM风险的。
+
+glide的磁盘缓存也是分离两级的。
+一个是保存的原尺寸的资源， 一个是缓存了被使用着的尺寸的资源。
+
+所以对于一张图片 同时使用了两个不同的尺寸的话，那么磁盘缓存里就有3分缓存。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Glide 面试题
 
 ### Glide的优点
@@ -2882,3 +3007,75 @@ Glide当中 bitmapPool的作用  对bitmap 进行复用。
 
 监听onLowMemory、onTrimMemory回调，及时释放memoryCache、bitmapPool、arrayPool
 
+
+
+# LeakCanary
+
+
+
+leakCanary是用来做内存泄漏监听的。
+
+## 基础用法
+
+用法非常简单
+
+- 在application里install 一下，得到refWatch
+
+![image-20210826103145888](https://i.loli.net/2021/08/26/iUnIbr9Hxev4MGK.png)
+
+- 对要观察的object watch一下即可
+
+![image-20210826103225735](https://i.loli.net/2021/08/26/Uy6hJrd2Q5YNKvP.png)
+
+
+如果有泄露的话 ，leakCanary会弹出通知出来。
+
+## 原理分析
+
+leakCanary的用法很简单。
+下面进行原理分析：
+
+install 里面 做了什么？
+
+### install
+
+跟一下install的代码， 可以发现 这里就是分成了对activity的监听和 fragment的监听。
+但无论是activity还是fragment的监听都是通过对appliation注册全局的activity生命周期监听的回调来实现的。
+
+![image-20210826104151102](https://i.loli.net/2021/08/26/fJM28tRwseAar64.png)
+
+
+
+activity的监听只监听了activity的onDestory。
+
+![image-20210826104806800](https://i.loli.net/2021/08/26/ehTJjt6BoCEcPlX.png)
+
+fragment的监听是只监听了 activity的onCreate
+![image-20210826104905689](https://i.loli.net/2021/08/26/SAGhTuzqb5feIsj.png)
+
+这里可以小结一下：
+LeakCanary的install实际就是对application注册了activity生命周期回调的监听，
+通过activity的生命周期周期的监听来追踪内存泄露。
+
+### watch
+
+install 中知道了 感知的入口是在activity的生命周期回调中。
+接下来看 具体是怎么确定是否有泄露的。
+
+跟一下watch函数
+
+![image-20210826114530232](https://i.loli.net/2021/08/26/sCQX9jDtOvdryEz.png)
+
+![image-20210826114602041](https://i.loli.net/2021/08/26/RbZnwPmYqrpdayX.png)
+
+内部再用一个线程池 去处理 activity的回调监听。
+
+![image-20210826114627461](https://i.loli.net/2021/08/26/CJwanOuEKAHNik2.png)
+
+![image-20210826114835977](https://i.loli.net/2021/08/26/INtsk8SAQaTKEdg.png)
+
+![image-20210826114941697](https://i.loli.net/2021/08/26/CT5StJcDl6XwfWj.png)
+
+其实判断是否被泄露的逻辑很简单，就是用弱引用去持有被观察的对象。
+在activity被destroy了之后 ，去检测下这个弱应用执行的对象还在不在。
+如果在就主动gc下， 如果主动gc后，还在，那么就认为有泄露了。

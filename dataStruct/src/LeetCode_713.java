@@ -6,18 +6,7 @@ import java.util.List;
 public class LeetCode_713 {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
-        LeetCode_713 code = new LeetCode_713();
-//        int[] nums = new int[]{10,5,2,6};
-//        int k = 100;
-//        int[] nums = new int[]{10,9,10,4,3,8,3,3,6,2,10,10,9,3};
-//        int k = 19;
-        int[] nums = new int[]{1,2,3};
-        int k = 0;
-//        int[] nums = new int[]{100,100,100,100,3};
-//        int k = 10;
-        int result1 = code.numSubarrayProductLessThanK(nums,k);
-        System.out.println(result1);
+
     }
 
 
