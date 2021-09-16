@@ -2,11 +2,15 @@ package src;
 
 import java.util.ArrayList;
 import java.util.List;
+import  src.TreeNodeUtil.TreeNode;
 
 public class LeetCode_101 {
 
     public static void main(String[] args) {
         LeetCode_101 code = new LeetCode_101();
+        TreeNode node = TreeNodeUtil.transferArrays2Tree(new Integer[]{1,2,2,2,null,2});
+        System.out.println(code.isSymmetric(node));
+        System.out.println(code.isSymmetric2(node));
 
     }
 
@@ -67,19 +71,64 @@ public class LeetCode_101 {
     }
 
 
-    public static  class TreeNode {
-      int val;
-      TreeNode left;
-      TreeNode right;
-      TreeNode() {}
-      TreeNode(int val) { this.val = val; }
-      TreeNode(int val, TreeNode left, TreeNode right) {
-          this.val = val;
-          this.left = left;
-          this.right = right;
-      }
+
+
+
+    public boolean isSymmetric2(TreeNode root) {
+
+        if(root==null)  return true;
+        List<Integer> resultL =fOrder(root.left);
+        List<Integer> resultR =lOrder(root.right);
+
+        if(resultL ==null && resultR == null) return true;
+        if(resultL ==null) return false;
+        if(resultR ==null) return false;
+
+        if(resultL.size() != resultR.size()){
+            return false;
+        }
+
+        for(int i = 0 ; i<resultL.size();i++){
+            System.out.println(resultL.get((int)i) +"   "+resultR.get((int)i));
+            if((resultL.get((int)i)) != (resultR.get((int)i))){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public List<Integer>  lOrder(TreeNode root){
+        List<Integer>  result = new ArrayList<>();
+        lOrder(result,root);
+        return result;
+    }
+
+    public void lOrder(List<Integer> result ,TreeNode node){
+        if(node == null) {
+            result.add(null);
+            return ;
+        }
+        result.add(node.val);
+        lOrder(result, node.right);
+
+        lOrder(result,node.left);
     }
 
 
+    public List<Integer>  fOrder(TreeNode node){
+        List<Integer> result = new ArrayList<>();
+        fOrder(result,node);
+        return result;
+    }
+    public void fOrder(List<Integer> result,TreeNode node){
+        if(node == null){
+            result.add(null);
+            return ;
+        }
+        result.add(node.val);
+        fOrder(result,node.left);
+
+        fOrder(result,node.right);
+    }
 
 }

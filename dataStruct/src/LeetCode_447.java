@@ -14,7 +14,9 @@ public class LeetCode_447 {
 //        int[] result = code.solution(ints,9);
 //        int[] result = code.twoSum(ints,9);
         int result = code.numberOfBoomerangs(ints);
+        int result2 = code.numberOfBoomerangs2(ints);
         System.out.println(result);
+        System.out.println(result2);
 
     }
 
@@ -61,5 +63,28 @@ public class LeetCode_447 {
 //        System.out.println("result "+result +"");
 //        System.out.println();
         return result;
+    }
+
+    public int numberOfBoomerangs2(int[][] points) {
+
+         if( points == null ||points.length<3) {
+             return 0 ;
+         }
+
+         int result = 0 ;
+
+         for(int i =0 ; i <points.length;i++){
+             HashMap<Double,Integer> map = new HashMap<>();
+             for(int j = 0 ;j<points.length;j++){
+                 if(i == j ) continue;
+                 double dis = calculatorDes(points[i],points[j]);
+                 map.put(dis,map.getOrDefault(dis,0)+1);
+
+             }
+             for(int count :map.values()) {
+                 result +=(count*(count-1));
+             }
+         }
+         return result;
     }
 }

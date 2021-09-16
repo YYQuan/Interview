@@ -26,8 +26,9 @@ public class LeetCode_309 {
         int[] ints = new int[]{1,2,4,2,5,7,2,4,9,0};
 //        int[] ints = new int[]{1,2,4,2,5};
 
-        System.out.println(code.maxProfit(ints));
+//        System.out.println(code.maxProfit(ints));
         System.out.println(code.maxProfitD(ints));
+        System.out.println(code.maxProfit2(ints));
 
     }
 
@@ -144,5 +145,36 @@ public class LeetCode_309 {
 
         return result;
     }
+
+    // 核心   把状态做成路径图， 理清 状态之间的关系 构建出路径
+    public int maxProfit2(int[] prices) {
+
+        if(prices == null || prices.length <2  ) return 0 ;
+        int[][] dp = new int[prices.length][4];// 0 买入  1 卖出  2 可卖但是不卖  3  冷冻期
+        dp[0][0] = -prices[0];
+        dp[0][1] = 0;
+        dp[0][2] = 0;
+        dp[0][3] = 0;
+
+        dp[1][0] = -prices[1];
+        dp[1][1] = prices[1]-prices[0];
+        dp[1][2] = dp[0][0];
+        dp[1][3] = 0;
+
+
+        for(int i = 2;i<prices.length;i++){
+            dp[i][0] = dp[i-1][3]-prices[i];// 买入 只能从 冷冻期处来
+            dp[i][1] = Math.max(dp[i-1][0],dp[i-1][2])+prices[i]; // 卖出 》{ 买入 / 可卖但是不卖}
+            dp[i][2] = Math.max(dp[i-1][0],dp[i-1][2]);//可卖但是不卖 { 卖出/ 可卖但是不卖}
+            dp[i][3] = Math.max(dp[i-1][1],dp[i-1][3]);// 冷冻期  》{卖出/ 冷冻期}
+        }
+
+        // 最后一个操作  要么是卖出 ，要么是冷冻期
+        return Math.max(dp[dp.length-1][1],dp[dp.length-1][3]);
+    }
+
+
+
+
 
 }

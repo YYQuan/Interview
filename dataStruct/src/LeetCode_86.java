@@ -1,6 +1,8 @@
 package src;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class LeetCode_86 {
 
@@ -21,7 +23,7 @@ public class LeetCode_86 {
         }
 
 
-        ListNode result =  code.partition(head,3);
+        ListNode result =  code.partition2(head,3);
 
 
 
@@ -92,6 +94,41 @@ public class LeetCode_86 {
             this.val = val;
             this.next = next;
         }
+
+    }
+
+
+    public ListNode partition2(ListNode head, int x) {
+        if(head ==null) return null;
+        ListNode virtualHead = new ListNode();
+        virtualHead.val = Integer.MIN_VALUE;
+        virtualHead.next=head;
+        Queue<ListNode> minQueue = new LinkedList<>();
+        Queue<ListNode> maxQueue = new LinkedList<>();
+
+        ListNode node = virtualHead.next;
+        while(node !=null){
+
+            if(node.val >= x){
+                maxQueue.add(node);
+            }else{
+                ((LinkedList<ListNode>) minQueue).add(node);
+            }
+            node  =node.next;
+        }
+        node = virtualHead;
+        while(!minQueue.isEmpty()){
+            node.next = ((LinkedList<ListNode>) minQueue).removeFirst();
+            node = node.next;
+        }
+
+        while(!maxQueue.isEmpty()){
+            node.next = ((LinkedList<ListNode>) maxQueue).removeFirst();
+            node = node.next;
+        }
+        node.next =null;
+
+        return virtualHead.next;
 
     }
 

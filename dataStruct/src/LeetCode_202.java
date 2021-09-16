@@ -9,7 +9,9 @@ public class LeetCode_202 {
         LeetCode_202 code = new LeetCode_202();
         int  n = 19;
         boolean result = code.isHappy(n);
+        boolean result2 = code.isHappy2(n);
         System.out.println(result);
+        System.out.println(result2);
 
     }
 
@@ -51,5 +53,39 @@ public class LeetCode_202 {
         }
         list.addFirst(tmp);
         return list;
+    }
+
+    public boolean isHappy2(int n) {
+
+        HashSet<Integer> set = new HashSet<>();
+
+
+        int tmp  = n ;
+        while(!set.contains(tmp)){
+            set.add(tmp);
+            tmp  = calculator(tmp);
+            if(tmp==1) return true;
+        }
+
+
+        return false;
+
+
+
+    }
+
+    public int calculator(int n){
+
+        int tmp = n;
+        int reslt = 0;
+
+        reslt +=(tmp% 10)*(tmp% 10);
+        while(tmp>=10){
+            tmp = tmp/10;
+            reslt += (tmp%10)*(tmp% 10);
+        }
+
+        return reslt;
+
     }
 }

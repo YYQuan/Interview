@@ -8,7 +8,8 @@ public class LeetCode_344 {
 //        int[] result = code.solution(ints,9);
 //        String s = "A man, a plan, a canal: Panama";
         char[] s = new char[]{'h','e','l','l','o'};
-        code.reverseString(s);
+//        code.reverseString(s);
+        code.reverseString2(s);
         System.out.println(s);
 
 
@@ -31,6 +32,27 @@ public class LeetCode_344 {
 
 
 
+
+    }
+
+
+    public void reverseString2(char[] s) {
+        if(s == null || s.length ==0)  return ;
+
+        int l = 0;
+        int r = s.length-1;
+
+        while(l<r){
+
+            swap(s,l++,r--);
+        }
+    }
+
+    private void swap(char[] s,int l ,int r){
+
+        char c = s[l];
+        s[l] = s[r];
+        s[r] =c ;
 
     }
 

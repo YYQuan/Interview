@@ -19,6 +19,8 @@ public class LeetCode_120 {
         list.add(Arrays.asList( new Integer[]{6,5,7}));
         list.add(Arrays.asList( new Integer[]{4,1,8,3}));
         System.out.println(new LeetCode_120().minimumTotal(list));
+        System.out.println(new LeetCode_120().minimumTotal2(list));
+        System.out.println(new LeetCode_120().minimumTotal3(list));
 //        System.out.println(new LeetCode_120().minimumTotal2(list));
 
     }
@@ -93,6 +95,47 @@ public class LeetCode_120 {
 
     }
 
+
+    public int minimumTotal3(List<List<Integer>> triangle) {
+        if(triangle == null||triangle.size()==0) return 0;
+        if(triangle.get(triangle.size()-1) == null) return 0;
+        int[] tmpSum = new int[triangle.get(triangle.size()-1).size()];
+        Arrays.fill(tmpSum,0);
+
+        tmpSum[0] = triangle.get(0).get(0);
+
+        for(int i = 1; i<triangle.size();i++){
+            // 从后往前就不会影响到后面的计算
+            for(int j = i ; j>=0; j--){
+                if(j == 0) {
+                    tmpSum[0] += triangle.get(i).get(j);
+                }else if(j ==i){
+                    tmpSum[j] = tmpSum[j-1] +triangle.get(i).get(j);
+                }else{
+                    tmpSum[j] = Math.min(tmpSum[j],
+                            tmpSum[j-1])+triangle.get(i).get(j);
+                }
+            }
+        }
+        int result = Integer.MAX_VALUE;
+        for(int i :tmpSum){
+            result = Math.min(result,i);
+        }
+
+        return result;
+
+    }
+    public int solution(List<List<Integer>> triangle,int count,int index ,int currentSum) {
+
+        if(count == triangle.size()) return currentSum;
+
+        List<Integer> list = triangle.get(count);
+        int min = Integer.MAX_VALUE;
+        for(int i = index ;i<list.size()&&i<(index+2);i++){
+            min = Math.min(solution(triangle,count+1,i,currentSum+list.get(i)),min);
+        }
+        return min;
+    }
 
 
 }

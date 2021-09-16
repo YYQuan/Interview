@@ -27,6 +27,7 @@ public class LeetCode_300 {
 
         System.out.println((new  LeetCode_300().solutionDync(nums1)));
         System.out.println((new  LeetCode_300().lengthOfLISD(nums1)));
+        System.out.println((new  LeetCode_300().lengthOfLIS2(nums1)));
 
 //        System.out.println((new  LeetCode_300().solutionDync(nums2)));
 //        System.out.println((new  LeetCode_300().solutionDync(nums3)));
@@ -206,4 +207,29 @@ public class LeetCode_300 {
 
     // 和大神的代码差不多
 
+
+    public int lengthOfLIS2(int[] nums) {
+        if(nums ==null||nums.length==0) return 0;
+
+        int[] dp  = new int[nums.length];
+        Arrays.fill(dp,1);
+
+        for(int i = 1 ; i<nums.length;i++){
+
+            for(int j = 0;j<i;j++ ){
+                // 注意 只有 大于前面的 才能选中该元素
+                if(nums[i]>nums[j]){
+                    dp[i] = Math.max(dp[i],dp[j]+1);
+                }
+            }
+        }
+
+        //  结果中 不一定包含最后一个元素
+        int result = 0;
+        for(int count :dp){
+            result= Math.max(result,count);
+        }
+        return result;
+
+    }
 }

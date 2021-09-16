@@ -1,15 +1,20 @@
 package src;
 
+import java.util.HashSet;
+import java.util.LinkedList;
+
 public class LeetCode_209 {
 
     public static void main(String[] args) {
 //        System.out.println("Hello World!");
         LeetCode_209 code = new LeetCode_209();
-        int[] ints  =new  int[0];
+        int[] ints  =new  int[]{1,2,3,4,5};
 
 //        code.solution(7,ints);
 
-        System.out.println("result  "+ code.solution(15,ints));
+        System.out.println("result  "+ code.solution(7,ints));
+        System.out.println("result  "+ code.minSubArrayLen(7,ints));
+        System.out.println("result  "+ code.minSubArrayLen2(7,ints));
 
     }
 
@@ -89,5 +94,66 @@ public class LeetCode_209 {
         return  minCurrentBound ;
     }
 
+
+    public int minSubArrayLen(int target, int[] nums) {
+
+        if(nums ==null) return 0;
+        if(target<0)  return 0;
+
+        int result = Integer.MAX_VALUE;
+        for(int i = 0 ; i<nums.length;i++){
+            int tmp = minSubArrayLen(target,nums,i,0);
+            if(tmp >0){
+                result = Math.min(result,tmp);
+            }
+        }
+
+        return result ==Integer.MAX_VALUE ?0:result;
+
+    }
+    public int minSubArrayLen(int target, int[] nums,int index ,int count) {
+        if(index >= nums.length ) return 0;
+        int tmp = nums[index];
+        if(tmp >= target){
+            return count +1;
+        }else {
+            return minSubArrayLen(target-tmp, nums,index+1,count+1);
+        }
+    }
+
+
+
+    public int minSubArrayLen2(int target, int[] nums) {
+
+        if(nums==null) return 0 ;
+        if(target <0) return 0 ;
+        if(nums.length<2){
+            return nums[0]>=target?1:0;
+        }
+
+        int l = 0 ;
+        int r = 0;
+        int result = Integer.MAX_VALUE;
+        int tmp = 0;
+        while(r<nums.length){
+
+            while(r<nums.length&&tmp<target){
+                tmp+=nums[r];
+                r++;
+            }
+
+            if(tmp<target&&r==nums.length) return result;
+
+            while(l<r&&tmp>=target){
+                tmp-=nums[l];
+                l++;
+            }
+            if(l == r) return 1;
+            else   if(r<=nums.length){
+                result = Math.min(result ,r-l+1);
+            }
+        }
+        return result ==Integer.MAX_VALUE?0:result;
+    }
 
 }

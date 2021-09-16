@@ -84,5 +84,32 @@ public class LeetCode_113 {
     }
 
 
+    public List<List<Integer>> pathSum2(TreeNode root, int targetSum) {
+
+        List<List<Integer>>  result = new ArrayList<>();
+        solution(result,new ArrayList<>(),root,targetSum);
+        return result;
+    }
+
+    public void solution(List<List<Integer>> result ,List<Integer> list ,TreeNode root, int targetSum) {
+        if(root == null) return ;
+
+        if(root.left==null&&root.right==null){
+            if(targetSum ==root.val){
+                list.add(root.val);
+                result.add(new ArrayList<>(list));
+                list.remove(list.size()-1);
+            }
+            return ;
+        }
+
+        list.add(root.val);
+        solution(result,list,root.left,targetSum-root.val);
+        solution(result,list,root.right,targetSum-root.val);
+        list.remove(list.size()-1);
+
+    }
+
+
 
 }

@@ -11,15 +11,12 @@ public class LeetCode_131 {
         LeetCode_131 code = new LeetCode_131();
         Integer[] ints = new Integer[]{236,104,701,null,227,null,911};
 
-        TreeNode head = TreeNodeUtil.transferArrays2Tree(ints);
-//        TreeNode  result = code.lowestCommonAncestor(head,new TreeNode(2),new TreeNode(8));
+//        List<List<String>>  result = code.partition("aab");
+//        List<List<String>>  result2 = code.partition2("aab");
+        List<List<String>>  result2 = code.partition2("efe");
 
-//        List<String> result = code.restoreIpAddresses("25525511135");
-//        List<String> result = code.restoreIpAddresses("010010");
-//        boolean result = code.isIllegat("01010");
-        List<List<String>>  result = code.partition("aa");
-
-        System.out.println(result);
+//        System.out.println(result);
+        System.out.println(result2);
 //        TreeNodeUtil.printOrderTree(result);
     }
 
@@ -49,7 +46,7 @@ public class LeetCode_131 {
             List<String> tmpList = new ArrayList<>(list);
             String subStr = s.substring(0,i);
 
-            System.out.println("s "+subStr);
+//            System.out.println("s "+subStr);
             if(isIllegat(subStr)){
                 tmpList.add(subStr);
                 partition(s.substring(i),tmpList,lists);
@@ -73,4 +70,47 @@ public class LeetCode_131 {
         return  true;
     }
 
+
+    public List<List<String>> partition2(String s) {
+        List<List<String>>  result = new ArrayList<>();
+        partition2(result, new ArrayList<>(),s,0);
+        return result;
+    }
+
+    public void partition2(List<List<String>> result ,List<String> list ,String s,int index) {
+        if(index>=s.length()) {
+            result.add(new ArrayList<>(list));
+            return;
+        }
+        for(int i = index; i<s.length();i++){
+            int j = i+1;
+            String subStr = s.substring(i,j);
+
+            // 要注意  efe 中 ef  不是回文 但是efe 是回文
+                while (j<=s.length()) {
+                    if(isLegal(subStr)) {
+                        list.add(subStr);
+                        partition2(result, list, s, j);
+                        list.remove(list.size() - 1);
+                    }
+                    j++;
+                    if (j > s.length()) return;
+                    subStr = s.substring(i, j);
+
+            }
+
+            return;
+        }
+    }
+
+    boolean isLegal(String s){
+
+        for(int i = 0 ; i<s.length()/2;i++){
+            if(s.charAt(i)!=s.charAt(s.length()-1-i)){
+                return false;
+            }
+        }
+        return true;
+
+    }
 }

@@ -18,11 +18,15 @@ public class LeetCode_450 {
 
 
         TreeNode head = TreeNodeUtil.transferArrays2Tree(ints);
+        TreeNode head2 = TreeNodeUtil.transferArrays2Tree(ints);
 //        TreeNode  result = code.lowestCommonAncestor(head,new TreeNode(2),new TreeNode(8));
-        TreeNode result = code.deleteNode(head,5);
+
+        TreeNode result2 = code.deleteNode2(head2,5);
+        TreeNode result = code.deleteNode(head,3);
 //        int result = code.minDiffInBST(head);
-        System.out.println(result);
+//        System.out.println(result);
         TreeNodeUtil.printOrderTree(result);
+        TreeNodeUtil.printOrderTree(result2);
     }
 
     public TreeNode deleteNode(TreeNode root, int key) {
@@ -102,5 +106,69 @@ public class LeetCode_450 {
     }
 
 
+    public TreeNode deleteNode2(TreeNode root, int key) {
+
+        if(root == null ) return null;
+
+        LinkedList<TreeNode> nodes = new LinkedList<>();
+        nodes.add(root);
+
+        A:while(!nodes.isEmpty()){
+            int size = nodes.size();
+
+            B:for(int i = 0 ; i<size  ;i++){
+                TreeNode node = nodes.removeFirst();
+
+                if(node.left!=null) {
+                    if(node.left.val==key){
+                        TreeNode replaceNode = findReplaceNode(node);
+                        node.left=replaceNode;
+
+                        if(node == root ) return replaceNode;
+                        break A;
+                    }else {
+                        nodes.addLast(node.left);
+                    }
+                }
+                if(node.right!=null){
+                    if(node.right.val==key){
+
+                        TreeNode replaceNode = findReplaceNode(node);
+                        node.right = replaceNode;
+                        if(node == root ) return replaceNode;
+                        break A;
+                    }else {
+                        nodes.addLast(node.right);
+                    }
+                }
+            }
+        }
+
+        return root;
+
+    }
+
+
+    TreeNode findReplaceNode(TreeNode node){
+
+        if(node == null) return null;
+        if(node.left == null&&node.right==null)  return null;
+        if(node.right == null){
+            TreeNode result = node.left;
+            node.left = null;
+            return result;
+        }else{
+            TreeNode p = node;
+            TreeNode resultNode = node.right;
+
+            while(resultNode.left!=null){
+                p = resultNode;
+                resultNode = resultNode.left;
+            }
+
+            p.left = null;
+            return resultNode;
+        }
+    }
 
 }

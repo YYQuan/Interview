@@ -1,6 +1,7 @@
 package src;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.TreeSet;
 
 public class LeetCode_220 {
@@ -12,11 +13,13 @@ public class LeetCode_220 {
 //        boolean result = code.containsNearbyAlmostDuplicate(nums1,3,0);
 
 //
-        int[] nums1  = new int[]{1,5,9,1,5,9};
-        boolean result = code.containsNearbyAlmostDuplicate(nums1,2,3);
+//        int[] nums1  = new int[]{1,5,9,1,5,9};
+//        boolean result = code.containsNearbyAlmostDuplicate(nums1,2,3);
+//        boolean result2 = code.containsNearbyAlmostDuplicate2(nums1,2,3);
 
-//       int[] nums1  = new int[]{-2147483648,2147483647};
-//        boolean result = code.containsNearbyAlmostDuplicate(nums1,1,1);
+       int[] nums1  = new int[]{-2147483648,2147483647};
+        boolean result = code.containsNearbyAlmostDuplicate(nums1,1,1);
+        boolean result2 = code.containsNearbyAlmostDuplicate2(nums1,1,1);
 
 //       int[] nums1  = new int[]{2147483646,2147483647};
 //        boolean result = code.containsNearbyAlmostDuplicate(nums1,3,3);
@@ -36,6 +39,7 @@ public class LeetCode_220 {
 
 //        System.out.println(result+"  ");
         System.out.println(result+"  ");
+        System.out.println(result2+"  ");
 
 
     }
@@ -67,4 +71,31 @@ public class LeetCode_220 {
 
         return false;
     }
+
+
+    
+
+    public boolean containsNearbyAlmostDuplicate2(int[] nums, int k, int t) {
+
+        if(nums==null ||nums.length ==0)  return false;
+        TreeSet<Long>  valueLongSet = new TreeSet<>();
+        for(int i = 0 ; i<nums.length;i++){
+            int tmp = nums[i];
+            Long  floor = valueLongSet.floor((long)tmp);
+            Long  ceiling  = valueLongSet.ceiling((long)tmp);
+
+            if(floor!=null&& tmp - floor <=t) return true;
+            if(ceiling!=null&& ceiling -tmp  <=t) return true;
+
+            valueLongSet.add((long)tmp);
+            if(valueLongSet.size()>k) {
+                // 不会有相同的 有相同的前面就该返回true了
+                valueLongSet.remove(((long)nums[i-k]));
+            }
+        }
+        return false;
+
+    }
+
+
 }

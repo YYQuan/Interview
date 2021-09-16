@@ -52,5 +52,28 @@ public class LeetCode_112 {
     }
 
 
+    public boolean hasPathSum2(TreeNode root, int targetSum) {
+
+        return solution(root,targetSum);
+    }
+    public boolean solution(TreeNode root, int targetSum) {
+        if(root == null){
+            return false;
+        }
+
+        if(root.left==null &&root.right ==null){
+            return (targetSum-root.val)==0;
+        }
+
+        if(solution(root.left,targetSum -root.val)){
+            return true;
+        }
+        if(solution(root.right,targetSum -root.val)){
+            return true;
+        }
+
+        return false;
+    }
+
 
 }

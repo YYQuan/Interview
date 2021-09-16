@@ -3,6 +3,7 @@ package src;
 import src.TreeNodeUtil.TreeNode;
 
 import java.util.LinkedList;
+import java.util.TreeSet;
 
 public class LeetCode_230 {
 
@@ -14,14 +15,16 @@ public class LeetCode_230 {
 //        Integer[] ints = new Integer[]{5,1,4,null,null,3,6};
 //        Integer[] ints = new Integer[]{5,3,6,2,4,null,7};
 //        int[] ints = new int[]{1,2,3,4,5,6,7,8,9};
-//        Integer[] ints = new Integer[]{3,1,4,null,2};
-        Integer[] ints = new Integer[]{1,null,2};
+        Integer[] ints = new Integer[]{3,1,4,null,2};
+//        Integer[] ints = new Integer[]{1,null,2};
 
 
         TreeNode head = TreeNodeUtil.transferArrays2Tree(ints);
 //        TreeNode  result = code.lowestCommonAncestor(head,new TreeNode(2),new TreeNode(8));
         int result = code.kthSmallest(head,1);
+        int result2 = code.kthSmallest2(head,1);
         System.out.println(result);
+        System.out.println(result2);
 //        TreeNodeUtil.printOrderTree(result);
     }
 
@@ -52,5 +55,60 @@ public class LeetCode_230 {
         return getNodeMinCount(node.left)+getNodeMinCount(node.right)+1;
 
     }
+
+
+    public int kthSmallest2(TreeNode root, int k) {
+
+        if(root == null)  return 0 ;
+        TreeSet<TreeNodeContain> nodeTreeSet = new TreeSet<>();
+
+
+        LinkedList<TreeNode> nodes = new LinkedList<>();
+
+        nodes.add(root);
+        while(!nodes.isEmpty()){
+            int size = nodes.size();
+
+            while(size>0){
+                size--;
+                TreeNode  node = nodes.removeFirst();
+                nodeTreeSet.add(new TreeNodeContain(node));
+                if (node.left!=null) nodes.addLast(node.left);
+                if(node.right!=null) nodes.addLast(node.right);
+            }
+
+
+        }
+
+
+        int count = k;
+        TreeNodeContain contain  = null;
+        while(count>0){
+            count--;
+            contain =nodeTreeSet.pollFirst();
+        }
+
+        if(contain!=null){
+            return contain.node.val;
+        }
+
+        return 0;
+
+    }
+
+    class TreeNodeContain implements Comparable{
+        TreeNode node;
+
+        public TreeNodeContain(TreeNode node) {
+            this.node = node;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            TreeNodeContain  contain = (TreeNodeContain)o ;
+            return this.node.val - contain.node.val;
+        }
+    }
+
 
 }

@@ -8,22 +8,12 @@ public class LeetCode_91 {
 
     public static void main(String[] args) {
         LeetCode_91 code = new LeetCode_91();
-
-//        int[] ints1 = new int[]{1,2};
-        int[] ints1 = new int[]{1,2,2,1};
-//        int[] ints1 = new int[]{1,2,3,4};
-//        int[] ints1 = new int[]{1,2,3,4,5};
-//        int[] ints1 = new int[]{5,1,2,3,4,5,6,7,8};
-        TreeNode node4 = new TreeNode(4);
-        TreeNode node3 = new TreeNode(3);
-        TreeNode node2 = new TreeNode(2);
-        node2.left = node3;
-        node2.right = node4;
-        TreeNode node1 = new TreeNode(1);
-        node1.right= node2;
-//        List<Integer> result =code.rightSideView(node1);
-
-//        System.out.println(code.numSquares(13));
+        ;
+        System.out.println(code.numDecodings("2611055971756562"));
+//        2 6 1 10 5 5 9 7 1 7 5 6 5 6 2
+//        2 6 1 10 5 5 9 7 17 5 6 5 6 2
+//        26 1 10 5 5 9 7 17 5 6 5 6 2
+//        26 1 10 5 5971756562
 //        System.out.println(code.numSquares2(13));
 
     }
@@ -45,4 +35,36 @@ public class LeetCode_91 {
         }
     }
 
+
+    public int numDecodings(String s) {
+        if(s.length()<=0) return 0;
+        if(s.charAt(0) =='0') return 0;
+        return solution(s,0);
+    }
+
+    int  solution(String s , int index){
+
+        if(index == s.length()){
+            return 1;
+        }
+
+        if(index>s.length()) return 0;
+
+
+        int sum = 0 ;
+        if(s.charAt(index)=='0')  return 0;
+        else if(index<(s.length()-1)&&s.charAt(index)<'3'&&s.charAt(index+1)=='0'){
+
+            sum+= solution(s,index+2);
+        }else if(index<(s.length()-1)&&s.charAt(index)=='1'&&s.charAt(index+1)<='9'){
+            sum+= solution(s,index+2);
+            sum+= solution(s,index+1);
+        }else if(index<(s.length()-1)&&s.charAt(index)=='2'&&s.charAt(index+1)<='6'){
+            sum+= solution(s,index+2);
+            sum+= solution(s,index+1);
+        }else{
+            sum+= solution(s,index+1);
+        }
+        return sum;
+    }
 }

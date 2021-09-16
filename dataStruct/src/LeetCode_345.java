@@ -11,7 +11,8 @@ public class LeetCode_345 {
 //        char[] s = new char[]{'h','e','l','l','o'};
 
        ;
-        System.out.println( code.reverseString(s));
+//        System.out.println( code.reverseString(s));
+        System.out.println( code.reverseVowels(s));
 
 
 
@@ -61,5 +62,36 @@ public class LeetCode_345 {
     }
 
 
+    public String reverseVowels(String s) {
+        if(s == null || s.length()==0)  return s;
+        int l = 0;
+        int r = s.length()-1;
+        char[] chars = s.toCharArray();
+        while(l<r){
+            while(l<s.length()&&!belongAEIOU(s.charAt(l))){
+                l++;
+            }
+
+            if(l>r)
+            {
+                return new String(chars);
+            }
+
+            while(r<s.length()&&!belongAEIOU(s.charAt(r))){
+                r--;
+            }
+
+            swap2(chars,l++,r--);
+
+
+        }
+        return new String(chars);
+    }
+
+    private void swap2(char[] s ,int l ,int r ){
+        char  c = s[l];
+        s[l]  = s[r];
+        s[r]  = c;
+    }
 
 }

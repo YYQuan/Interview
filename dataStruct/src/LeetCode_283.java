@@ -2,6 +2,7 @@ package src;
 
 import com.sun.org.apache.xalan.internal.xsltc.util.IntegerArray;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -11,13 +12,30 @@ public class LeetCode_283 {
 
     public static void main(String[] args) {
         LeetCode_283 code = new LeetCode_283();
-        int[] ints  = new int[]{2,7,11,15};
-//        int[] result = code.solution(ints,9);
+        int[] ints  = new int[]{0,2,0,7,11,15};
+        code.moveZeroes2(ints);
 
+        System.out.println(Arrays.toString(ints));
     }
 
 
     //
+    public void moveZeroes3(int[] nums) {
+        if(nums == null) return;
+        int k = 0;
+        for(int i =0 ; i<nums.length;i++){
+
+            if(nums[i]!=0){
+                nums[k++] = nums[i];
+            }
+        }
+
+        for(int i= k;i<nums.length;i++){
+            nums[i] = 0 ;
+        }
+
+
+    }
     public void moveZeroes(int[] nums) {
 
         if(nums == null || nums.length<=0)  return ;
@@ -33,6 +51,39 @@ public class LeetCode_283 {
         for(int i = k; i<nums.length;i++){
             nums[i] = 0;
         }
+    }
+
+
+    public void moveZeroes2(int[] nums) {
+
+
+        int l = 0;
+        int r = 0;
+        while(r<nums.length-1){
+
+            // 找到第一个 0
+            while(l<(nums.length-1)&&nums[l]!=0){
+                l++;
+            }
+
+            r = l +1;
+            while(r<(nums.length-1)&&nums[r]==0){
+                r++;
+            }
+
+            if(r== nums.length) break;
+            swap(nums,l,r);
+
+            l++;
+
+        }
+    }
+
+    public void swap(int[] nums,int l ,int r){
+        int tmp = nums[l];
+        nums[l] =nums[r];
+        nums[r] =tmp;
+
     }
 
 }

@@ -6,8 +6,6 @@ public class LeetCode_206 {
 
     public static void main(String[] args) {
         LeetCode_206 code = new LeetCode_206();
-        String pattern = "foo";
-        String s = "bar";
 
         ListNode head = new ListNode(0);
         ListNode node = head;
@@ -16,9 +14,9 @@ public class LeetCode_206 {
             node = node.next;
         }
 
-        ListNode result =  code.reverseList(head);
+        ListNode result =  code.reverseList2(head);
 
-        while(result.next !=null) {
+        while(result !=null) {
             System.out.println(result.val);
             result = result.next;
         }
@@ -62,4 +60,30 @@ public class LeetCode_206 {
         }
     }
 
+
+    public ListNode reverseList2(ListNode head) {
+
+        if(head == null ) return null;
+        ListNode virtualHead = new ListNode();
+        virtualHead.next = head;
+
+        ListNode pNode= virtualHead;
+        ListNode node = pNode.next;
+        ListNode nNode = node.next;
+
+        while(node!=null){
+
+            node.next = pNode;
+
+            pNode = node;
+            node= nNode ;
+            if(node!=null){
+                nNode =node.next;
+            }
+
+        }
+
+        head.next =null;
+        return pNode;
+    }
 }

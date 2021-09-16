@@ -21,12 +21,13 @@ public class LeetCode_337 {
 
         TreeNodeUtil.TreeNode root = TreeNodeUtil.transferArrays2Tree(ints);
 //        System.out.println(code.transfer(root));
+//        System.out.println(code.robD(root));
+//        System.out.println(code.robDCount);
+//
+//        System.out.println(code.rob(root));
+//        System.out.println(code.robCount);
         System.out.println(code.robD(root));
-        System.out.println(code.robDCount);
-
-        System.out.println(code.rob(root));
-        System.out.println(code.robCount);
-
+        System.out.println(code.rob2(root));
     }
 
 
@@ -140,6 +141,36 @@ public class LeetCode_337 {
                         (root.right == null ?0:((rob(root.right.left))+(rob(root.right.right)))));
     }
 
+
+
+    // 从低往上  决定返回值
+    public int rob2(TreeNode root) {
+        if(root == null) return 0 ;
+        int[] result =solution(root);
+
+        return Math.max(result[0],result[1]);
+    }
+
+    /**
+     * 动态规划是思想  动态规划和递归 并不冲突 ，
+     * @param root
+     * @return  int [2]  :  选择该节点 ： 不选择该节点  的最大值
+     */
+    public int[] solution(TreeNode root) {
+
+        if(root == null) return new int[]{0,0};
+
+        int[] l = solution(root.left);
+        int[] r = solution(root.right);
+
+        //unsel
+        int sel = root.val +l[1] +r[1];
+        //sel
+        int unsel = Math.max(l[0],l[1])+Math.max(r[0],r[1]);
+
+        return  new int[]{sel,unsel};
+
+    }
 
 
 }

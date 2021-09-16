@@ -7,6 +7,8 @@ public class LeetCode_343 {
 
         System.out.println(new LeetCode_343().integerBreak(
                 10));
+        System.out.println(new LeetCode_343().integerBreak2(
+                10));
         System.out.println(new LeetCode_343().solution2(
                 10));
 //        System.out.println(new LeetCode_343().solution3(
@@ -90,6 +92,27 @@ public class LeetCode_343 {
             }
         }
         return tmp[n];
+
+    }
+
+
+    public int integerBreak2(int n) {
+        if(n<=0)  return 0;
+        if(n<=2)  return 1;
+        int[] dp = new int[n+1];
+
+        dp[1] = 1;
+        dp[2] = 1;
+
+        for(int i = 3 ; i<dp.length;i++){
+            int max = Integer.MIN_VALUE;
+            for(int j  = 1; j<i;j++){
+                max  =Math.max(Math.max(max,(i-j)*j),Math.max(dp[i-j]*j,dp[i-j] *dp[j]));
+            }
+            dp[i]  = max;
+        }
+
+        return dp[n];
 
     }
 }

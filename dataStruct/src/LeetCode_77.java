@@ -12,6 +12,7 @@ public class LeetCode_77 {
         System.out.println("Hello World!");
         LeetCode_77  code = new LeetCode_77();
         System.out.println(code.combine(3,3));
+        System.out.println(code.combine2(3,3));
 
     }
 
@@ -48,5 +49,23 @@ public class LeetCode_77 {
     }
 
 
+    public List<List<Integer>> combine2(int n, int k) {
+        List<List<Integer>> result = new ArrayList<>();
+        solution(result,new ArrayList<>(),0,1,n,k);
+        return result;
+    }
 
+    void  solution(List<List<Integer>> result,List<Integer> ints,int index ,int start,int n ,int k){
+        if(index>=k){
+            result.add(new ArrayList<>(ints));
+            return;
+        }
+
+        for(int i =start;i<=n;i++){
+            ints.add((Integer) i);
+            solution(result,ints,index+1,i+1,n,k);
+            ints.remove((Integer)i);
+        }
+
+    }
 }

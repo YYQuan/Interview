@@ -1,17 +1,20 @@
 package src;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class LeetCode_88 {
 
     public static void main(String[] args) {
         LeetCode_88 code = new LeetCode_88();
 //        int[] ints  = new int[]{2,0,2,1,1,0};
-//        int[] nums1  = new int[]{1,2,3,0,0,0};
-//        int[] nums2   = new int[]{2,5,6};
+        int[] nums1  = new int[]{1,2,3,0,0,0};
+        int[] nums2   = new int[]{2,5,6};
 
-        int[] nums1  = new int[]{0};
-        int[] nums2   = new int[]{1};
+//        int[] nums1  = new int[]{0};
+//        int[] nums2   = new int[]{1};
 
-        code.merge2(nums1,0,nums2,1);
+        code.merge(nums1,3,nums2,3);
 //        System.out.println(result+"  ");
         for(int i =0 ;i<nums1.length;i++){
             System.out.print(nums1[i]+"  ");
@@ -94,5 +97,33 @@ public class LeetCode_88 {
 
     }
 
+
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+
+        Queue<Integer> queue = new LinkedList<>();
+        int i = 0;
+        int j = 0;
+        while(i <m || j<n){
+
+            if(i==m){
+                ((LinkedList<Integer>) queue).add(nums2[j++]);
+                continue;
+            }
+            if(j==n){
+                ((LinkedList<Integer>) queue).add(nums1[i++]);
+                continue;
+            }
+
+            if(nums1[i]<=nums2[j]){
+                ((LinkedList<Integer>) queue).add(nums1[i++]);
+            }else{
+                ((LinkedList<Integer>) queue).add(nums2[j++]);
+            }
+        }
+        int q = 0;
+        while(!queue.isEmpty()){
+            nums1[q++] = ((LinkedList<Integer>) queue).removeFirst();
+        }
+    }
 
 }

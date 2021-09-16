@@ -26,7 +26,7 @@ public class LeetCode_83 {
 //        ListNode result =  code.reverseBetween(head,2,2);
 //        ListNode result =  code.reverseBetween(head,1,2);
 //        ListNode result =  code.reverseBetween(head,3,3);
-        ListNode result =  code.deleteDuplicates(head);
+        ListNode result =  code.deleteDuplicates2(head);
 
 
 
@@ -88,4 +88,32 @@ public class LeetCode_83 {
 
     }
 
+
+    public ListNode deleteDuplicates2(ListNode head) {
+        if(head ==null) return null;
+        ListNode  virtualHead = new ListNode();
+        virtualHead.val = Integer.MIN_VALUE;
+        virtualHead.next=head;
+
+        ListNode pNode = virtualHead;
+        ListNode cNode = head;
+        ListNode nNode = head.next;
+
+        while(cNode!=null){
+            while(pNode.val == cNode.val){
+                pNode.next = cNode.next;
+                cNode = cNode.next;
+                if(cNode!=null) {
+                    nNode = cNode.next;
+                }
+            }
+
+            pNode = pNode.next;
+            if(cNode!=null)
+                cNode = cNode.next;
+            if(nNode!=null)
+                nNode = nNode.next;
+        }
+        return  virtualHead.next;
+    }
 }

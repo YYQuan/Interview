@@ -2,6 +2,7 @@ package src;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class LeetCode_90 {
@@ -18,7 +19,7 @@ public class LeetCode_90 {
         int[] ints = new int[]{4,4,4,1,4};
 //        System.out.println(code.combinationSum(ints,7));
 //        System.out.println(code.combinationSum2(ints,8));
-        System.out.println(code.subsetsWithDup(ints));
+        System.out.println(code.subsetsWithDup2(ints));
 
     }
 
@@ -50,4 +51,30 @@ public class LeetCode_90 {
 
     }
 
+    public List<List<Integer>> subsetsWithDup2(int[] nums) {
+        Arrays.sort( nums);
+        List<List<Integer>> result = new ArrayList<>();
+        LinkedList<Integer> tmpList = new LinkedList<>();
+        result.add(tmpList);
+        for(int i = 0 ; i<nums.length;i++) {
+            solution(result,tmpList ,nums, 0, 0, i);
+        }
+        return result;
+    }
+
+    void solution(List<List<Integer>> result , LinkedList<Integer> tmpList, int[] nums , int index  , int count, int k){
+
+        if(count >k ){
+            result.add(new ArrayList<>(tmpList));
+            return ;
+        }
+
+        for(int i = index ;i<nums.length;i++){
+            if(i>index &&nums[i] == nums[i-1]) continue;
+            tmpList.addLast(nums[i]);
+            solution(result,tmpList,nums,i+1,count+1,k);
+            tmpList.removeLast();
+        }
+
+    }
 }

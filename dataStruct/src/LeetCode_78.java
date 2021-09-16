@@ -17,6 +17,7 @@ public class LeetCode_78 {
 //        System.out.println(code.combinationSum(ints,7));
 //        System.out.println(code.combinationSum2(ints,8));
         System.out.println(code.subsets(ints));
+        System.out.println(code.subsets2(ints));
 
     }
 
@@ -43,5 +44,27 @@ public class LeetCode_78 {
         }
 
 
+    }
+
+    public List<List<Integer>> subsets2(int[] nums) {
+        List<List<Integer>> result = new ArrayList<>();
+        List<Integer> intList = new ArrayList<>();
+        for(int i = 0;i<=nums.length;i++){
+            solution(result,intList,0,0,nums,i);
+        }
+        return result;
+    }
+
+    void  solution(List<List<Integer>> result , List<Integer> intList ,int start ,int index ,int[] nums,int k){
+        if(index>= k ){
+            result.add(new ArrayList<>(intList));
+            return;
+        }
+
+        for(int i = start;i<nums.length;i++){
+            intList.add((Integer)nums[i]);
+            solution(result,intList,i+1,index+1,nums,k);
+            intList.remove((Integer)nums[i]);
+        }
     }
 }

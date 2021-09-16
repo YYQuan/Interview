@@ -14,7 +14,7 @@ public class LeetCode_147 {
             node.next = new ListNode(ints1[i]);
             node = node.next;
         }
-        ListNode result =  code.insertionSortList(head);
+        ListNode result =  code.insertionSortList2(head);
         while(result !=null) {
             System.out.println(result.val);
             result = result.next;
@@ -32,7 +32,7 @@ public class LeetCode_147 {
         ListNode node = head;
         ListNode nextNode = head.next;
 
-        // 第一步找到  node < pre 的node
+        // 第一步找到  node < pre 的node   》》》》重点
         // 断开 node
         // 从头开始找  第一个大于node的点  插入到前面
         // 移动 preNode  、node 、next 对于要移动的点 有个隐含逻辑就是 pre 大于 itself
@@ -93,4 +93,56 @@ public class LeetCode_147 {
 
     }
 
+
+    public ListNode insertionSortList2(ListNode head) {
+        if(head ==null) return head;
+
+        ListNode virtualHead = new ListNode();
+
+
+        ListNode virtualCurrentHead = new ListNode();
+        virtualHead.next= virtualCurrentHead;
+        virtualHead.val= Integer.MIN_VALUE;
+
+        virtualCurrentHead.next= head;
+        virtualCurrentHead.val= Integer.MIN_VALUE;
+
+        // 两串数据   要不能相互影响的话，那么一个尾部是head， 一个头部是head 所以加了两个头
+        ListNode pNode = virtualHead;
+        ListNode cNode = virtualCurrentHead;
+        ListNode nNode = head;
+
+
+
+        ListNode pN = head;
+        ListNode n = head.next;
+        ListNode nN = head.next==null?null:head.next.next;
+
+        while(n!=null){
+
+            while(n!=null&&pN.val<=n.val){
+                pN = pN.next;
+                n = n.next;
+                nN =nN==null?null:nN.next;
+            }
+
+            if(n == null ) break;
+
+            while(cNode!=null&&n.val>cNode.val){
+                pNode = pNode.next;
+                cNode = cNode.next;
+                nNode = nNode==null?null:nNode.next;
+            }
+            pNode.next = n;
+            n.next = cNode;
+            pN.next= nN;
+            n =nN;
+            nN = (nN==null?null:nN.next);
+            pNode = virtualHead;
+            cNode = virtualCurrentHead;
+            nNode = head;
+        }
+        return virtualCurrentHead.next;
+
+    }
 }

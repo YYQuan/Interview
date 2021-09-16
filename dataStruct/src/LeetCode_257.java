@@ -32,7 +32,8 @@ public class LeetCode_257 {
         node6.left = node22;
 
 
-        System.out.print(code.binaryTreePaths(node2));
+        System.out.println(code.binaryTreePaths(node2));
+        System.out.println(code.binaryTreePaths2(node2));
     }
 
     // 击败 百分之8
@@ -42,6 +43,7 @@ public class LeetCode_257 {
 
         if(root == null ) return result;
         binaryTreePaths(root, "",result);
+
 
 
 
@@ -80,5 +82,28 @@ public class LeetCode_257 {
     }
 
 
+    public List<String> binaryTreePaths2(TreeNode root) {
+
+        List<String> result = new ArrayList<>();
+
+        binaryTreePaths2(root, "",result);
+        return result;
+    }
+
+    public void binaryTreePaths2(TreeNode root,String s ,List<String>  result) {
+        if(root.left == null&&root.right == null){
+
+            result.add(s+(s.isEmpty()?"":"->")+root.val);
+            return ;
+        }
+
+        if(root.left !=null) {
+            binaryTreePaths2(root.left, s + (s.isEmpty() ? "" : "->") + root.val, result);
+        }
+        if(root.right !=null) {
+
+            binaryTreePaths2(root.right, s + (s.isEmpty() ? "" : "->") + root.val, result);
+        }
+    }
 
 }

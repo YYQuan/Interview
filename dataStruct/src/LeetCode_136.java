@@ -28,5 +28,4 @@ public class LeetCode_136 {
         return sets.iterator().next();
     }
 
-
 }

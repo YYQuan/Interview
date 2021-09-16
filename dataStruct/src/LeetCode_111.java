@@ -18,12 +18,13 @@ public class LeetCode_111 {
         TreeNode node2 = new TreeNode(2);
 
         node2.right = node3;
-        node3.right =node4;
+        node3.left=node4;
         node4.right =node5;
         node5.right =node6;
 
 
         System.out.print(code.minDepth(node2));
+        System.out.print(code.minDepth2(node2));
     }
 
     // 击败 45
@@ -66,5 +67,15 @@ public class LeetCode_111 {
     }
 
 
+
+    public int minDepth2(TreeNode root) {
+        return minDepth2(root,1);
+    }
+    public int minDepth2(TreeNode root,int depth) {
+        if(root.left ==null &&root.right==null)  return depth;
+        if(root.left ==null )  return minDepth2(root.right,depth+1);
+        else if(root.right ==null )  return minDepth2(root.left,depth+1);
+        else return Math.min(minDepth2(root.left,depth+1),minDepth2(root.right,depth+1));
+    }
 
 }

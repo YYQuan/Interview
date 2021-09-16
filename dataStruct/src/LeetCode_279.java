@@ -25,9 +25,12 @@ public class LeetCode_279 {
 
 //        System.out.println(code.numSquares(13));
         System.out.println(code.numSquares2(56));
-        System.out.println(code.numSquaresMyself(56));
-        System.out.println(code.numSquaresMyselfD(56));
+//
+//        System.out.println(code.numSquaresMyself(56));
+//        System.out.println(code.numSquaresMyselfD(56));
 
+        System.out.println(code.numSquares3(56));
+        System.out.println(code.numSquares3Dp(56));
     }
 
 
@@ -146,6 +149,38 @@ public class LeetCode_279 {
             this.left = left;
             this.right = right;
         }
+    }
+
+    public int numSquares3Dp (int n) {
+        if(n<1) return 0;
+
+        int[] dp = new int[n+1];
+
+        Arrays.fill(dp,Integer.MAX_VALUE);
+        dp[0] =0;
+        dp[1] =1;
+
+        for(int i = 1 ; i<=n ;i++){
+            for(int j = 1 ;j*j <= i ;j++){
+                  dp[i] =Math.min(dp[i], dp[i - j*j] +1);
+            }
+        }
+        return dp[n];
+    }
+    public int numSquares3 (int n) {
+        return numSquares3(n,0);
+    }
+    public int numSquares3 (int n,int count) {
+        if( n == 1) return count+1;
+        if( n == 0) return count;
+
+        int result = Integer.MAX_VALUE;
+        for( int i = 1 ; i*i<=n;i++){
+            int tmp = numSquares3(n-i*i,count+1);
+            result = Math.min(result,tmp);
+        }
+
+        return  result ;
     }
 
 }
