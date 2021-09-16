@@ -435,7 +435,7 @@ node4 -> node1  -> node2 -> node3
 删除一个node
 在单向链表的情况下， 得先遍历到 node2 ，然后再把node2.next 置为null
 tail 指向node2 (cas 操作)
-这里也是由一个cas操作， 但是多了遍历链表。
+这里就得需要先遍历链表了 。
 
 如果这里用 双向链表呢？ 用双向链表就不需要遍历了。
 但是多操作了一个指针。node指针不是Cas 操作，而是volitail
@@ -444,11 +444,18 @@ head                        tail
 node4 -> node1  -> node2 -> node3
 
 
-所以用双指针 也只是一个CAS指令就可以了呀， 但是增加了 内存成本， 也多维护了一个指针。
-
+双指针的话 ，那也ok哇。
+实际上 AQS 队列的节点 是双向的， 但是还是使用的尾插法。
+这里没看出 头插法的优势。
 ```
 
 
+
+原子操作 改变一个地址的值 ，所以得保证只能有一个指向的变化
+
+![image-20210729175035551](https://i.loli.net/2021/07/29/THGecXlIYhmJoz6.png)
+
+![image-20210729175444011](https://i.loli.net/2021/07/29/z6ncDWLFM4qfeNi.png)
 
 
 

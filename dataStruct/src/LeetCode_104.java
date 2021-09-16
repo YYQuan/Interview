@@ -1,6 +1,7 @@
 package src;
 
 import java.util.PriorityQueue;
+import  src.TreeNodeUtil.TreeNode;
 
 public class LeetCode_104 {
 
@@ -12,7 +13,8 @@ public class LeetCode_104 {
         node3.right = node20;
         node20.left = new TreeNode(15);
         node20.right = new TreeNode(7);
-        System.out.print(code.maxDepth(node3));
+        System.out.println(code.maxDepth(node3));
+        System.out.println(code.maxDepth2(node3));
     }
 
     // 击败 100
@@ -39,19 +41,16 @@ public class LeetCode_104 {
     }
 
 
-    public static  class TreeNode {
-      int val;
-      TreeNode left;
-      TreeNode right;
-      TreeNode() {}
-      TreeNode(int val) { this.val = val; }
-      TreeNode(int val, TreeNode left, TreeNode right) {
-          this.val = val;
-          this.left = left;
-          this.right = right;
-      }
+
+
+
+    public int maxDepth2(TreeNode root) {
+        if(root ==null) return 0;
+
+        if(root.left == null &&root.right == null) return 1;
+
+        return Math.max(maxDepth2(root.right)+1,maxDepth2(root.left)+1);
+
     }
-
-
 
 }

@@ -42,36 +42,42 @@ public class LeetCode_37 {
 
 
         result[0] = new char[]{'5','3','4','6','7','8','9','1','2'};
+        chars[0] = new char[]{'5','3','4','6','7','8','9','1','2'};
         chars[0] = new char[]{'5','3','.','.','7','.','.','.','.'};
 
         result[1] = new char[]{'6','7','2','1','9','5','3','4','8'};
-        chars[1] = new char[]{'6','.','.','1','9','5','.','.','.'};
+        chars[1] = new char[]{'6','7','2','1','9','5','3','4','8'};
         chars[1] = new char[]{'6','.','.','1','9','5','.','.','.'};
 
 
         result[2] = new char[]{'1','9','8','3','4','2','5','6','7'};
+        chars[2] = new char[]{'1','9','8','3','4','2','5','6','7'};
         chars[2] = new char[]{'.','9','8','.','.','.','.','6','.'};
 
         result[3] = new char[]{'8','5','9','7','6','1','4','2','3'};
+        chars[3] = new char[]{'8','5','9','7','6','1','4','2','3'};
         chars[3] = new char[]{'8','.','.','.','6','.','.','.','3'};
 
         result[4] = new char[]{'4','2','6','8','5','3','7','9','1'};
+        chars[4] = new char[]{'4','2','6','8','5','3','7','9','1'};
         chars[4] = new char[]{'4','.','.','8','.','3','.','.','1'};
 
         result[5] = new char[]{'7','1','3','9','2','4','8','5','6'};
-        chars[5] = new char[]{'7','.','.','.','2','.','.','.','6'};
+        chars[5] = new char[]{'7','1','3','9','2','4','8','5','6'};
+//        chars[5] = new char[]{'7','.','.','.','2','.','.','.','6'};
 
         result[6] = new char[]{'9','6','1','5','3','7','2','8','4'};
-        chars[6] = new char[]{'.','6','.','.','.','.','2','8','.'};
+        chars[6] = new char[]{'9','6','1','5','3','7','2','8','4'};
+//        chars[6] = new char[]{'.','6','.','.','.','.','2','8','.'};
 
         result[7] = new char[]{'2','8','7','4','1','9','6','3','5'};
         chars[7] = new char[]{'2','8','7','4','1','9','6','3','5'};
-        chars[7] = new char[]{'.','.','.','4','1','9','.','.','5'};
+//        chars[7] = new char[]{'.','.','.','4','1','9','.','.','5'};
 
         result[8] = new char[]{'3','4','5','2','8','6','1','7','9'};
         chars[8] = new char[]{'3','4','5','2','8','6','1','7','9'};
-        chars[8] = new char[]{'.','.','.','.','8','.','.','7','9'};
-        solution.solveSudoku(chars);
+//        chars[8] = new char[]{'.','.','.','.','8','.','.','7','9'};
+        solution.solveSudoku2(chars);
 
 
         solution.printLnChars();
@@ -94,6 +100,12 @@ public class LeetCode_37 {
 
 
     public void printLnChars(){
+        for(char[] cs :chars) {
+            System.out.println(Arrays.toString(cs));
+        }
+    }
+
+    public void printLnChars(char[][] chars){
         for(char[] cs :chars) {
             System.out.println(Arrays.toString(cs));
         }
@@ -187,6 +199,105 @@ public class LeetCode_37 {
             }
         }
 
+        return true;
+    }
+
+
+    public void solveSudoku2(char[][] board) {
+
+
+        System.out.println(  "solve2 " +solve2(board,0,0));
+
+    }
+    public boolean solve2(char[][] board,int x ,int y ) {
+
+        if(board == null) return false;
+        if(x>= board.length ||y>=board.length)  {
+            return true;
+        }
+
+        for( int i = x ; i<board.length;i++){
+            for(int j = y ; j<board[0].length;j++){
+
+                if(board[i][j] =='.'){
+
+                    for(int q = 1 ;q<=9;q++){
+
+                        if(enableX(board, (char) ('0'+q),i)&&
+                           enableY(board, (char) ('0'+q),j)&&
+                           enableH(board, (char) ('0'+q),i,j)){
+                           board[i][j] =(char) ('0'+q);
+
+                           boolean resultTmp =false;
+                           if(j >= board[0].length-1){
+                               resultTmp = solve2(board,i+1,0);
+                           }else {
+                               // 注意得 从 0 开始  要不下一列的元素判断就变少了
+                               resultTmp = solve2(board, i,0);
+//                               resultTmp = solve2(board, i, 0);
+                           }
+
+
+                           if(resultTmp) {
+                               return true;
+                           }
+                           board[i][j] ='.';
+
+                        }
+
+
+                    }
+                    return false;
+                }
+            }
+        }
+
+        return true;
+
+    }
+
+    // 允许同行
+    boolean enableX(char[][] chars , char  c,int xIndex){
+
+
+        for(char cTmp : chars[xIndex]){
+            if (c == cTmp){
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
+    // 允许同列
+    boolean enableY(char[][] chars , char  c,int yIndex ){
+
+        for(int i = 0 ; i<chars.length;i++){
+
+            if(chars[i][yIndex] == c){
+                return false;
+            }
+
+        }
+        return true;
+    }
+
+    // 允许同区域
+    boolean enableH(char[][] chars , char  c,int xIndex , int  yIndex){
+
+        int startX = xIndex/3;
+        int startY = yIndex/3;
+
+        for(int i = 0;i<3;i++){
+            for(int j  = 0 ; j<3;j++){
+
+                if(chars[3*startX+i][3*startY+j] == c){
+                    return false;
+                }
+
+            }
+        }
         return true;
     }
 }

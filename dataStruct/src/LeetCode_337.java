@@ -25,9 +25,11 @@ public class LeetCode_337 {
 //        System.out.println(code.robDCount);
 //
 //        System.out.println(code.rob(root));
+//        System.out.println(code.rob2(root));
 //        System.out.println(code.robCount);
-        System.out.println(code.robD(root));
+        System.out.println(code.rob(root));
         System.out.println(code.rob2(root));
+
     }
 
 
@@ -142,6 +144,16 @@ public class LeetCode_337 {
     }
 
 
+    // 直接用递归就得的  dp 的话 得从子节点往父节点来确定值
+    public int rob2(TreeNode root) {
+        if(root == null) return 0;
+
+        return Math.max(rob2(root.left)+rob2(root.right),
+                root.val+
+                        ((root.left!=null?(rob2(root.left.right)+rob2(root.left.left)):0))+
+                        (root.right!=null?(rob2(root.right.right)+rob2(root.right.left)):0));
+
+    }
 
     // 从低往上  决定返回值
     public int rob2(TreeNode root) {

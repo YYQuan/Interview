@@ -2,18 +2,36 @@ package src;
 
 import javafx.util.Pair;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 public class LeetCode_91 {
 
     public static void main(String[] args) {
         LeetCode_91 code = new LeetCode_91();
-        ;
-        System.out.println(code.numDecodings("2611055971756562"));
-//        2 6 1 10 5 5 9 7 1 7 5 6 5 6 2
-//        2 6 1 10 5 5 9 7 17 5 6 5 6 2
-//        26 1 10 5 5 9 7 17 5 6 5 6 2
-//        26 1 10 5 5971756562
+
+//        int[] ints1 = new int[]{1,2};
+//        int[] ints1 = new int[]{1,2,2,1};
+//        int[] ints1 = new int[]{1,2,3,4};
+        Integer[] ints1 = new Integer[]{1,2,3,4,5};
+//        int[] ints1 = new int[]{5,1,2,3,4,5,6,7,8};
+        ListNode head = new ListNode();
+        ListNode node = head;
+        for(int i :ints1){
+            node.next = new ListNode(i);
+            node = node.next;
+        }
+
+        node = reverseBetween(head.next,2,4);
+
+        while(node!=null){
+            System.out.println(node.val);
+            node= node.next;
+        }
+
+//        List<Integer> result =code.rightSideView(node1);
+
+
 //        System.out.println(code.numSquares2(13));
 
     }
@@ -34,6 +52,64 @@ public class LeetCode_91 {
             this.right = right;
         }
     }
+
+    public static ListNode reverseBetween(ListNode head, int left, int right) {
+        if(head ==null) return null;
+        ListNode virtualHead = new ListNode();
+        virtualHead.next=head;
+        ListNode start = null;
+        ListNode end = null;
+
+        ListNode pNode = virtualHead;
+        ListNode cNode  =virtualHead.next;
+        ListNode nNode = head.next;
+        for(int i = 1;i<=right;i++){
+
+            if(i==left){
+                start = pNode;
+            }
+
+            if(i>left){
+                if(cNode == null)   return null;
+                cNode.next = pNode;
+                pNode = cNode;
+                cNode = nNode ;
+                if(nNode!=null) {
+                    nNode = nNode.next;
+                }
+
+
+            }else{
+                if(cNode == null)   return null;
+                pNode = pNode.next;
+                cNode = cNode.next;
+                if(nNode!=null) {
+                    nNode = nNode.next;
+                }
+            }
+        }
+        if(start!=null) {
+            ListNode tmpNode = start.next;
+            if (tmpNode != null) {
+                tmpNode.next = cNode;
+            }
+            start.next = pNode;
+
+        }
+
+
+
+
+        return virtualHead.next;
+    }
+
+    public static class ListNode {
+      int val;
+      ListNode next;
+      ListNode() {}
+      ListNode(int val) { this.val = val; }
+      ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+  }
 
 
     public int numDecodings(String s) {

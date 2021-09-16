@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LeetCode_51 {
 
@@ -126,4 +127,95 @@ public class LeetCode_51 {
         }
         return listStr;
     }
+
+
+    public List<List<String>> solveNQueens2(int n) {
+        char[][]  intss = new char[n][n];
+        for(char[] ints :intss) {
+            Arrays.fill(ints,'.');
+        }
+
+
+        char[][] tmpIntss = intss.clone();
+//
+        List<List<String>> result = new ArrayList<>();
+//        for(char[] ints :intss) {
+//            //List<Integer> intsList = Arrays.stream(ints).boxed().collect(Collectors.toList());
+//            List<String> cList =  new String(ints).chars().mapToObj(i -> (String)""+i).collect(Collectors.toList());
+//
+//            result.add(cList);
+//        }
+        solution(intss,0,tmpIntss,result);
+        return result;
+
+    }
+
+    public  void solution(char[][] charss,int row ,char[][] tmpChars ,List<List<String>> result){
+
+        if(row>= charss.length) {
+            List<String> sList = new ArrayList<>();
+            for(char[] cs :tmpChars){
+                sList.add(new String(cs));
+            }
+            result.add(sList);
+            return ;
+        }
+
+        for(int i = 0 ;i<charss.length;i++){
+
+            if(isLegal(tmpChars,row,i)){
+                tmpChars[row][i] ='Q';
+                solution(charss,row+1,tmpChars,result);
+                tmpChars[row][i] ='.';
+            }
+
+        }
+    }
+
+    boolean isLegal(char[][] chars , int row,int coloum){
+
+        return legalColoum(chars,coloum)&&
+                legalRow(chars,row)&&
+                legalRightSlant(chars,row,coloum)&&
+                legalLeftSlant(chars,row,coloum);
+    }
+
+
+    boolean  legalRow(char[][] chars , int row){
+        for(char c : chars[row]){
+            if(c =='Q') return false;
+        }
+        return true;
+    }
+    boolean  legalColoum(char[][] chars , int coloum){
+        for(int i = 0; i<chars.length;i++){
+            if(chars[i][coloum] =='Q') return false;
+        }
+        return true;
+    }
+
+    boolean legalRightSlant(char[][] chars , int row,int coloum){
+        int sum = row +coloum;
+        for(int i = 0 ; i<chars.length;i++){
+            for( int j = 0 ;j<chars.length;j++){
+                if(i+j == sum&&chars[i][j]=='Q'){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    boolean legalLeftSlant(char[][] chars , int row,int coloum){
+        int d = row -coloum;
+        for(int i = 0 ; i<chars.length;i++){
+            for( int j = 0 ;j<chars.length;j++){
+                if(i-j == d&&chars[i][j]=='Q'){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 }

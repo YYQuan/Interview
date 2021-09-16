@@ -1,6 +1,7 @@
 package src;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class LeetCode_222 {
@@ -26,8 +27,8 @@ public class LeetCode_222 {
         node5.right =node6;
 
 //        code.invertTree(node2);
-//        System.out.print(code.invertTree(node2));
-//        System.out.print(code.invertTree(node2));
+        System.out.print(code.countNodes(node2));
+        System.out.print(code.countNodes2(node2));
     }
 
     public int countNodes(TreeNode root) {
@@ -67,6 +68,34 @@ public class LeetCode_222 {
       }
     }
 
+
+    public int countNodes2(TreeNode root) {
+
+        if(root == null)  return 0;
+
+        LinkedList<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        int result = 0;
+        while(!queue.isEmpty()){
+
+            int size = queue.size();
+            result +=size;
+            while(size>0){
+                size--;
+                TreeNode node = queue.remove();
+
+                if(node.left!=null){
+                    queue.add(node.left);
+                }
+                if(node.right!=null){
+                    queue.add(node.right);
+                }
+            }
+
+
+        }
+        return result;
+    }
 
 
 }

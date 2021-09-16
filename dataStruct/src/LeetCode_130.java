@@ -39,6 +39,9 @@ public class LeetCode_130 {
         code.solve(chars);
         System.out.println(chars);
 
+//        code.solve2(chars);
+//        System.out.println(chars);
+
     }
     // 击败20
     public void solve(char[][] board) {
@@ -125,5 +128,92 @@ public class LeetCode_130 {
 
     }
 
+    // 核心 要多 两个 状态数组， 一个用于把O 范围扩展， 一个用于判断是否已读
+    // 扩展完了之后 在确定需不需要被修改
+    public void solve2(char[][] board) {
 
+        if(board==null || board[0]==null) return ;
+        boolean[][] state = new boolean[board.length][board[0].length];
+        boolean[][] isRead = new boolean[board.length][board[0].length];
+
+
+        for(int i = 0;i<state.length;i++){
+
+
+            for(int j = 0 ; j<state[0].length;j++){
+
+
+                if(board[i][j] =='O'&&!isRead[i][j]){
+
+
+                    solutionExpand(state,isRead,board,i,j);
+                    illegal(state,board);
+                    for(boolean[]  bs :state ){
+                        Arrays.fill(bs,false);
+                    }
+                }
+
+
+
+            }
+
+
+        }
+
+    }
+    public void solutionExpand(boolean[][] state, boolean[][] isRead, char[][] board,int row ,int column) {
+
+        state[row][column] = true;
+        isRead[row][column] =true;
+
+        //左上右下  逐一检查
+
+        if(column>0&&!isRead[row][column-1]&&board[row][column-1]=='O'){
+            solutionExpand(state,isRead,board,row,column-1);
+        }
+
+        if(row>0&&!isRead[row-1][column]&&board[row-1][column]=='O'){
+            solutionExpand(state,isRead,board,row-1,column);
+        }
+
+        if(column<(board[0].length-1)&&!isRead[row][column+1]&&board[row][column+1]=='O'){
+            solutionExpand(state,isRead,board,row,column+1);
+        }
+
+        if(row<(board.length-1)&&!isRead[row+1][column]&&board[row+1][column]=='O'){
+            solutionExpand(state,isRead,board,row+1,column);
+        }
+
+
+
+    }
+
+
+    public void illegal(boolean[][] state,char[][] board) {
+        for (boolean b : state[0]) {
+            if (b) return;
+        }
+        for (boolean b : state[state.length - 1]) {
+            if (b) return;
+        }
+
+        for (int i = 0; i < state.length; i++) {
+            if (state[i][0] || state[i][state[0].length - 1]) {
+                return;
+            }
+        }
+
+        for (int p = 0; p < board.length; p++) {
+            for (int q = 0; q < board[0].length; q++) {
+
+                if (state[p][q]) {
+                    board[p][q] = 'X';
+                }
+
+            }
+        }
+
+
+
+    }
 }

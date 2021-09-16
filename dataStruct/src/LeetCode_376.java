@@ -14,6 +14,7 @@ public class LeetCode_376 {
         int nums1[] = {1,7,4,9,2,5,5,5,5,5,5,5,5,6,4,5};
 //        int nums1[] = {1,7,4};
         System.out.println((new LeetCode_376().wiggleMaxLength(nums1)));
+        System.out.println((new LeetCode_376().wiggleMaxLength2(nums1)));
     }
 
 
@@ -40,6 +41,7 @@ public class LeetCode_376 {
         down[0] = 1;
         for(int i = 1 ; i< nums.length;i++){
             if(nums[i]>nums[i-1]){
+
                 up[i] = Math.max(up[i-1],down[i-1]+1);
             }else{
                 up[i] = up[i-1];
@@ -51,6 +53,40 @@ public class LeetCode_376 {
             }
         }
         return  Math.max(down[nums.length-1],up[nums.length-1]);
+    }
+
+    // 上面 用 i 和i-1的关系来判断 这个不容易想清楚 ， 还是用比较容易理解的处理方式来
+    // 这种 时间复杂度为O（n^2^）的方法也能获得通过
+    public int wiggleMaxLength2(int[] nums) {
+
+        if(nums == null ||nums.length==0)  return  0;
+        int[] up  = new int[nums.length];// 该元素升序的最大长度
+        int[] down  = new int[nums.length];// 该元素降序的最大长度
+
+
+        up[0] = 1;
+        down[0] = 1;
+
+        for(int i= 1; i<nums.length;i++){
+            int maxUp = up[i-1];
+            for( int j  = 0 ; j<i;j++){
+                if(nums[i]>nums[j]){
+                    maxUp = Math.max(maxUp ,down[j]+1);
+                }
+            }
+
+            int maxDown = down[i-1];
+            for(int j =0 ; j<i;j++){
+                if(nums[i]<nums[j]){
+                    maxDown = Math.max(maxDown,up[j]+1);
+                }
+            }
+            up[i] = maxUp;
+            down[i] = maxDown;
+
+        }
+
+        return  Math.max(up[nums.length-1],down[nums.length-1]);
     }
 
 }

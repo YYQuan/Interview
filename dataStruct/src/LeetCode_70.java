@@ -5,6 +5,7 @@ public class LeetCode_70 {
     public static void main(String[] args) {
 
         System.out.println(new LeetCode_70().climbStairs(45));
+        System.out.println(new LeetCode_70().climbStairs2(45));
         System.out.println(new LeetCode_70().climbStairsOverTime(45));
 
     }
@@ -40,6 +41,19 @@ public class LeetCode_70 {
     }
 
 
+    public int climbStairs2(int n) {
+
+        if(n <=0 )  return 0;
+        if(n ==1 )  return 1;
+        int[] tmpInts = new int[n];
+        tmpInts[0] =1;
+        tmpInts[1] =2;
+
+        for(int i = 2;i<n;i++){
+            tmpInts[i] = tmpInts[i-1]+tmpInts[i-2];
+        }
+        return tmpInts[n-1];
+    }
 
 
 }

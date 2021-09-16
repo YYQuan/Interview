@@ -8,16 +8,17 @@ public class LeetCode_322 {
         System.out.println("Hello World!");
         LeetCode_322 code = new LeetCode_322();
 //        int[] ints  = new int[]{1,2,5};
-//        int[] ints  = new int[]{2};
+        int[] ints  = new int[]{2};
 //        int[] ints = {1, 5, 11, 5};
 //        int[] ints = {1, 5,  1,5};
 //        int[] ints = {14,9,8,4,3,2};
 //        int[] ints = {1};
 //        int[] ints = {1, 2, 3, 5};
-        int[] ints = {186,419,83,408};
+//        int[] ints = {186,419,83,408};
 //        System.out.println(code.coinChange(ints,11));
 //        System.out.println(code.coinChange(ints,6249));
-        System.out.println(code.coinChangeD(ints,6249));
+        System.out.println(code.coinChangeD(ints,3));
+        System.out.println(code.coinChange2(ints,3));
 
     }
 
@@ -84,4 +85,29 @@ public class LeetCode_322 {
     }
 
 
+
+    public int coinChange2(int[] coins, int amount) {
+
+        if(coins  ==null || coins.length==0) return 0;
+        if(amount<=0) return 0 ;
+        long[] dp   = new long[amount+1];
+        Arrays.fill(dp,Integer.MAX_VALUE);
+        for(int i = 1; i <(amount+1);i++){
+            for(int j = 0;j<coins.length;j++){
+                int tmp   = coins[j];
+                if(tmp >i){
+                   continue;
+                }else if(tmp <i){
+                    dp[i]=  Math.min(dp[i],dp[i-tmp]+1);
+                }else{
+                    dp[i] = 1;
+                    break;
+                }
+            }
+
+        }
+
+        return ((int)(dp[amount]) ==Integer.MAX_VALUE )?-1:((int)(dp[amount]));
+
+    }
 }

@@ -20,6 +20,7 @@ public class LeetCode_474 {
 //        System.out.println(code.coinChange(ints,6249));
         System.out.println(code.findMaxForm(strs,5,3));
         System.out.println(code.findMaxFormD(strs,5,3));
+        System.out.println(code.findMaxForm2(strs,5,3));
 
     }
 
@@ -79,6 +80,29 @@ public class LeetCode_474 {
         }
         return Math.max(findMaxForm(strs,index+1,count,m,n),findMaxForm(strs,index+1,count+1,m-count0,n-count1));
 
+    }
+
+    // 题目  m 和 n 约束的 集合的元素的全部的 0,1的数量
+    public int findMaxForm2(String[] strs, int m, int n) {
+
+        if(strs == null ||strs.length == 0 )  return 0 ;
+
+        int[][]  dp = new int[m+1][n+1];
+
+        for(String s : strs){
+
+
+            int[] count = calculatorCount(s);
+            for(int i = m ;i>=count[0];i--){
+                for(int j = n ;j>=count[1];j--){
+
+                    dp[i][j] = Math.max(dp[i][j],dp[i-count[0]][j-count[1]]+1);
+
+                }
+            }
+
+        }
+        return dp[m][n];
     }
 
 }

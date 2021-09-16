@@ -77,6 +77,18 @@ binder 机制  ： 对比起基本的跨进程通讯的优势在于 一次通讯
 
 ![ç¤ºæå¾](https://imgconvert.csdnimg.cn/aHR0cDovL3VwbG9hZC1pbWFnZXMuamlhbnNodS5pby91cGxvYWRfaW1hZ2VzLzk0NDM2NS0xMzU1NjBjODdjOTgzZTQzLnBuZz9pbWFnZU1vZ3IyL2F1dG8tb3JpZW50L3N0cmlwJTdDaW1hZ2VWaWV3Mi8yL3cvMTI0MA)
 
+
+
+
+
+
+
+
+
+
+
+
+
 ## Binder驱动的作用与原理
 
 
@@ -99,15 +111,34 @@ binder 机制  ： 对比起基本的跨进程通讯的优势在于 一次通讯
 
 #### 流程分析理解
 
-整个过程 可以理解为 服务端 向 ServerManager注册（systemService进程中）时，
-目的就是为了在binder在内核空间开辟服务端的接收缓存，然后映射到服务端的用户空间中的内存当中。
-所以服务端的内核空间的接收缓存就确定下来了，并且是由binder驱动在维护。
+1. 服务端向ServiceManager 注册binder， binder的信息由ServiceManager维护
 
-然后 客户端 请求的时候， 就通过ServerManager 来找到服务端在内核空间的接收缓存。接着再给客户端一个内核空间（**不确定是不是真实的空间**），  客户端的内核空间映射到 服务端的内核空间中。
-这样的映射关系下，客户端在往为客户端开辟的内核空间中写入信息的时候，就等于是直接在服务端的用户空间里写入数据了。
-这样就完成的跨进程通讯。
+2. 客户端通过名称去 请求 binder对象 ，
 
-##### QA
+   - binder驱动 向 ServiceManager  获取
+   - binder驱动返回给 客户端
+
+3. 客户端调用binder接口
+
+   - binder驱动 在内核空间新开辟接收缓存
+
+   - binder驱动 把接收缓存 映射到  服务端的内核空间当中
+     服务端的内核空间是映射到服务端的用户空间的 
+     接收缓存 - 服务端内核空间 - 服务端的用户空间
+
+     这个映射关系是在 进程启动的时候 就执行了的。
+     属于是启动binder的一部分
+
+   - binder驱动把客户端的数据 用客户端的用户空间拷贝到 新开辟的接收缓存当中
+
+   - 通过内存映射 ，服务端在自己的用户空间接收到了数据
+
+4. 服务端 返回数据
+
+   - 服务端把自己的返回写入自己的用户空间当中， 由于内存映射 就等于是直接写入了 binder新开辟的接收缓存里
+   - binder驱动把接收缓存里的返回值  拷贝到客户端的用户空间中 完成一次完整的binder通讯
+
+### QA
 
 Q:为啥还要有客户端开辟内核空间，映射到服务端的内核空间呢？
 都在内核空间， 直接把服务端的内核空间客户端用不就得了？
@@ -117,9 +148,41 @@ A：其实ipc中的 共享内存使用的就是这种方式。这种方式最大
 
 
 
+Q：为啥binder 只做了一次 数据拷贝？
+首先这个一次 指的不是一次通讯 ，而不是 CS 一来一回 两个通讯。
+
+进程在启动的时候 就启动binder的时候，就已经建立好了  本进程和内核之间的内存映射了。
+包括 serviceManager也是这样的。
+启动binder就是 其实就是
+
+- 打开binder驱动
+- 映射内存，设置缓存区
+- 注册binder线程
+- 进入binder线程的 loop 等待 驱动的消息
 
 
-#### 额外说明
+
+所以说 进程启动了binder之后， 就已经有了进程的用户空间和内核空间的内存映射了。
+
+等到Client端 发送binder消息来的时候 binder驱动 
+binder驱动重新再内存空间开辟了一块接收缓存。 
+把新开辟的内存映射到 服务端内核空间；
+
+对于这次通讯 就有了如下的内存映射关系：
+binder驱动新开辟的接收缓存 -》 服务端的内核空间  -》 服务端的用户空间
+
+这个时候Client端 把数据发送到 binder新开辟的接收缓存中 ，这个是一次 用户空间到内核空间的数据拷贝。
+由于内存映射， 服务端的用户空间就已经直接感知到了。
+就没有服务端的 内核空间到 用户空间的这次拷贝。
+
+服务端回数据的流程类似， 少的是 服务端 用户空间到内核空间这次数据拷贝。
+
+所以说 binder能够少一次 数据拷贝。
+少的这个数据拷贝是 服务端的用户空间和内核空间的交互。
+
+
+
+### 额外说明
 
 ##### 1. Client 进程和 ServerManger ,以及 服务进程 都需要通过binder驱动（使用 open 和 ioctl文件操作函数） 而非直接交互。
 
@@ -198,6 +261,48 @@ andoird中 一般 是service是binder的服务端。
 虽然没看到 binder具体是怎么在serverManager里注册的。
 但是应用进程的操作已经完成。
 
+接着跟一下frameWork的代码
+
+系统的binder会注册到ServiceManager中,普通的binder不会。
+
+我们从ServiceManager来开始分析， 
+
+![image-20210811184238209](https://i.loli.net/2021/08/11/GPadJyB4Nj3RshW.png)
+
+serviceManager的启动的核心就以上三步：
+
+- 开辟内存空间 建立内存映射
+- 绑定binder驱动和ServiceManager
+- 启动binder驱动的loop循环
+
+ServiceManager的启动就完成了。
+
+接着往下看，
+ServiceManager启动完成之后，系统服务怎么注册到serviceManager中呢？
+
+以显示系统的SurfaceFlinger服务为例子
+SurfaceFlinger可以参考 [文章](https://www.cnblogs.com/blogs-of-lxl/p/11272756.html)
+
+/[frameworks](http://androidxref.com/9.0.0_r3/xref/frameworks/)/[native](http://androidxref.com/9.0.0_r3/xref/frameworks/native/)/[services](http://androidxref.com/9.0.0_r3/xref/frameworks/native/services/)/[surfaceflinger](http://androidxref.com/9.0.0_r3/xref/frameworks/native/services/surfaceflinger/)/main_surfaceflinger.cpp
+
+![image-20210812102403685](https://i.loli.net/2021/08/12/CnHbpJVODtu9XxY.png)
+
+surfaceFlinger 注册到ServiceManager中的关键，就在于怎么获取这个serviceManager。
+跟一下 defaultServiceManager()
+
+![image-20210812105450981](https://i.loli.net/2021/08/12/R4osFExQUD15NdY.png)
+
+上面可以看出， serviceManager 对应的binder是 保存在进程状态当中。
+
+拿到serviceManager对应的binder之后 就可以进行service注册。
+服务端在注册binder的时候 应该就建立好了 服务端的用户空间和内核空间的映射了。
+
+客户端来的时候  只映射 客户端内存空间和  服务端 映射的那块内核空间即可。
+
+
+
+
+
 ### 获取服务
 
 客户端在使用服务端binder之前怎么获取服务的？
@@ -227,6 +332,12 @@ tansact 内部调用的就是onTransact
 
 
 
+对于transact函数
+
+
+
+![image-20210812121602215](https://i.loli.net/2021/08/12/PvTYS3eEcmB1LCb.png)
+
 ![image-20210521185701046](https://i.loli.net/2021/05/21/lSIVvoWz4cGKJCR.png)
 
 
@@ -234,7 +345,6 @@ tansact 内部调用的就是onTransact
 
 
 这些bindler接口都是通过binder线程池来完成的。
-
 
 先按下图理解。
 客户端的binder接口 通过客户端的binder线程池去发送数据，
@@ -260,3 +370,104 @@ tansact 内部调用的就是onTransact
 ## Binder优点
 
 ![ç¤ºæå¾](https://imgconvert.csdnimg.cn/aHR0cDovL3VwbG9hZC1pbWFnZXMuamlhbnNodS5pby91cGxvYWRfaW1hZ2VzLzk0NDM2NS1jMzIxMTYxYmZlYTdlNzhkLnBuZz9pbWFnZU1vZ3IyL2F1dG8tb3JpZW50L3N0cmlwJTdDaW1hZ2VWaWV3Mi8yL3cvMTI0MA)
+
+
+
+## 应用如何启动binder机制
+
+
+
+从下面这个问题入手
+
+- 什么时候启动binder机制的？
+
+首先 开发中  在application的oncraete里就已经可以使用binder来通讯了，所以应该是在application之前。
+而且 应用进程和ams的交互都是通过binder机制来进行的， 所以肯定是在zygote  frok 出进程的时候 就启动了binder的
+
+是在zygote fork 出应用进程的后 应用进程的进程状态对象中打开的binder驱动。
+
+然后应用进程映射内存， 分配缓冲区（**每个进程的内存映射都是由自己来完成的**）
+接着注册应用进程的 binder线程， 
+binder线程 进入loop 等待binder驱动的消息。
+
+binder 线程进入loop之后  应用进程才会去和ams 通讯。
+
+
+要点
+
+- 打开binder驱动
+- 映射内存，设置缓冲区
+- 注册binder线程
+- binder线程进入loop等待binder驱动的消息
+
+
+
+## Binder的Oneway机制
+
+- oneway的特性
+- oneway的底层实现
+
+ 
+
+### 特性
+
+
+
+- oneway 不阻塞客户端
+- oneway虽然不阻塞客户端，但是服务端是会阻塞的
+  并且对于同一个服务端的oneway binder 对象下的接口 都是要排队的，是串行执行的。虽然binder线程是多个线程的。
+
+binder 的接口调用 分两种 oneway 和非oneway的 
+ 默认是非oneway的
+直接区别就是 oneway是非阻塞的， 直接返回。
+非oneway的会阻塞。
+
+oneway的 transfer 函数的 resply参数 传的是null， flag 传的是oneway
+
+
+
+
+
+
+
+
+
+
+## 小结：
+
+### binder的作用
+
+android特有的跨进程通讯方式
+采用的是CS的通讯模型， 虽然是跨进程的通讯方式，但是不一定要跨进程。
+
+### binder的意义
+
+对比起 linux的其他ipc通讯机制，  binder有如下优点
+
+- 由内核统一管理， 更安全
+- 通过内存映射 只需要 一次 用户空间 和内核空间之间的数据拷贝，比 socket和管道 更快
+- 客户端和服务端有独立的内核空间 ，操作比共享内存要简单
+
+### binder的原理
+
+binder的通讯中 一共有四个角色。
+客户端，服务端， binder驱动 以及ServiceManager
+
+服务端 向 ServiceManager 注册服务，
+客户端 向 ServiceManager 获取对应的ibinder的proxy.
+
+binder驱动 负责服务端和客户端之间流转 消息。以及映射内存
+binder的通讯都是通过binder驱动 运行在binder线程当中的。
+
+ServiceManager中 管理着注册进来的binder对象。
+内存是怎么映射的 就先不管了。
+
+也就是ServiceManager 决定 找谁处理， 怎么处理。
+binder驱动决定 在什么线程来处理。
+
+
+
+
+
+
+

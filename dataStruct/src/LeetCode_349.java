@@ -1,7 +1,6 @@
 package src;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 
 public class LeetCode_349 {
 
@@ -17,9 +16,14 @@ public class LeetCode_349 {
 //        int[] nums = new int[]{100,100,100,100,3};
 //        int k = 10;
         int[] result1 = code.intersection(nums,k);
+        int[] result2 = code.intersection2(nums,k);
 
         for(int i = 0 ; i<result1.length;i++){
             System.out.print(result1[i]+" ");
+
+        }
+        for(int i = 0 ; i<result2.length;i++){
+            System.out.print(result2[i]+" ");
 
         }
     }
@@ -63,4 +67,21 @@ public class LeetCode_349 {
     }
 
 
+    public int[] intersection2(int[] nums1, int[] nums2) {
+
+        if(nums1 == null ||nums2 ==null || nums1.length==0 ||nums2.length==0) return new int[]{};
+
+        Set<Integer> resultList = new HashSet<>();
+        HashSet<Integer> set = new HashSet<>();
+        for(int i :nums1){
+            set.add(i);
+        }
+
+        for(int i :nums2){
+            if(set.contains(i)){
+                resultList.add(i);
+            }
+        }
+        return resultList.stream().mapToInt(p -> p ).toArray();
+    }
 }

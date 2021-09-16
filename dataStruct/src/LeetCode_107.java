@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
+import  src.TreeNodeUtil.TreeNode;
 public class LeetCode_107 {
 
     public static void main(String[] args) {
@@ -21,7 +21,9 @@ public class LeetCode_107 {
         TreeNode node1 = new TreeNode(1);
         node1.right= node2;
         List<List<Integer>> result =code.levelOrderBottom(node1);
+        List<List<Integer>> result2 =code.levelOrderBottom2(node1);
         System.out.println(Arrays.toString(result.toArray()));
+        System.out.println(Arrays.toString(result2.toArray()));
 
     }
 
@@ -80,17 +82,40 @@ public class LeetCode_107 {
     }
 
 
-    public static class TreeNode {
-        int val;
-        TreeNode left;
-        TreeNode right;
-        TreeNode() {}
-        TreeNode(int val) { this.val = val; }
-        TreeNode(int val, TreeNode left, TreeNode right) {
-            this.val = val;
-            this.left = left;
-            this.right = right;
+
+    public List<List<Integer>> levelOrderBottom2(TreeNode root) {
+        LinkedList<List<Integer>>  result = new LinkedList<>();
+        if(root == null)  return result;
+
+        List<Integer> list = new ArrayList<>();
+        LinkedList<TreeNode> nodes = new LinkedList<>();
+        nodes.add(root);
+
+        while(!nodes.isEmpty()){
+
+            list.clear();
+
+            int size = nodes.size();
+
+            while(size-->0){
+                TreeNode node = nodes.removeFirst();
+
+                if(node.left!=null)
+                    nodes.addLast(node.left);
+                if(node.right!=null)
+                    nodes.addLast(node.right);
+
+                list.add(node.val);
+            }
+            result.addFirst(new ArrayList<>(list));
+
         }
+
+        return result;
+
+
     }
+
+
 
 }

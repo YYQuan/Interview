@@ -11,14 +11,16 @@ public class LeetCode_416 {
         System.out.println("Hello World!");
         LeetCode_416 code = new LeetCode_416();
 //        int[] ints  = new int[]{1,2,3};
-        int[] ints = {1, 5, 11, 5};
+//        int[] ints = {1, 5, 11, 5};
 //        int[] ints = {1, 5,  1,5};
 //        int[] ints = {14,9,8,4,3,2};
-//        int[] ints = {1, 2, 3, 5};
-        System.out.println(code.solution(ints));
-        System.out.println(code.solutionDync(ints));
-        System.out.println(code.canPartition(ints));
+        int[] ints = {1, 2, 3, 5};
+//        int[] ints = {1, 2,  5};
+//        System.out.println(code.solution(ints));
+//        System.out.println(code.solutionDync(ints));
+//        System.out.println(code.canPartition(ints));
         System.out.println(code.canPartitionD(ints));
+        System.out.println(code.canPartitionD2(ints));
 
     }
 
@@ -138,10 +140,10 @@ public class LeetCode_416 {
 
         if(sum%2 != 0 )  return false;
 
-        tmpResult  = new  int[arr.length][sum/2+1];
-        for(int i = 0 ; i<tmpResult.length; i++) {
-            Arrays.fill(tmpResult[i], -1);
-        }
+//        tmpResult  = new  int[arr.length][sum/2+1];
+//        for(int i = 0 ; i<tmpResult.length; i++) {
+//            Arrays.fill(tmpResult[i], -1);
+//        }
 
         boolean[] tmpResult = new boolean[sum/2+1];
 
@@ -168,6 +170,38 @@ public class LeetCode_416 {
     }
 
 
+    /**
+     * 核心 转换成 一个二维数组来表达
+     * @param nums
+     * @return
+     */
+    public boolean canPartitionD2(int[] nums) {
+        if(nums == null ||nums.length ==0 ) return false;
+
+        int sum = 0 ;
+        for(int i : nums){
+            sum +=i;
+        }
+        if(sum%2 == 1) return false;
+        int target = (sum)/2 ;
+
+        // 核心意义是 从数组从取一部分值出来 看能不能得到某一个值
+        boolean[][] dp = new boolean[nums.length][target+1];
+
+        if(nums[0]<=target) dp[0][nums[0]] = true;
+
+
+
+        for(int i = 1;i<nums.length;i++){
+            for(int j = 0 ;j<target+1;j++){
+                //有两种情况 选择了 nums[i] 凑出了 j ， 也没有nums[i] 也能凑出j
+                dp[i][j]  = dp[i-1][j]||(j>nums[i]?dp[i-1][j-nums[i]]:false);
+            }
+        }
+
+        return dp[nums.length-1][target];
+
+    }
 
 
 }

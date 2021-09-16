@@ -31,6 +31,7 @@ public class LeetCode_404 {
 
 
         System.out.print(code.sumOfLeftLeaves(node2));
+        System.out.print(code.sumOfLeftLeaves2(node2));
     }
 
     // 击败 百分之 14
@@ -93,5 +94,35 @@ public class LeetCode_404 {
     }
 
 
+    public int sumOfLeftLeaves2(TreeNode root) {
+
+        if(root == null)  return 0 ;
+        LinkedList<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        int result = 0 ;
+
+        while(!queue.isEmpty()){
+
+            int size = queue.size();
+
+            for(int i  = 0 ; i<size ;i++){
+
+                TreeNode node = queue.removeFirst();
+                if(node.left!=null&&node.left.left == null&&node.left.right == null){
+                    result += node.left.val;
+                }
+                    if(node.left!=null){
+                        queue.addLast(node.left);
+                    }
+                    if(node.right!=null){
+                        queue.addLast(node.right);
+                    }
+
+
+            }
+
+        }
+        return result;
+    }
 
 }

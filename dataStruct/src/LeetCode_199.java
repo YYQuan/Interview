@@ -1,9 +1,6 @@
 package src;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class LeetCode_199 {
 
@@ -23,7 +20,9 @@ public class LeetCode_199 {
         TreeNode node1 = new TreeNode(1);
         node1.right= node2;
         List<Integer> result =code.rightSideView(node1);
+        List<Integer> result2 =code.rightSideView2(node1);
         System.out.println(Arrays.toString(result.toArray()));
+        System.out.println(Arrays.toString(result2.toArray()));
 
     }
 
@@ -68,4 +67,32 @@ public class LeetCode_199 {
         }
     }
 
+
+    public List<Integer> rightSideView2(TreeNode root) {
+        List<Integer>  result = new ArrayList<>();
+        if(root == null ) return result;
+
+        LinkedList<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+
+        while(!queue.isEmpty()){
+            int size = queue.size();
+            while(size>0){
+                TreeNode node = queue.removeFirst();
+                if(node.left!=null) {
+                    queue.addLast(node.left);
+                }
+                if(node.right!=null) {
+                    queue.addLast(node.right);
+                }
+
+                size--;
+                if(size ==0){
+                    result.add(node.val);
+                }
+            }
+        }
+
+        return result;
+    }
 }

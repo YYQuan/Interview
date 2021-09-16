@@ -1,6 +1,10 @@
 package src;
 
+import java.util.Arrays;
+
 public class LeetCode_198 {
+
+
 
     public static void main(String[] args) {
         LeetCode_198 code = new LeetCode_198();
@@ -10,6 +14,7 @@ public class LeetCode_198 {
         int[] ints = new int[]{2,7,9,3,1};
         System.out.println(code.rob(ints));
         System.out.println(code.robD(ints));
+        System.out.println(code.rob2(ints));
 
     }
 
@@ -44,5 +49,30 @@ public class LeetCode_198 {
         if(index == 0 ) return nums[0];
 
         return Math.max(nums[index] +rob(nums,index-2),rob(nums,index-1));
+    }
+
+
+
+    public int rob2(int[] nums) {
+
+        if(nums == null || nums.length==0) return 0;
+        if(nums.length==1) return nums[0];
+        int[] dp = new int[nums.length];
+        Arrays.fill(dp,0);
+
+
+
+        dp[0] = nums[0];
+        dp[1] = Math.max(nums[0],nums[1]);
+
+        for(int i =2 ;i<nums.length;i++){
+
+            dp[i] = Math.max(dp[i-1],dp[i-2]+nums[i]);
+
+        }
+
+        return dp[dp.length-1];
+
+
     }
 }

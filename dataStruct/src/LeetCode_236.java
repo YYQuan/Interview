@@ -2,17 +2,19 @@ package src;
 
 import src.TreeNodeUtil.TreeNode;
 
+import java.util.LinkedList;
+
 public class LeetCode_236 {
 
     public static void main(String[] args) {
         LeetCode_236 code = new LeetCode_236();
-//        Integer[] ints = new Integer[]{10,5,-3,3,2,null,11,3,-2,null,1};
+        Integer[] ints = new Integer[]{3,5,1,6,2,0,8,null,null,7,4};
 //        Integer[] ints = new Integer[]{4,2,6,1,3,null,null};
 //        Integer[] ints = new Integer[]{6,2,8,0,4,7,9,null,null,3,5};
 //        Integer[] ints = new Integer[]{5,1,4,null,null,3,6};
 //        Integer[] ints = new Integer[]{5,3,6,2,4,null,7};
 //        int[] ints = new int[]{1,2,3,4,5,6,7,8,9};
-        Integer[] ints = new Integer[]{3,1,4,null,2};
+//        Integer[] ints = new Integer[]{3,1,4,null,2};
 //        Integer[] ints = new Integer[]{1,null,2};
 
 
@@ -20,9 +22,12 @@ public class LeetCode_236 {
 //        TreeNode  result = code.lowestCommonAncestor(head,new TreeNode(2),new TreeNode(8));
 
         TreeNode result = code.lowestCommonAncestor(head,
-                new TreeNode(4),new TreeNode(2));
+                new TreeNode(5),new TreeNode(4));
+        TreeNode result2 = code.lowestCommonAncestor2(head,
+                new TreeNode(5),new TreeNode(4));
 
         System.out.println(result.val);
+        System.out.println(result2.val);
 //        TreeNodeUtil.printOrderTree(result);
     }
 
@@ -101,4 +106,47 @@ public class LeetCode_236 {
         return containTreeNode(root.left,node)||containTreeNode(root.right,node);
 
     }
+
+    public TreeNode lowestCommonAncestor2(TreeNode root, TreeNode p, TreeNode q) {
+
+        if(root == null)  return null;
+
+        TreeNode node = root;
+        TreeNode result = null;
+        LinkedList<TreeNode> nodes = new LinkedList<>();
+        nodes.add(node);
+        while(!nodes.isEmpty()){
+
+            int size = nodes.size();
+            while(size>0){
+                size--;
+                TreeNode tmpNode = nodes.poll();
+                if (tmpNode == null) break;
+                if(containNode(tmpNode,p)&&containNode(tmpNode,q)){
+                    result = tmpNode;
+                    nodes.clear();
+                    if(tmpNode.left!=null) {
+                        nodes.add(tmpNode.left);
+                    }
+                    if(tmpNode.right!=null) {
+                        nodes.add(tmpNode.right);
+                    }
+                    break;
+                }
+            }
+
+
+
+        }
+
+        return result;
+
+    }
+
+   public boolean containNode(TreeNode root , TreeNode node){
+        if(root == null)  return false;
+        if(root.val ==node.val)  return true;
+        return containNode(root.left,node)  || containNode(root.right,node);
+   }
+
 }

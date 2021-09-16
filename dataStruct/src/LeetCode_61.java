@@ -5,8 +5,10 @@ public class LeetCode_61 {
     public static void main(String[] args) {
         LeetCode_61 code = new LeetCode_61();
 
-//        int[] ints1 = new int[]{1,2};
-        int[] ints1 = new int[]{1,2,3,4,5};
+//        int[] ints1 = new int[]{1};
+        int[] ints1 = new int[]{1,2};
+//        int[] ints1 = new int[]{1,2,3,4,5};
+//        int[] ints1 = new int[]{};
 //        int[] ints1 = new int[]{5,1,2,3,4,5,6,7,8};
 
         ListNode head = new ListNode(ints1[0]);
@@ -15,7 +17,9 @@ public class LeetCode_61 {
             node.next = new ListNode(ints1[i]);
             node = node.next;
         }
-        ListNode result = code.rotateRight(head,7);
+        ListNode result = code.rotateRight2(head,1);
+//        ListNode result = code.rotateRight2(head,7);
+//        ListNode result = code.rotateRight2(head,2);
         while(result !=null) {
             System.out.println(result.val);
             result = result.next;
@@ -76,4 +80,37 @@ public class LeetCode_61 {
 
     }
 
+
+    public ListNode rotateRight2(ListNode head, int k) {
+        if(head == null ||k<=0) return head;
+        ListNode virtualHead = new ListNode();
+        virtualHead.next = head;
+
+        ListNode node = head;
+
+        int length = 1 ;
+        for(; ;length++){
+            ;
+            if(node.next==null) {
+                node.next = head;
+                break;
+            }
+
+            node = node.next;
+        }
+//        System.out.println("length "+length);
+//        System.out.println("k "+k);
+//        System.out.println("length-k%length "+(length-k%length));
+        node = virtualHead;
+        for(int i = 0 ; i<length-k%length;i++){
+            node = node.next;
+        }
+        ListNode result = node.next;
+        node.next =null;
+        return result;
+
+
+
+
+    }
 }

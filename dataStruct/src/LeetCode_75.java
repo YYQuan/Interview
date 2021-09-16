@@ -1,13 +1,16 @@
 package src;
 
+import java.util.Random;
+
 public class LeetCode_75 {
 
     public static void main(String[] args) {
         LeetCode_75 code = new LeetCode_75();
-//        int[] ints  = new int[]{2,0,2,1,1,0};
-        int[] ints  = new int[]{1,2};
+        int[] ints  = new int[]{2,0,2,1,1,0};
+//        int[] ints  = new int[]{1,2,0};
 
-        code.sortColors(ints);
+  //      code.sortColors(ints);
+        code.sortColors2(ints);
 //        System.out.println(result+"  ");
         for(int i =0 ;i<ints.length;i++){
             System.out.print(ints[i]+"  ");
@@ -49,4 +52,42 @@ public class LeetCode_75 {
         nums[r] = tmp;
     }
 
+
+    public void sortColors2(int[] nums) {
+        sortColors2(nums,0,nums.length);
+    }
+    public void sortColors2(int[] nums,int l  ,int r ) {
+        if(l >= r){
+            return ;
+        }
+
+        int random = new Random().nextInt(r-l)+l;
+        swap(nums,l,random);
+        int tmp = nums[l];
+        int p =l; //[l+1,p)<nums[]
+        int q =r-1; //[q,r)>=nums[l]
+        System.out.println(String.format(" l %d, i %d, r %d  random %d",l,q,r,random));
+        while(p<q){
+
+            while(p<r&&nums[p]<=tmp){
+                p++;
+            }
+
+            while(q>l&&nums[q]>=tmp){
+                q--;
+            }
+
+
+            if(p<q) {
+                swap(nums, p, q);
+            }
+
+        }
+
+        swap(nums,l,q);
+
+
+        sortColors2(nums,l,q);
+        sortColors2(nums,q+1,r);
+    }
 }

@@ -67,4 +67,21 @@ public class LeetCode_144 {
       }
     }
 
+
+    public List<Integer> preorderTraversal2(TreeNode root) {
+        List<Integer> ints = new ArrayList<>();
+        preorderTraversal(root,ints);
+        return ints;
+    }
+    public void  preorderTraversal(TreeNode root,List<Integer> result) {
+
+        if(root ==null){
+            return ;
+        }
+
+        result.add(root.val);
+        preorderTraversal(root.left,result);
+        preorderTraversal(root.right,result);
+
+    }
 }

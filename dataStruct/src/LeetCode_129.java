@@ -2,6 +2,7 @@ package src;
 
 import java.util.ArrayList;
 import java.util.List;
+import src.TreeNodeUtil.TreeNode;
 
 public class LeetCode_129 {
 
@@ -14,8 +15,8 @@ public class LeetCode_129 {
 //        node20.left = new TreeNode(15);
 //        node20.right = new TreeNode(7);
 
-        TreeNode node6 = new TreeNode(6);
-        TreeNode node5 = new TreeNode(5);
+        TreeNodeUtil.TreeNode node6 = new TreeNode(6);
+        TreeNodeUtil.TreeNode node5 = new TreeNode(5);
         TreeNode node4 = new TreeNode(4);
         TreeNode node3 = new TreeNode(3);
         TreeNode node2 = new TreeNode(2);
@@ -31,7 +32,8 @@ public class LeetCode_129 {
         node6.left = node22;
 
 
-//        System.out.print(code.pathSum(node2));
+        System.out.print(code.sumNumbers(node2));
+        System.out.print(code.sumNumbers2(node2));
     }
 
     // 击败 28
@@ -65,19 +67,27 @@ public class LeetCode_129 {
 
 
 
-    public static  class TreeNode {
-      int val;
-      TreeNode left;
-      TreeNode right;
-      TreeNode() {}
-      TreeNode(int val) { this.val = val; }
-      TreeNode(int val, TreeNode left, TreeNode right) {
-          this.val = val;
-          this.left = left;
-          this.right = right;
-      }
-    }
 
+
+    public int sumNumbers2(TreeNode root) {
+        if(root == null) return 0;
+        return  solution(0,root);
+
+
+    }
+    public int solution(int sum,TreeNode root) {
+
+        if(root.left ==null&& root.right ==null){
+            return sum  +root.val;
+        }
+
+        sum  +=root.val;
+
+        return (root.left!=null?solution(sum*10,root.left):0)+
+        (root.right!=null?solution(sum*10,root.right):0);
+
+
+    }
 
 
 }

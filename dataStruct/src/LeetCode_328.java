@@ -11,8 +11,8 @@ public class LeetCode_328 {
 //        int[] ints = new int[]{3,5};
 //        int[] ints = new int[]{1,4,3,2,5,2};
 //        int[] ints = new int[]{1,2,3,4,5};
-//        int[] ints = new int[]{2,1,3,5,6,4,7};
-        int[] ints = new int[]{1};
+        int[] ints = new int[]{2,1,3,5,6,4,7};
+//        int[] ints = new int[]{1};
 //        int[] ints = new int[]{1,2,1};
 //        int[] ints = new int[]{};
         ListNode head = new ListNode(ints[0]);
@@ -23,7 +23,8 @@ public class LeetCode_328 {
         }
 
 
-        ListNode result =  code.oddEvenList(head);
+//        ListNode result =  code.oddEvenList(head);
+        ListNode result =  code.oddEvenList2(head);
 
 
 
@@ -102,4 +103,48 @@ public class LeetCode_328 {
 
     }
 
+
+    // 核心  找到 必须存储的  5个节点
+    public ListNode oddEvenList2(ListNode head) {
+        if(head == null ) return null;
+
+        if(head.next==null) return head;
+        if(head.next.next==null) return head;
+
+        // 原来的第一个偶数节点， 和其前一个节点
+        ListNode signHead = head;
+        ListNode second = head.next;
+
+        ListNode pNode= head;
+        ListNode cNode= head.next;
+        ListNode nNode= head.next.next;
+
+        for(int i =0;cNode!=null ;i++){
+
+            if(i%2 ==1){
+                pNode.next =nNode;
+                signHead.next = cNode;
+                cNode.next = second;
+
+                signHead = signHead.next;
+
+
+                cNode = nNode;
+                if(cNode!=null) {
+                    nNode = cNode.next;
+                }
+                i++;
+            }
+            pNode = pNode.next;
+            if(cNode!=null) {
+                cNode = cNode.next;
+            }
+            if(nNode!=null) {
+                nNode = nNode.next;
+            }
+
+        }
+
+        return head;
+    }
 }

@@ -29,6 +29,8 @@ public class LeetCode_530 {
 //        TreeNodeUtil.printOrderTree(result);
     }
 
+
+//    核心  二叉搜索树的中序遍历 会得到有序数组
     // 击败 29
     // 思路 中序遍历之后 得到有序的 数组 再对数组进行处理
     public int getMinimumDifference(TreeNode root) {
@@ -63,5 +65,7 @@ public class LeetCode_530 {
 
 
     }
+
+
 
 }

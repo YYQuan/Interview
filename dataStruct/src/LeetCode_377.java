@@ -1,23 +1,27 @@
 package src;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class LeetCode_377 {
 
     public static void main(String[] args) {
         System.out.println("Hello World!");
         LeetCode_377 code = new LeetCode_377();
-//        int[] ints  = new int[]{1,2,5};
+        int[] ints  = new int[]{1,2,3};
 //        int[] ints  = new int[]{2};
 //        int[] ints = {1, 5, 11, 5};
 //        int[] ints = {1, 5,  1,5};
 //        int[] ints = {14,9,8,4,3,2};
 //        int[] ints = {1};
-        int[] ints = {3};
+//        int[] ints = {3};
 //        System.out.println(code.coinChange(ints,11));
 //        System.out.println(code.coinChange(ints,6249));
-        System.out.println(code.combinationSum4(ints,0));
-        System.out.println(code.combinationSum4D(ints,0));
+        System.out.println(code.combinationSum4(ints,4));
+        System.out.println(code.combinationSum4D(ints,4));
+        System.out.println(code.combinationSum4_2(ints,4));
 
     }
 
@@ -60,6 +64,30 @@ public class LeetCode_377 {
         }
 
         return result;
+    }
+
+
+    public int combinationSum4_2(int[] nums, int target) {
+
+        if(nums == null ||nums.length==0) return   0 ;
+        int[] dp = new  int[target+1];
+        dp[0] =0;//
+        for(int i =  1 ; i <=target;i++){
+
+
+            int sum  = 0  ;
+            for(int j = 0 ; j<nums.length;j++){
+                if(nums[j]<i){
+                    sum +=dp[i-nums[j]];
+                }else if(nums[j]==i){
+                    sum +=1;
+                }
+            }
+            dp[i] = sum;
+
+        }
+        return dp[target];
+
     }
 
 }
