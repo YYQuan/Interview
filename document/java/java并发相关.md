@@ -296,6 +296,30 @@ A：
 [参考](https://www.bilibili.com/read/cv5161315/)
 轻量级锁通过 等待队列就已经避免了大多数的线程的自旋的开销，开销已经是比较小了哇。
 
+感觉参考文章里说的不太对。
+核心应该是如果只有轻量级锁的话， 那么获取锁的顺序就固定了。
+就是队列的顺序
+轻量级锁升级为重量级锁的条件，有资料这样说 entryList的头元素在不断地自旋，当自旋的次数超过的阈值。
+可在jvm参数中配置。就会膨胀成重量级锁。
+
+
+
+感觉还是挺靠谱的，特别是都指出了配置参数。
+
+所以轻量级锁膨胀的关键不是数量，而是等待的时长。
+
+
+
+
+
+ps:
+
+monitor的源码看起来 entryList是一个双向链表
+
+![image-20210916211449887](https://i.loli.net/2021/09/16/L6TXHfmFbxhkaWn.png)
+
+[monitor源码](http://hg.openjdk.java.net/jdk8u/jdk8u/hotspot/file/095e60e7fc8c/src/share/vm/runtime/objectMonitor.hpp)
+
 
 
 #### 为啥重量级锁， 操作系统 的互斥消耗大？
@@ -673,6 +697,14 @@ instance.setRelease(new Demo());
 queue中的请求线程的节点 过了某个阈值， 才开始 new新线程。
 此时 一个执行完的线程 返回到队列当中， 也可以继续进行消费。
 
+
+
+[阻塞队列参考](https://www.cnblogs.com/libin6505/p/12850830.html)
+
+- SychronousQueue 得等添加的元素被消费后 才能添加新元素 ，在线程池里一般用于无非核心线程数量限制的场景
+- ArrayBlockingQueue，阻塞数组队列  ,在线程池一般用于 在队列满了之后，在创建新线程的场景
+- LinkedBlockingQueue， 阻塞队列没有长度限制， 一般用于 没有非核心线程的线程池中
+
 ### ArrayBlockingQueue和SynchronousQueue 的工作原理一样吗？
 
 ArrayBlockQueue 和SynchroniousQueue的原理是不一样的
@@ -700,7 +732,12 @@ LinkedTransferQueue有tryTransfer 接口， synchronious 没有。
 
 
 
+### 以android的线程池为例子
+
+![image-20210916223903175](https://i.loli.net/2021/09/16/RJ8QA9Z7gNqcIeY.png)
 
 
 
+![image-20210916224007552](https://i.loli.net/2021/09/16/4vk7NPM8VLz2SGO.png)
 
+![image-20210916224123455](https://i.loli.net/2021/09/16/MlT5Xseda1GFygP.png)
