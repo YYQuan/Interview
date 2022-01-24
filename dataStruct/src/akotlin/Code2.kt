@@ -8,8 +8,8 @@ fun main(args: Array<String>) {
     var node1 = Util.transferListNode4Array(l1)
     var node2 = Util.transferListNode4Array(l2)
     val result = code.addTwoNumbers_2(null,null)
-    Util.print(node1)
-    Util.print(node2)
+    Util.print(node1!!)
+    Util.print(node2!!)
     result?.let {
         Util.print(result)
     }?: println("result is null")

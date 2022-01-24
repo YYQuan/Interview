@@ -155,13 +155,13 @@ public class LeetCode_337 {
 
     }
 
-    // 从低往上  决定返回值
-    public int rob2(TreeNode root) {
-        if(root == null) return 0 ;
-        int[] result =solution(root);
-
-        return Math.max(result[0],result[1]);
-    }
+//    // 从低往上  决定返回值
+//    public int rob2(TreeNode root) {
+//        if(root == null) return 0 ;
+//        int[] result =solution(root);
+//
+//        return Math.max(result[0],result[1]);
+//    }
 
     /**
      * 动态规划是思想  动态规划和递归 并不冲突 ，

@@ -45,7 +45,6 @@ public class LeetCode_25 {
                 if (tmp == null||tmp.next==null) {
                     break w;
                 }
-
                 tmp = tmp.next;
             }
             while(i-->0&&node!=null){

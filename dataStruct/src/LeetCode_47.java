@@ -9,8 +9,8 @@ public class LeetCode_47 {
     public static void main(String[] args) {
         LeetCode_47 code = new LeetCode_47();
 //        int[] ints = new int[]{236,104,701,227,911};
-//        int[] ints = new int[]{1,1,2};
-        int[] ints = new int[]{2,2,1,1};
+        int[] ints = new int[]{1,1};
+//        int[] ints = new int[]{2,2,1,1};
 
 //        TreeNode  result = code.lowestCommonAncestor(head,new TreeNode(2),new TreeNode(8));
 
