@@ -22,7 +22,6 @@ A：
    
    
    
-   
 2. 原生的路由方式,无法插手启动的任何环节。在startActivity之后无法拦截，不能捕获，降级，只能交给系统，这是如果跳转失败的时候 就有可能发生异常；
 
 3. 原生和H5之间的跳转
@@ -83,7 +82,6 @@ Navigation.findNavController(View/*NavHostFragment的view*/)
 NavHostFragment.findNavController(FirstFragment.this).navigate(
     R.id.action_FirstFragment_to_NavgationActivity/*配置文件中的配置的id*/,
     Bundle.EMPTY/*传参*/);
-
 
 ```
 
@@ -378,7 +376,6 @@ ARouter的跨模块调用流程：
 
 - base
   
-
 - library1
 
   有一个Activity1
@@ -724,7 +721,7 @@ ARouter里面读取类名是用了多个线程同时执行， 但是加了个同
 
 
 
-其实Root的loadInto只是把 生成的对应组的 相关的class传了进去。 并没有做处理。
+其实Root的loadInto只是把 生成的对应组的相关的class传了进去。并没有做处理。
 
 
 

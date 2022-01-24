@@ -148,7 +148,9 @@ Call的具体实现类是RealCall
 Call call =  client.newCall(Request);
 ```
 
-实际上的调用的就是     ![image-20200814114038101](E:/tools/Typora/res/andoirdCodeAnaly/image-20200814114038101.png)![image-20200814114015394](https://i.loli.net/2020/09/24/YNAWEaLseHp5GJB.png)
+实际上的调用的就是     ![image-20200814114038101](E:/tools/Typora/res/andoirdCodeAnaly/image-20200814114038101.png)
+
+![image-20200814114015394](https://i.loli.net/2020/09/24/YNAWEaLseHp5GJB.png)
 
 这样Call的实现类就已经创建出来了
 
@@ -710,7 +712,10 @@ ConnectPool 中put一次 就提交了一个死循环的任务，那么到后面�
 用demo去模拟了场景 得到结果 和注释是一致的。
 在runnable没执行完时 是不是做空闲的。哪怕他一直在休眠
 
+#### 连接池的应用
 
+之前有个需求， http请求需要在限制在一定范围内的端口当中。
+就是通过 控制连接池 socket的创建来 控制的。
 
 
 
@@ -788,7 +793,6 @@ client 负责执行call。
 
 - OkHttp分发网络请求
 - 网络请求
-
 
 网络请求的分发 分为了 同步请求和异步请求。
 OkHttp中 用了 三个队列来维护。

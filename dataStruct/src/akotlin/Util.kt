@@ -51,7 +51,17 @@ class Util {
             println("listNode : $s")
 
         }
+
+        fun printArray(ints :IntArray){
+            ints.forEach {
+                print("$it ,")
+            }
+            println()
+        }
     }
+
+
+
 
 
     class ListNode(var `val`: Int) {

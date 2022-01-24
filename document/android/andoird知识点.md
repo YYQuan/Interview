@@ -2000,7 +2000,7 @@ ps: 所以说弱引用也不一定一来GC就释放的。如果没有弱应用�
 解决办法 
 
 源码中 在ThreadLocalMap的set函数中有把key为空的entry给释放的操作，但是并不能百分百保证。
- 执行ThreaLocal.remove 就能保证value的释放了。
+执行ThreaLocal.remove 就能保证value的释放了。
 
 
 

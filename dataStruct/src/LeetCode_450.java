@@ -176,48 +176,48 @@ public class LeetCode_450 {
 
     // 注意题目  题目只是 要 保持二叉搜索树，  并不是完全二叉搜索树  要保持成 完成二叉搜索树
     // 所以只需要把 被移除节点 的 左子树  移到 右子树的最小节点的左边 就能保持 为二叉搜索树了。
-    public TreeNode deleteNode2(TreeNode root, int key) {
-        if(root == null) return null;
-        LinkedList<TreeNode> queue = new LinkedList<>();
-
-        TreeNode virtualNode = new TreeNode(key-1);
-        virtualNode.left = root;
-
-
-        queue.add(virtualNode);
-
-        while(!queue.isEmpty()){
-
-            int size = queue.size();
-
-            for(int i = 0 ; i<size;i++){
-
-                TreeNode node = queue.removeFirst();
-
-                if(node.left !=null) {
-                    if (node.left.val == key) {
-                        moveMin(new TreeNode[]{node,node.left},true);
-                        return virtualNode.left;
-
-                    }
-                    queue.addLast(node.left);
-                }
-
-                if(node.right !=null) {
-                    if (node.right.val == key) {
-                        moveMin(new TreeNode[]{node,node.right},false);
-                        return virtualNode.left;
-
-                    }
-                    queue.addLast(node.right);
-
-                }
-            }
-        }
-
-        return virtualNode.left;
-
-    }
+//    public TreeNode deleteNode2(TreeNode root, int key) {
+//        if(root == null) return null;
+//        LinkedList<TreeNode> queue = new LinkedList<>();
+//
+//        TreeNode virtualNode = new TreeNode(key-1);
+//        virtualNode.left = root;
+//
+//
+//        queue.add(virtualNode);
+//
+//        while(!queue.isEmpty()){
+//
+//            int size = queue.size();
+//
+//            for(int i = 0 ; i<size;i++){
+//
+//                TreeNode node = queue.removeFirst();
+//
+//                if(node.left !=null) {
+//                    if (node.left.val == key) {
+//                        moveMin(new TreeNode[]{node,node.left},true);
+//                        return virtualNode.left;
+//
+//                    }
+//                    queue.addLast(node.left);
+//                }
+//
+//                if(node.right !=null) {
+//                    if (node.right.val == key) {
+//                        moveMin(new TreeNode[]{node,node.right},false);
+//                        return virtualNode.left;
+//
+//                    }
+//                    queue.addLast(node.right);
+//
+//                }
+//            }
+//        }
+//
+//        return virtualNode.left;
+//
+//    }
 
 
    void moveMin(TreeNode[] roots ,boolean isleft){
