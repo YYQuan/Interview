@@ -4,41 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5c87f70d-ca16-4a3f-9191-529bb0e0f454" name="变更" comment="update">
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code11.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code15.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code16.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code17.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code18.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code19.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code3.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/sort/QuickSort.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dataStruct/src/LeetCode_337.java" beforeDir="false" afterPath="$PROJECT_DIR$/dataStruct/src/LeetCode_337.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dataStruct/src/LeetCode_450.java" beforeDir="false" afterPath="$PROJECT_DIR$/dataStruct/src/LeetCode_450.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dataStruct/src/akotlin/Util.kt" beforeDir="false" afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Util.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android/activity/activity.assets/image-20220119112152308.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android/activity/activity.assets/image-20220119112210013.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android/activity/activity.assets/image-20220119141532967.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android/activity/activity.assets/image-20220119141600833.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android/activity/activity.assets/image-20220119142342979.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android/activity/activity.assets/image-20220119142620977.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android/activity/activity.assets/image-20220119181651330.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android/activity/activity.assets/image-20220120114848703.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android/activity/activity.assets/image-20220120115116613.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android/activity/activity.assets/image-20220120115743409.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android/activity/activity.assets/image-20220120120102887.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android/activity/activity.assets/image-20220120144425425.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android/activity/activity.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android/andoird知识点.md" beforeDir="false" afterPath="$PROJECT_DIR$/document/android/andoird知识点.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android/android导航框架.md" beforeDir="false" afterPath="$PROJECT_DIR$/document/android/android导航框架.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android/性能优化相关/性能优化专题.md" beforeDir="false" afterPath="$PROJECT_DIR$/document/android/性能优化相关/性能优化专题.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/android/第三方库源码分析/andoird常规开源库源码分析.md" beforeDir="false" afterPath="$PROJECT_DIR$/document/android/第三方库源码分析/andoird常规开源库源码分析.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/java/java基础.md" beforeDir="false" afterPath="$PROJECT_DIR$/document/java/java基础.md" afterDir="false" />
-    </list>
+    <list default="true" id="5c87f70d-ca16-4a3f-9191-529bb0e0f454" name="变更" comment="update" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -59,6 +25,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -72,6 +39,9 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="23dyqlqEJHAWJgGRvbHUqS3Gp2b" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
