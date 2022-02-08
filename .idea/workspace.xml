@@ -4,7 +4,38 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5c87f70d-ca16-4a3f-9191-529bb0e0f454" name="变更" comment="update" />
+    <list default="true" id="5c87f70d-ca16-4a3f-9191-529bb0e0f454" name="变更" comment="update">
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code131.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code136.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code139.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code143.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code144.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code145.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code147.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code148.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code149.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code150.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code167.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code198.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code199.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code200.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code202.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code203.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code205.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code206.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code209.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code213.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code215.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code216.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code217.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code219.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code220.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code222.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code226.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code230.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code234.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -61,50 +92,37 @@
       <recent name="D:\workspace\java\Interview\dataStruct\src\akotlin" />
     </key>
   </component>
-  <component name="RunManager" selected="Kotlin.Code19Kt">
-    <configuration name="LeetCode_1" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="src.LeetCode_1" />
-      <module name="Interview" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="src.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Code16Kt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="akotlin.Code16Kt" />
+  <component name="RunManager" selected="Kotlin.Code234Kt">
+    <configuration name="Code219Kt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="akotlin.Code219Kt" />
       <module name="Interview" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Code17Kt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="akotlin.Code17Kt" />
+    <configuration name="Code220Kt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="akotlin.Code220Kt" />
       <module name="Interview" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Code18Kt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="akotlin.Code18Kt" />
+    <configuration name="Code226Kt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="akotlin.Code226Kt" />
       <module name="Interview" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Code19Kt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="akotlin.Code19Kt" />
+    <configuration name="Code230Kt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="akotlin.Code230Kt" />
       <module name="Interview" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="QuickSortKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="akotlin.sort.QuickSortKt" />
+    <configuration name="Code234Kt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="akotlin.Code234Kt" />
       <module name="Interview" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -112,11 +130,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Kotlin.Code19Kt" />
-        <item itemvalue="Kotlin.Code18Kt" />
-        <item itemvalue="Kotlin.Code17Kt" />
-        <item itemvalue="Kotlin.Code16Kt" />
-        <item itemvalue="Kotlin.QuickSortKt" />
+        <item itemvalue="Kotlin.Code234Kt" />
+        <item itemvalue="Kotlin.Code230Kt" />
+        <item itemvalue="Kotlin.Code226Kt" />
+        <item itemvalue="Kotlin.Code220Kt" />
+        <item itemvalue="Kotlin.Code219Kt" />
       </list>
     </recent_temporary>
   </component>
@@ -150,7 +168,35 @@
       <option name="project" value="LOCAL" />
       <updated>1642582131657</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="update">
+      <created>1643365890255</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1643365890255</updated>
+    </task>
+    <task id="LOCAL-00005" summary="update">
+      <created>1643366007006</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1643366007006</updated>
+    </task>
+    <task id="LOCAL-00006" summary="update">
+      <created>1643366128348</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1643366128348</updated>
+    </task>
+    <task id="LOCAL-00007" summary="update">
+      <created>1643366173008</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1643366173008</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -183,16 +229,6 @@
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/dataStruct/src/akotlin/Util.kt</url>
-          <line>35</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/dataStruct/src/akotlin/Util.kt</url>
-          <line>30</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/dataStruct/src/akotlin/Code2.kt</url>
           <line>4</line>
           <option name="timeStamp" value="8" />
@@ -215,6 +251,33 @@
           <line>12</line>
           <option name="timeStamp" value="13" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/dataStruct/src/akotlin/Code147.kt</url>
+          <line>37</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-function">
+          <url>file://$PROJECT_DIR$/dataStruct/src/akotlin/Code131.kt</url>
+          <line>10</line>
+          <properties class="akotlin.Code131" method="partition">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-function">
+          <url>file://$PROJECT_DIR$/dataStruct/src/akotlin/Code206.kt</url>
+          <line>11</line>
+          <properties class="akotlin.Code206" method="reverseList">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.NullPointerException" package="java.lang" />
+          <option name="timeStamp" value="19" />
+        </breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
