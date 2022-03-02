@@ -5,36 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5c87f70d-ca16-4a3f-9191-529bb0e0f454" name="变更" comment="update">
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code131.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code136.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code139.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code143.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code144.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code145.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code147.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code148.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code149.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code150.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code167.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code198.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code199.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code200.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code202.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code203.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code205.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code206.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code209.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code213.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code215.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code216.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code217.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code219.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code220.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code222.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code226.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code230.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataStruct/src/akotlin/Code234.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/document/android/基础理解.md" beforeDir="false" afterPath="$PROJECT_DIR$/document/android/基础理解.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/document/android/第三方库源码分析/andoirdCodeAnaly.md" beforeDir="false" afterPath="$PROJECT_DIR$/document/android/第三方库源码分析/andoirdCodeAnaly.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

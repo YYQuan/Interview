@@ -366,7 +366,17 @@ OkHttp当中默认的队列是同步队列
 
 
 
+## 问题：
 
+1. okhttp的长链接是怎么保持的？
+
+http的长连接时在 tcp的基础上的，
+http的长连接 是通过 connection 字段配置成keep-alive
+tcp 的keep -alive是服务端经过设定事件之后，服务端就会发出检测包去确认tcp连接是否还在，如果有问题就关闭。
+
+从下面可以看出在bridgeInterceptor 中默认connection字段是keep-alive的
+
+![image-20220214101631638](andoirdCodeAnaly.assets/image-20220214101631638.png)
 
 # Retrofit
 
